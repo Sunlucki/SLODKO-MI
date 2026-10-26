@@ -58,8 +58,9 @@ export default function Split({ section }: SectionProps<'split'>) {
   const headingId = `${section.id}-title`
   const coverImage = left.video ? left.video.poster : left.image
   return (
-    <Section id={section.id} labelledBy={headingId} className="px-2 py-0 sm:px-3 md:py-0">
-      <div className="grid overflow-hidden rounded-frame md:grid-cols-2">
+    // Full-bleed, square-edged band like the reference (the hero and footer are the inset frames)
+    <Section id={section.id} labelledBy={headingId} className="py-0 md:py-0">
+      <div className="grid overflow-hidden md:grid-cols-2">
         <div className="relative isolate flex min-h-[24rem] items-center justify-center p-8 md:min-h-[32rem] lg:min-h-[35rem]">
           {left.video ? <CoverVideo video={left.video} /> : <Picture image={left.image} sizes={coverSizes} className={cover} />}
           <div aria-hidden className="absolute inset-0 -z-10 bg-linear-to-t from-ink/70 via-ink/40 to-ink/25" />

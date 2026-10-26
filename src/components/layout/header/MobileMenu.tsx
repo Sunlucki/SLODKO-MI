@@ -6,13 +6,16 @@ import { SmartLink } from '@/components/ui/SmartLink'
 import { site } from '@/content'
 import { trackEngagement } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
+import { HeaderActions } from './HeaderActions'
 import { Logo } from './Logo'
-import { Notch } from './Notch'
 
 const roundButton =
-  'inline-grid size-11 shrink-0 cursor-pointer place-items-center rounded-full bg-brand-deep text-cream transition-colors duration-200 hover:bg-ink'
+  'inline-grid size-(--nf-item) shrink-0 cursor-pointer place-items-center rounded-full bg-brand-deep text-cream transition-colors duration-200 hover:bg-ink'
 
-/** Menu button (below lg) + full-screen dialog drawn as the hero frame: focus trap, Escape, scroll lock. */
+/**
+ * Menu button + full-screen dialog drawn as the same SVG frame as the hero (.nf-menu): the logo and
+ * the close button sit exactly where the header's logo and menu button were. Focus trap, Escape, scroll lock.
+ */
 export function MobileMenu({ className }: { className?: string }) {
   const [open, setOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -46,14 +49,9 @@ export function MobileMenu({ className }: { className?: string }) {
         first.focus()
       }
     }
-    // The dialog is lg:hidden — close it (and release the lock) when e.g. a tablet rotates past lg
-    const desktop = window.matchMedia('(min-width: 64rem)')
-    const onDesktop = () => desktop.matches && setOpen(false)
     document.addEventListener('keydown', onKey)
-    desktop.addEventListener('change', onDesktop)
     return () => {
       document.removeEventListener('keydown', onKey)
-      desktop.removeEventListener('change', onDesktop)
       root.style.overflow = overflow
       if (!followedLink.current) buttonRef.current?.focus({ preventScroll: true })
       followedLink.current = false
@@ -90,19 +88,19 @@ export function MobileMenu({ className }: { className?: string }) {
           role="dialog"
           aria-modal="true"
           aria-label="Menu"
-          className="fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-cream p-2 transition-opacity duration-300 starting:opacity-0 lg:hidden"
+          className="fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-cream p-(--nf-inset) transition-opacity duration-300 starting:opacity-0"
         >
-          <div className="relative flex min-h-full flex-col rounded-frame bg-brand-deep px-6 pt-28 pb-8 text-cream transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] starting:translate-y-6">
-            <Notch corner="tl" className="absolute top-0 left-0 pr-3 pb-3">
-              <Logo location="menu" onClick={follow} />
-            </Notch>
-            <Notch corner="tr" className="absolute top-0 right-0 pb-3 pl-3">
-              <div className="flex h-12 items-center">
-                <button ref={closeRef} type="button" aria-label="Zamknij menu" onClick={close} className={roundButton}>
-                  <Close />
-                </button>
-              </div>
-            </Notch>
+          <div className="nf-menu relative flex min-h-full flex-col px-6 pt-[calc(var(--nf-item)+var(--nf-gap)+2.5rem)] pb-8 text-cream transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] starting:translate-y-6 md:px-10 lg:px-14">
+            <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3">
+              <Logo location="menu" onClick={follow} className="h-(--nf-item) w-[calc(var(--nf-left)-var(--nf-gap))]" />
+              <HeaderActions
+                menuButton={
+                  <button ref={closeRef} type="button" aria-label="Zamknij menu" onClick={close} className={roundButton}>
+                    <Close />
+                  </button>
+                }
+              />
+            </div>
 
             <nav aria-label="Menu główne">
               <ul className="flex flex-col gap-1">

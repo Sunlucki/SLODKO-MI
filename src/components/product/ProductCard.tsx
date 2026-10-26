@@ -38,7 +38,7 @@ export function ProductCard({ product, index, listName }: Props) {
       )}
     >
       <div className="relative">
-        <ProductImage image={product.images[0]} sizes={SIZES} muted={!product.available} className="aspect-square rounded-xl" />
+        <ProductImage image={product.images[0]} sizes={SIZES} muted={!product.available} className="aspect-square rounded-xl bg-none" />
         <span
           aria-hidden
           className={cn(
@@ -70,7 +70,7 @@ export function ProductCard({ product, index, listName }: Props) {
             {tag}
           </span>
         )}
-        <h3 className={cn('font-display text-2xl leading-[1.05] uppercase', product.available ? 'text-brand-deep' : 'text-ink/70')}>
+        <h3 className={cn('font-display text-2xl leading-[1.05] uppercase', product.available ? 'text-ink' : 'text-ink/70')}>
           <SmartLink
             href={`/produkt/${product.slug}`}
             location={`product-card:${listName}`}

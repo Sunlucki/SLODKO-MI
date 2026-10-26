@@ -50,7 +50,7 @@ function Stars({ value, label, className }: { value: number; label?: string; cla
   )
 }
 
-function NavButton({ dir, controls, onClick }: { dir: -1 | 1; controls: string; onClick: () => void }) {
+function NavButton({ dir, controls, onClick, className }: { dir: -1 | 1; controls: string; onClick: () => void; className?: string }) {
   const Icon = dir < 0 ? ChevronLeft : ChevronRight
   return (
     <button
@@ -58,7 +58,10 @@ function NavButton({ dir, controls, onClick }: { dir: -1 | 1; controls: string; 
       onClick={onClick}
       aria-controls={controls}
       aria-label={dir < 0 ? 'Poprzednia opinia' : 'Następna opinia'}
-      className="grid size-12 shrink-0 cursor-pointer place-items-center rounded-full bg-caramel text-ink shadow-[0_10px_24px_-10px_rgb(0_0_0/0.6)] transition-transform duration-200 hover:scale-105 focus-visible:outline-cream active:scale-95 sm:size-14"
+      className={cn(
+        'z-10 grid size-12 shrink-0 cursor-pointer place-items-center rounded-full bg-caramel text-ink shadow-[0_10px_24px_-10px_rgb(0_0_0/0.6)] transition-transform duration-200 hover:scale-105 focus-visible:outline-cream active:scale-95 sm:size-14',
+        className,
+      )}
     >
       <Icon width={24} height={24} />
     </button>
@@ -131,96 +134,113 @@ function ReviewCarousel({ id, items }: { id: string; items: Review[] }) {
       onKeyDown={onKeyDown}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
-      className="relative flex flex-wrap items-center justify-center gap-4 px-4 py-14 sm:flex-nowrap sm:gap-6 sm:px-8 md:py-24"
+      className="relative flex flex-col items-center px-4 py-14 sm:px-16 md:py-24"
     >
-      {multi && <NavButton dir={-1} controls={listId} onClick={() => go(-1)} />}
-
-      <div className="order-first w-full max-w-xl rounded-2xl bg-cream p-6 text-ink shadow-[0_28px_60px_-24px_rgb(0_0_0/0.6)] sm:order-none sm:p-9">
-        <div className={cn('flex items-center justify-between gap-4', label)}>
-          <span className="inline-flex items-center gap-2">
-            <GoogleG width={18} height={18} />
-            {/* "Google" stays fixed: attribution required for Google reviews */}
-            {`${ui.sourcePrefix} Google`}
-          </span>
-          {multi && (
-            <span aria-hidden className="text-ink/70 tabular-nums">
-              {String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
+      {/* Arrows sit on the card's left and right edges (as in the reference); on phones they go under it */}
+      <div className="relative w-full max-w-xl">
+        <div className="rounded-2xl bg-cream p-6 text-center text-ink shadow-[0_28px_60px_-24px_rgb(0_0_0/0.6)] sm:p-9">
+          <div className={cn('flex items-center justify-between gap-4', label)}>
+            <span className="inline-flex items-center gap-2">
+              <GoogleG width={18} height={18} />
+              {/* "Google" stays fixed: attribution required for Google reviews */}
+              {`${ui.sourcePrefix} Google`}
             </span>
-          )}
-        </div>
+            {multi && (
+              <span aria-hidden className="text-ink/70 tabular-nums">
+                {String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
+              </span>
+            )}
+          </div>
 
-        <div ref={listRef} id={listId} aria-live="polite" className="mt-5 grid">
-          {items.map((review, i) => {
-            const active = i === index
-            const open = active && expanded
-            const textId = `${id}-text-${i}`
-            const date = reviewDate(review)
-            return (
-              <div
-                key={i}
-                role="group"
-                aria-roledescription="opinia"
-                aria-label={`${i + 1} z ${items.length}`}
-                inert={!active}
-                tabIndex={-1}
-                className={cn(
-                  'col-start-1 row-start-1 flex flex-col duration-500',
-                  // Incoming slide is visible (and focusable) at once; the outgoing one hides after its fade-out
-                  active ? 'visible opacity-100 transition-opacity' : 'invisible opacity-0 transition-[opacity,visibility]',
-                )}
-              >
-                <Stars value={review.rating} label={`Ocena ${review.rating} na 5`} className="text-brand" />
-                <blockquote className="mt-4">
-                  <p id={textId} data-review-text className={cn('text-[15px] leading-relaxed font-medium sm:text-lg', !open && 'line-clamp-6')}>
-                    {review.text}
-                  </p>
-                </blockquote>
-                <button
-                  type="button"
-                  aria-expanded={open}
-                  aria-controls={textId}
-                  onClick={() => setExpanded(!open)}
+          <div ref={listRef} id={listId} aria-live="polite" className="mt-5 grid">
+            {items.map((review, i) => {
+              const active = i === index
+              const open = active && expanded
+              const textId = `${id}-text-${i}`
+              const date = reviewDate(review)
+              return (
+                <div
+                  key={i}
+                  role="group"
+                  aria-roledescription="opinia"
+                  aria-label={`${i + 1} z ${items.length}`}
+                  inert={!active}
+                  tabIndex={-1}
                   className={cn(
-                    'inline-flex min-h-11 cursor-pointer items-center gap-1 self-start text-brand-deep underline-offset-4 hover:underline',
-                    label,
-                    !(clamped[i] || open) && 'invisible',
+                    'col-start-1 row-start-1 flex flex-col duration-500',
+                    // Incoming slide is visible (and focusable) at once; the outgoing one hides after its fade-out
+                    active ? 'visible opacity-100 transition-opacity' : 'invisible opacity-0 transition-[opacity,visibility]',
                   )}
                 >
-                  {open ? ui.readLess : ui.readMore}
-                  <ChevronDown width={14} height={14} className={cn('transition-transform', open && 'rotate-180')} />
-                </button>
-                <div className="mt-auto flex items-center gap-3 border-t border-ink/10 pt-4">
-                  <span aria-hidden className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-deep font-display text-lg text-cream">
-                    {review.author.trim().charAt(0).toUpperCase()}
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block truncate font-display text-xl leading-tight tracking-wide text-brand-deep uppercase">
-                      {review.authorUrl ? (
-                        <SmartLink href={review.authorUrl} location={LOCATION} className="underline-offset-4 hover:underline">
-                          {review.author}
-                        </SmartLink>
-                      ) : (
-                        review.author
-                      )}
+                  <Stars value={review.rating} label={`Ocena ${review.rating} na 5`} className="mx-auto text-brand" />
+                  <blockquote className="mt-4">
+                    <p id={textId} data-review-text className={cn('text-[15px] leading-relaxed font-medium sm:text-lg', !open && 'line-clamp-6')}>
+                      {review.text}
+                    </p>
+                  </blockquote>
+                  <button
+                    type="button"
+                    aria-expanded={open}
+                    aria-controls={textId}
+                    onClick={() => setExpanded(!open)}
+                    className={cn(
+                      'inline-flex min-h-11 cursor-pointer items-center gap-1 self-center text-brand-deep underline-offset-4 hover:underline',
+                      label,
+                      !(clamped[i] || open) && 'invisible',
+                    )}
+                  >
+                    {open ? ui.readLess : ui.readMore}
+                    <ChevronDown width={14} height={14} className={cn('transition-transform', open && 'rotate-180')} />
+                  </button>
+                  <div className="mt-auto flex items-center justify-center gap-3 border-t border-ink/10 pt-4 text-left">
+                    <span aria-hidden className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-deep font-display text-lg text-cream">
+                      {review.author.trim().charAt(0).toUpperCase()}
                     </span>
-                    {date &&
-                      (date.dateTime ? (
-                        <time dateTime={date.dateTime} className={cn('mt-0.5 block text-ink/70', label)}>
-                          {date.text}
-                        </time>
-                      ) : (
-                        <span className={cn('mt-0.5 block text-ink/70', label)}>{date.text}</span>
-                      ))}
-                  </span>
+                    <span className="min-w-0">
+                      <span className="block truncate font-display text-xl leading-tight tracking-wide text-brand-deep uppercase">
+                        {review.authorUrl ? (
+                          <SmartLink href={review.authorUrl} location={LOCATION} className="underline-offset-4 hover:underline">
+                            {review.author}
+                          </SmartLink>
+                        ) : (
+                          review.author
+                        )}
+                      </span>
+                      {date &&
+                        (date.dateTime ? (
+                          <time dateTime={date.dateTime} className={cn('mt-0.5 block text-ink/70', label)}>
+                            {date.text}
+                          </time>
+                        ) : (
+                          <span className={cn('mt-0.5 block text-ink/70', label)}>{date.text}</span>
+                        ))}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
+        {multi && (
+          <div className="mt-6 flex justify-center gap-3 sm:contents">
+            <NavButton dir={-1} controls={listId} onClick={() => go(-1)} className="sm:absolute sm:top-1/2 sm:left-0 sm:-translate-x-1/2 sm:-translate-y-1/2" />
+            <NavButton dir={1} controls={listId} onClick={() => go(1)} className="sm:absolute sm:top-1/2 sm:right-0 sm:translate-x-1/2 sm:-translate-y-1/2" />
+          </div>
+        )}
       </div>
-
-      {multi && <NavButton dir={1} controls={listId} onClick={() => go(1)} />}
     </div>
+  )
+}
+
+/** Hand-drawn brand strokes over the photo (sparkle lines + crown), as in the reference. */
+function Doodles() {
+  return (
+    <svg aria-hidden focusable={false} viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid slice" className="pointer-events-none absolute inset-0 hidden size-full text-brand-deep sm:block">
+      <g fill="none" stroke="currentColor" strokeWidth={14} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M245 108l38 52M188 150l58 22M300 64l2 58" />
+        <path d="M800 240l28-58 40 50 44-62 30 68 24-42-6 104H806z" />
+      </g>
+    </svg>
   )
 }
 
@@ -244,7 +264,8 @@ export default function Reviews({ section }: SectionProps<'reviews'>) {
                 sizes="(min-width: 72rem) 1088px, calc(100vw - 2rem)"
                 className="absolute inset-0 size-full object-cover object-[50%_40%]"
               />
-              <div aria-hidden className="absolute inset-0 bg-ink/30" />
+              <div aria-hidden className="absolute inset-0 bg-ink/15" />
+              <Doodles />
               <ReviewCarousel id={section.id} items={items} />
             </div>
             <p className="mx-auto mt-4 max-w-3xl text-center text-xs leading-relaxed">{section.notice}</p>

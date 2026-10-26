@@ -97,11 +97,11 @@ export const Star = ({ filled = true, ...p }: IconProps & { filled?: boolean }) 
     <path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" />
   </svg>
 )
-/** Hand-drawn looping arrow used for annotations (hero note). */
+/** Hand-drawn looping arrow for annotations (hero note): starts at the text, loops once, points down-left. */
 export const SquiggleArrow = (p: IconProps) => (
-  <svg width={96} height={48} viewBox="0 0 96 48" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden focusable={false} {...p}>
-    <path d="M94 6C70 4 52 12 50 26c-1 9 9 12 12 4 3-9-8-14-18-9C30 28 18 38 4 40" />
-    <path d="M12 33 4 40l9 4" />
+  <svg width={120} height={72} viewBox="0 0 120 72" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden focusable={false} {...p}>
+    <path d="M116 10C98 2 78 8 72 24c-5 14 10 21 16 10 6-12-14-18-29-6C44 40 28 56 8 60" />
+    <path d="M19 51 8 60l13 5" />
   </svg>
 )
 export const GoogleG = (p: IconProps) => (

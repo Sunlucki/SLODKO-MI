@@ -6,20 +6,20 @@ import { Container, Section, SectionHeading } from '@/components/ui/Section'
 import { cn } from '@/lib/utils'
 import type { SectionProps } from './types'
 
-// Desktop: first photo floats low on the left, second high on the right. Mobile: a tilted pair under the text.
-const placement = ['lg:absolute lg:bottom-0 lg:left-4 xl:left-0', 'lg:absolute lg:top-0 lg:right-4 xl:right-0']
-const tilt = ['-rotate-6', 'rotate-6']
+// Desktop (as in the reference): small square photos, the first low on the left, the second high on the right
+const placement = ['lg:absolute lg:bottom-6 lg:left-[6%]', 'lg:absolute lg:top-10 lg:right-[6%]']
 
 export default function About({ section }: SectionProps<'about'>) {
   const headingId = `${section.id}-title`
   return (
     <Section id={section.id} tone={section.tone} labelledBy={headingId} className="overflow-x-clip">
       <Container className="relative">
-        <Reveal className="relative z-10 mx-auto max-w-2xl text-center">
-          <SectionHeading id={headingId} tone={section.tone} sticker={section.sticker}>
+        <Reveal className="relative z-10 mx-auto max-w-4xl text-center">
+          {/* The statement heading is set in sentence case and brand colour, like the reference */}
+          <SectionHeading id={headingId} tone={section.tone} sticker={section.sticker} className="text-[clamp(2.2rem,4.6vw,3.6rem)] text-balance text-brand-deep normal-case">
             {section.heading}
           </SectionHeading>
-          <div className="mx-auto mt-8 max-w-[40rem] space-y-5 text-xs leading-relaxed font-bold tracking-[0.16em] uppercase sm:text-sm">
+          <div className="mx-auto mt-8 max-w-[40rem] space-y-5 text-xs leading-relaxed font-semibold tracking-[0.12em] text-ink/75 uppercase sm:text-sm">
             {section.body.map((paragraph, i) => (
               <p key={i}>{paragraph}</p>
             ))}
@@ -32,15 +32,11 @@ export default function About({ section }: SectionProps<'about'>) {
         </Reveal>
 
         {section.images.length > 0 && (
-          <div className="mt-14 flex justify-center gap-5 sm:gap-10 lg:contents">
+          <div className="mt-12 flex justify-center gap-6 lg:contents">
             {section.images.map((image, i) => (
-              <Reveal key={image.src} delay={150 * (i + 1)} className={cn('w-[42%] max-w-48 lg:w-32 xl:w-44', placement[i])}>
-                <div className={cn('relative', tilt[i])}>
-                  <Picture
-                    image={image}
-                    sizes="(min-width: 1280px) 176px, (min-width: 1024px) 128px, 42vw"
-                    className="aspect-[4/5] w-full rounded-2xl object-cover shadow-[0_18px_40px_-14px_rgb(0_0_0/0.45)]"
-                  />
+              <Reveal key={image.src} delay={150 * (i + 1)} className={cn('w-28 lg:w-24 xl:w-28', placement[i])}>
+                <div className="relative">
+                  <Picture image={image} sizes="112px" className="aspect-square w-full rounded-lg object-cover" />
                   {image.aiGenerated && <AiBadge className="absolute bottom-2 left-2" />}
                 </div>
               </Reveal>

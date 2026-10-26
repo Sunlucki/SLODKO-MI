@@ -7,12 +7,15 @@ import CookieBanner from '@/components/consent/CookieBanner'
 import { site } from '@/content'
 import { trackPageView } from '@/lib/analytics'
 import Footer from './Footer'
+import { frameCss } from './frame'
 import Header from './Header'
 
 /** Injects theme colours from site.json as CSS variables (SSR, no flash). */
 function ThemeStyle() {
   const c = site.theme.colors
-  const css = `:root{--c-cream:${c.cream};--c-ink:${c.ink};--c-brand:${c.brand};--c-brand-deep:${c.brandDeep};--c-blush:${c.blush};--c-caramel:${c.caramel}}`
+  const css =
+    `:root{--c-cream:${c.cream};--c-ink:${c.ink};--c-brand:${c.brand};--c-brand-deep:${c.brandDeep};--c-blush:${c.blush};--c-caramel:${c.caramel}}` +
+    frameCss(c)
   return (
     <Head>
       <html lang="pl" />

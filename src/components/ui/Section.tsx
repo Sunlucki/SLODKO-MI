@@ -10,10 +10,10 @@ export const toneClass: Record<ToneT, string> = {
   caramel: 'bg-caramel text-ink',
 }
 
-/** Heading colour that keeps contrast on each tone (brand pink only on light backgrounds, large text). */
+/** Heading colour per tone: ink on light backgrounds (as in the reference), brand only on caramel panels. */
 export const headingToneClass: Record<ToneT, string> = {
-  cream: 'text-brand-deep',
-  blush: 'text-brand-deep',
+  cream: 'text-ink',
+  blush: 'text-ink',
   brand: 'text-cream',
   ink: 'text-cream',
   caramel: 'text-brand-deep',

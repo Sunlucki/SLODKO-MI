@@ -14,7 +14,7 @@ export function Ticker({ items, className }: { items: string[]; className?: stri
   const reps = Math.max(1, Math.ceil(200 / chars))
   const runs = Array.from({ length: reps * 2 }, (_, i) => i)
   return (
-    <div className={cn('group overflow-hidden bg-caramel text-ink', className)}>
+    <div className={cn('group overflow-hidden text-ink', className)}>
       <div
         className="flex w-max animate-marquee group-hover:[animation-play-state:paused] group-has-[input:checked]:[animation-play-state:paused] motion-reduce:animate-none"
         style={{ animationDuration: `${Math.round(chars * reps * 0.3)}s` }}
