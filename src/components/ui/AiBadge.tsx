@@ -1,7 +1,9 @@
+import { useContent } from '@/content'
 import { cn } from '@/lib/utils'
 
 /** Visible disclosure for AI-generated illustrations (Image.aiGenerated) — place it over the image's corner. */
 export function AiBadge({ className }: { className?: string }) {
+  const { site } = useContent()
   return (
     <span
       className={cn(
@@ -9,7 +11,7 @@ export function AiBadge({ className }: { className?: string }) {
         className,
       )}
     >
-      Ilustracja
+      {site.ui.common.illustration}
     </span>
   )
 }

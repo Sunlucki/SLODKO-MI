@@ -5,7 +5,7 @@ import { Picture } from '@/components/ui/Picture'
 import { Reveal } from '@/components/ui/Reveal'
 import { Container, headingToneClass, Section, SectionHeading } from '@/components/ui/Section'
 import { SmartLink } from '@/components/ui/SmartLink'
-import { reviews, site } from '@/content'
+import { fmt, useContent } from '@/content'
 import type { ReviewsT } from '@/content/schema'
 import { trackEngagement } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
@@ -15,21 +15,18 @@ type Review = ReviewsT['items'][number]
 
 const LOCATION = 'reviews'
 const label = 'text-[11px] font-extrabold tracking-[0.14em] uppercase'
-const ui = site.ui.reviews
 
-/** Polish plural: 1 opinia, 2–4 opinie (but 12–14 opinii), otherwise opinii. */
-function opinions(n: number) {
-  const [one, few, many] = ui.countForms
-  if (n === 1) return one
-  const last = n % 10
-  const lastTwo = n % 100
-  return last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14) ? few : many
+/**
+ * Review count noun in the page's language: Intl plural categories map onto countForms [one, few, many]
+ * ("other" and the rest → many). Polish: 1 opinia, 2–4 opinie (but 12–14 opinii), otherwise opinii.
+ */
+function countNoun(n: number, [one, few, many]: readonly [string, string, string], lang: string) {
+  const category = new Intl.PluralRules(lang).select(n)
+  return category === 'one' ? one : category === 'few' ? few : many
 }
 
-const monthYear = new Intl.DateTimeFormat('pl-PL', { month: 'long', year: 'numeric', timeZone: 'Europe/Warsaw' })
-
 /** "październik 2026" from publishTime ("YYYY-MM" or ISO) — stays true, unlike Google's frozen "tydzień temu". */
-function reviewDate(review: Review): { text: string; dateTime?: string } | undefined {
+function reviewDate(review: Review, monthYear: Intl.DateTimeFormat): { text: string; dateTime?: string } | undefined {
   const time = review.publishTime
   if (time) {
     const date = new Date(time.length === 7 ? `${time}-15T12:00:00Z` : time)
@@ -50,14 +47,14 @@ function Stars({ value, label, className }: { value: number; label?: string; cla
   )
 }
 
-function NavButton({ dir, controls, onClick, className }: { dir: -1 | 1; controls: string; onClick: () => void; className?: string }) {
+function NavButton({ dir, label, controls, onClick, className }: { dir: -1 | 1; label: string; controls: string; onClick: () => void; className?: string }) {
   const Icon = dir < 0 ? ChevronLeft : ChevronRight
   return (
     <button
       type="button"
       onClick={onClick}
       aria-controls={controls}
-      aria-label={dir < 0 ? 'Poprzednia opinia' : 'Następna opinia'}
+      aria-label={label}
       className={cn(
         'z-10 grid size-12 shrink-0 cursor-pointer place-items-center rounded-full bg-caramel text-ink shadow-[0_10px_24px_-10px_rgb(0_0_0/0.6)] transition-transform duration-200 hover:scale-105 focus-visible:outline-cream active:scale-95 sm:size-14',
         className,
@@ -74,6 +71,9 @@ function NavButton({ dir, controls, onClick, className }: { dir: -1 | 1; control
  * No autoplay; buttons, arrow keys and swipe navigate.
  */
 function ReviewCarousel({ id, items }: { id: string; items: Review[] }) {
+  const { site, lang } = useContent()
+  const ui = site.ui.reviews
+  const monthYear = new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric', timeZone: 'Europe/Warsaw' })
   const [index, setIndex] = useState(0)
   const [expanded, setExpanded] = useState(false)
   // Which texts are cut by line-clamp — measured after mount; buttons keep their space while invisible (no CLS).
@@ -129,8 +129,8 @@ function ReviewCarousel({ id, items }: { id: string; items: Review[] }) {
   return (
     <div
       role="region"
-      aria-roledescription="karuzela"
-      aria-label="Opinie klientów"
+      aria-roledescription={ui.carouselRole}
+      aria-label={ui.carouselLabel}
       onKeyDown={onKeyDown}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
@@ -157,13 +157,13 @@ function ReviewCarousel({ id, items }: { id: string; items: Review[] }) {
               const active = i === index
               const open = active && expanded
               const textId = `${id}-text-${i}`
-              const date = reviewDate(review)
+              const date = reviewDate(review, monthYear)
               return (
                 <div
                   key={i}
                   role="group"
-                  aria-roledescription="opinia"
-                  aria-label={`${i + 1} z ${items.length}`}
+                  aria-roledescription={ui.slideRole}
+                  aria-label={fmt(ui.slideLabel, { n: i + 1, total: items.length })}
                   inert={!active}
                   tabIndex={-1}
                   className={cn(
@@ -172,7 +172,7 @@ function ReviewCarousel({ id, items }: { id: string; items: Review[] }) {
                     active ? 'visible opacity-100 transition-opacity' : 'invisible opacity-0 transition-[opacity,visibility]',
                   )}
                 >
-                  <Stars value={review.rating} label={`Ocena ${review.rating} na 5`} className="mx-auto text-brand" />
+                  <Stars value={review.rating} label={fmt(ui.ratingLabel, { rating: review.rating })} className="mx-auto text-brand" />
                   <blockquote className="mt-4">
                     <p id={textId} data-review-text className={cn('text-[15px] leading-relaxed font-medium sm:text-lg', !open && 'line-clamp-6')}>
                       {review.text}
@@ -223,8 +223,8 @@ function ReviewCarousel({ id, items }: { id: string; items: Review[] }) {
         </div>
         {multi && (
           <div className="mt-6 flex justify-center gap-3 sm:contents">
-            <NavButton dir={-1} controls={listId} onClick={() => go(-1)} className="sm:absolute sm:top-1/2 sm:left-0 sm:-translate-x-1/2 sm:-translate-y-1/2" />
-            <NavButton dir={1} controls={listId} onClick={() => go(1)} className="sm:absolute sm:top-1/2 sm:right-0 sm:translate-x-1/2 sm:-translate-y-1/2" />
+            <NavButton dir={-1} label={ui.previous} controls={listId} onClick={() => go(-1)} className="sm:absolute sm:top-1/2 sm:left-0 sm:-translate-x-1/2 sm:-translate-y-1/2" />
+            <NavButton dir={1} label={ui.next} controls={listId} onClick={() => go(1)} className="sm:absolute sm:top-1/2 sm:right-0 sm:translate-x-1/2 sm:-translate-y-1/2" />
           </div>
         )}
       </div>
@@ -245,10 +245,14 @@ function Doodles() {
 }
 
 export default function Reviews({ section }: SectionProps<'reviews'>) {
+  const { site, reviews, lang } = useContent()
+  const ui = site.ui.reviews
   const headingId = `${section.id}-title`
   const items = reviews.items.filter((r) => r.rating >= section.minRating).slice(0, section.maxItems)
   const dark = section.tone === 'brand' || section.tone === 'ink'
-  const rating = new Intl.NumberFormat('pl-PL', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(reviews.rating)
+  const rating = new Intl.NumberFormat(lang, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(reviews.rating)
+  // Screen readers hear the whole averageLabel; only the number is visible
+  const [beforeRating, afterRating] = ui.averageLabel.split('{rating}')
   return (
     <Section id={section.id} tone={section.tone} labelledBy={headingId}>
       <Container>
@@ -276,13 +280,13 @@ export default function Reviews({ section }: SectionProps<'reviews'>) {
           <div className="flex items-center gap-4">
             <GoogleG width={36} height={36} className="shrink-0" />
             <p className={cn('font-display text-5xl leading-none sm:text-6xl', headingToneClass[section.tone])}>
-              <span className="sr-only">Średnia ocena </span>
+              {beforeRating && <span className="sr-only">{beforeRating}</span>}
               {rating}
-              <span className="sr-only"> na 5</span>
+              {afterRating && <span className="sr-only">{afterRating}</span>}
             </p>
             <div>
               <Stars value={reviews.rating} className={headingToneClass[section.tone]} />
-              <p className={cn('mt-1', label)}>{`${reviews.count.toLocaleString('pl-PL')} ${opinions(reviews.count)} w Google`}</p>
+              <p className={cn('mt-1', label)}>{`${reviews.count.toLocaleString(lang)} ${countNoun(reviews.count, ui.countForms, lang)} ${site.ui.sections.reviewCountSource} Google`}</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3">

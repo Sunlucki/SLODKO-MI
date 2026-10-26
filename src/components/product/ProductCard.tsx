@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import { formatPrice, site } from '@/content'
+import { useContent } from '@/content'
 import type { ProductT } from '@/content/schema'
 import { Plus } from '@/components/ui/icons'
 import { SmartLink } from '@/components/ui/SmartLink'
@@ -24,6 +24,7 @@ interface Props {
  */
 export function ProductCard({ product, index, listName }: Props) {
   const statusId = useId()
+  const { site, formatPrice } = useContent()
   const price = formatPrice(product)
   const tag = price ?? product.badge
   return (

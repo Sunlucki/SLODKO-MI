@@ -10,7 +10,7 @@ import { ChevronRight } from '@/components/ui/icons'
 import { Reveal } from '@/components/ui/Reveal'
 import { Container, Section, SectionHeading, Sticker } from '@/components/ui/Section'
 import { SmartLink } from '@/components/ui/SmartLink'
-import { catalog, formatPrice, getProduct, products, site } from '@/content'
+import { useContent } from '@/content'
 import type { ProductT } from '@/content/schema'
 import { trackViewItem } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
@@ -18,28 +18,30 @@ import { breadcrumbJsonLd, productJsonLd, type Crumb } from '@/lib/schema-org'
 import NotFound from './NotFound'
 
 const label = 'text-[11px] font-extrabold tracking-[0.18em] uppercase'
-const ui = site.ui.product
 
 export default function ProductPage() {
   const { slug = '' } = useParams()
-  const product = getProduct(slug)
+  const product = useContent().getProduct(slug)
   if (!product) return <NotFound />
   // Keyed so gallery state and view tracking reset when navigating between products
   return <ProductView key={product.slug} product={product} />
 }
 
 function ProductView({ product }: { product: ProductT }) {
+  const c = useContent()
+  const { site, catalog } = c
+  const ui = site.ui.product
   const path = `/produkt/${product.slug}`
   const location = `product:${product.slug}`
-  const list = catalogLink()
+  const list = catalogLink(c)
   const crumbs: Crumb[] = [
     { name: ui.breadcrumbHome, path: '/' },
     { name: list.label, path: list.href },
     { name: product.name, path },
   ]
-  const category = catalog.categories.find((c) => c.slug === product.category)?.name
-  const price = formatPrice(product)
-  const others = products.filter((p) => p.slug !== product.slug)
+  const category = catalog.categories.find((cat) => cat.slug === product.category)?.name
+  const price = c.formatPrice(product)
+  const others = c.products.filter((p) => p.slug !== product.slug)
 
   useEffect(() => {
     trackViewItem(product)
@@ -52,7 +54,7 @@ function ProductView({ product }: { product: ProductT }) {
         description={product.shortDescription}
         path={path}
         ogImage={product.images[0].src}
-        jsonLd={[productJsonLd(product), breadcrumbJsonLd(crumbs)]}
+        jsonLd={[productJsonLd(product, c), breadcrumbJsonLd(crumbs, c)]}
       />
 
       <article aria-labelledby="product-name" className="pt-6 pb-16 md:pt-10 md:pb-20">
@@ -98,7 +100,7 @@ function ProductView({ product }: { product: ProductT }) {
                     <ul role="list" className="mt-3 flex flex-wrap gap-2">
                       {product.allergens.map((a) => (
                         <li key={a} className="rounded-full bg-cream px-3 py-1.5 text-xs font-bold tracking-[0.08em] uppercase">
-                          {a}
+                          {site.ui.allergenNames[a] ?? a}
                         </li>
                       ))}
                     </ul>
@@ -143,7 +145,7 @@ function ProductView({ product }: { product: ProductT }) {
 
 function Breadcrumbs({ crumbs }: { crumbs: Crumb[] }) {
   return (
-    <nav aria-label="Nawigacja okruszkowa">
+    <nav aria-label={useContent().site.ui.common.breadcrumb}>
       <ol className={`${label} flex flex-wrap items-center gap-x-2`}>
         {crumbs.map((crumb, i) => (
           <li key={crumb.path} className="flex min-w-0 items-center gap-2">

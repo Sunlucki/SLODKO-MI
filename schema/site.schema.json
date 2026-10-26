@@ -31,6 +31,76 @@
       "format": "uri",
       "description": "Canonical production URL without trailing slash (env SITE_URL overrides it at build time)"
     },
+    "i18n": {
+      "type": "object",
+      "properties": {
+        "defaultLocale": {
+          "type": "string",
+          "pattern": "^[a-z]{2}$",
+          "description": "Language of the files in src/data (served at \"/\")"
+        },
+        "locales": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^[a-z]{2}$",
+                "description": "URL prefix and folder name in src/data/i18n, e.g. \"uk\""
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Language name in that language, e.g. \"Українська\""
+              },
+              "short": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 3,
+                "description": "Short label in the switcher, e.g. \"UA\""
+              },
+              "htmlLang": {
+                "type": "string",
+                "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+                "description": "BCP 47 tag for <html lang> and hreflang, e.g. \"uk\""
+              },
+              "ogLocale": {
+                "type": "string",
+                "pattern": "^[a-z]{2}_[A-Z]{2}$",
+                "description": "Open Graph locale, e.g. \"uk_UA\""
+              }
+            },
+            "required": [
+              "code",
+              "label",
+              "short",
+              "htmlLang",
+              "ogLocale"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Every language the site is published in; translations live in src/data/i18n/<code>/"
+        },
+        "autoDetect": {
+          "default": true,
+          "description": "Send first-time visitors to the version in their browser language (never bots)",
+          "type": "boolean"
+        },
+        "fallbackLocale": {
+          "description": "Version for browsers in a language the site does not have",
+          "type": "string",
+          "pattern": "^[a-z]{2}$"
+        }
+      },
+      "required": [
+        "defaultLocale",
+        "locales"
+      ],
+      "additionalProperties": false,
+      "description": "Languages of the site"
+    },
     "logo": {
       "type": "object",
       "properties": {
@@ -672,7 +742,7 @@
                 "opinie",
                 "opinii"
               ],
-              "description": "Review count noun for 1 / 2–4 / 5+ (Polish plural); \"w Google\" after it is fixed",
+              "description": "Review count noun for the plural categories one / few / many (Intl.PluralRules of the language; English: [\"review\", \"reviews\", \"reviews\"])",
               "type": "array",
               "prefixItems": [
                 {
@@ -701,6 +771,52 @@
             "readLess": {
               "default": "Zwiń",
               "description": "Collapses an expanded review",
+              "type": "string",
+              "minLength": 1
+            },
+            "carouselLabel": {
+              "default": "Opinie klientów",
+              "description": "Screen-reader name of the reviews carousel",
+              "type": "string",
+              "minLength": 1
+            },
+            "carouselRole": {
+              "default": "karuzela",
+              "description": "Screen-reader role description of the carousel",
+              "type": "string",
+              "minLength": 1
+            },
+            "slideRole": {
+              "default": "opinia",
+              "description": "Screen-reader role description of one review",
+              "type": "string",
+              "minLength": 1
+            },
+            "slideLabel": {
+              "default": "{n} z {total}",
+              "description": "Screen-reader label of a review slide; {n} and {total} are replaced",
+              "type": "string",
+              "minLength": 1
+            },
+            "ratingLabel": {
+              "default": "Ocena {rating} na 5",
+              "description": "Screen-reader label of the stars; {rating} is replaced",
+              "type": "string",
+              "minLength": 1
+            },
+            "averageLabel": {
+              "default": "Średnia ocena {rating} na 5",
+              "description": "Screen-reader text of the overall rating; {rating} is replaced",
+              "type": "string",
+              "minLength": 1
+            },
+            "previous": {
+              "default": "Poprzednia opinia",
+              "type": "string",
+              "minLength": 1
+            },
+            "next": {
+              "default": "Następna opinia",
               "type": "string",
               "minLength": 1
             }
@@ -758,6 +874,275 @@
               "description": "Privacy note under the map button",
               "type": "string",
               "minLength": 1
+            },
+            "mapTitle": {
+              "default": "Mapa Google — {name}",
+              "description": "Accessible title of the map; {name} is replaced with site.legalName",
+              "type": "string",
+              "minLength": 1
+            },
+            "today": {
+              "default": "dziś",
+              "description": "Screen-reader marker of today's row in the hours table",
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "common": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "skipToContent": {
+              "default": "Przejdź do treści",
+              "type": "string",
+              "minLength": 1
+            },
+            "mainNav": {
+              "default": "Menu główne",
+              "description": "Screen-reader name of the main navigation",
+              "type": "string",
+              "minLength": 1
+            },
+            "menu": {
+              "default": "Menu",
+              "description": "Screen-reader name of the menu dialog",
+              "type": "string",
+              "minLength": 1
+            },
+            "openMenu": {
+              "default": "Otwórz menu",
+              "type": "string",
+              "minLength": 1
+            },
+            "closeMenu": {
+              "default": "Zamknij menu",
+              "type": "string",
+              "minLength": 1
+            },
+            "call": {
+              "default": "Zadzwoń: {phone}",
+              "description": "Label of round phone buttons; {phone} is replaced with contact.phoneDisplay",
+              "type": "string",
+              "minLength": 1
+            },
+            "language": {
+              "default": "Język strony",
+              "description": "Label of the language switcher",
+              "type": "string",
+              "minLength": 1
+            },
+            "illustration": {
+              "default": "Ilustracja",
+              "description": "Label on AI-generated illustrations",
+              "type": "string",
+              "minLength": 1
+            },
+            "previousProduct": {
+              "default": "Poprzedni produkt",
+              "type": "string",
+              "minLength": 1
+            },
+            "nextProduct": {
+              "default": "Następny produkt",
+              "type": "string",
+              "minLength": 1
+            },
+            "pauseAnimation": {
+              "default": "Zatrzymaj przewijany napis",
+              "description": "Pause switch of the moving text bands",
+              "type": "string",
+              "minLength": 1
+            },
+            "breadcrumb": {
+              "default": "Nawigacja okruszkowa",
+              "description": "Screen-reader name of the breadcrumb",
+              "type": "string",
+              "minLength": 1
+            },
+            "errorTitle": {
+              "default": "Coś poszło nie tak",
+              "description": "Heading shown when a page fails to load",
+              "type": "string",
+              "minLength": 1
+            },
+            "errorText": {
+              "default": "Odśwież stronę, aby spróbować ponownie.",
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "layout": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "copyright": {
+              "default": "© {year} {name}",
+              "description": "Footer copyright line; {year} and {name} (site.legalName) are replaced",
+              "type": "string",
+              "minLength": 1
+            },
+            "reload": {
+              "default": "Odśwież",
+              "description": "Button on the error page that reloads the page",
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "days": {
+          "description": "Day names in the opening hours",
+          "default": {},
+          "type": "object",
+          "properties": {
+            "short": {
+              "default": {
+                "Mo": "pon",
+                "Tu": "wt",
+                "We": "śr",
+                "Th": "czw",
+                "Fr": "pt",
+                "Sa": "sob",
+                "Su": "nd"
+              },
+              "type": "object",
+              "properties": {
+                "Mo": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "Tu": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "We": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "Th": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "Fr": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "Sa": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "Su": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr",
+                "Sa",
+                "Su"
+              ],
+              "additionalProperties": false
+            },
+            "long": {
+              "default": {
+                "Mo": "Poniedziałek",
+                "Tu": "Wtorek",
+                "We": "Środa",
+                "Th": "Czwartek",
+                "Fr": "Piątek",
+                "Sa": "Sobota",
+                "Su": "Niedziela"
+              },
+              "type": "object",
+              "properties": {
+                "Mo": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "Tu": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "We": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "Th": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "Fr": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "Sa": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "Su": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr",
+                "Sa",
+                "Su"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "allergenNames": {
+          "default": {},
+          "description": "Display names of allergens (key = value used in products.json); missing ones show the key itself",
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "enum": [
+              "gluten",
+              "skorupiaki",
+              "jaja",
+              "ryby",
+              "orzeszki ziemne",
+              "soja",
+              "mleko",
+              "orzechy",
+              "seler",
+              "gorczyca",
+              "sezam",
+              "dwutlenek siarki",
+              "łubin",
+              "mięczaki"
+            ]
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "sections": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "reviewCountSource": {
+              "default": "w",
+              "description": "Word between the review count and the fixed word \"Google\" under the reviews (\"123 opinii w Google\")",
+              "type": "string",
+              "minLength": 1
             }
           },
           "additionalProperties": false
@@ -772,6 +1157,7 @@
     "tagline",
     "description",
     "url",
+    "i18n",
     "logo",
     "contact",
     "address",

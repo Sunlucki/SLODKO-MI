@@ -1,5 +1,6 @@
 // Post-build steps for the static export (runs after `vite-react-ssg build`, respects OUT_DIR):
-// tidy <head>, 404.html, sitemap.xml, robots.txt, llms.txt and an SEO sanity check of every page.
+// tidy <head>, 404.html, sitemap.xml (with hreflang alternates), robots.txt, llms.txt and an SEO
+// sanity check of every page, including its language (<html lang>, hreflang, internal links).
 //
 //   npm run build   (or: OUT_DIR=.tmp/x npx vite-react-ssg build && OUT_DIR=.tmp/x npx tsx scripts/postbuild.ts)
 //
@@ -17,6 +18,8 @@ if (!content) {
   process.exit(1)
 }
 const { site, catalog, reviews, pages } = content
+const { locales, defaultLocale } = site.i18n
+const defaultLang = locales.find((l) => l.code === defaultLocale)!
 
 const env = loadEnv('production', process.cwd(), '')
 // Same rules as siteUrl()/pageUrl() in src/lib/schema-org.ts (that module needs the Vite virtual content)
@@ -58,6 +61,27 @@ function routeOf(file: string): string | null {
   return rel.endsWith('/index.html') ? `/${rel.slice(0, -'/index.html'.length)}` : null
 }
 
+/** Language of a route by its prefix ("/en/produkt/oreo" → en), as localeFromPath() in src/content/index.ts */
+function localeOf(route: string): (typeof locales)[number] {
+  const first = route.split('/')[1]
+  return locales.find((l) => l.code === first && l.code !== defaultLocale) ?? defaultLang
+}
+
+/** Value of an attribute in an HTML tag (React/Helmet may write hrefLang or hreflang) */
+const attr = (tag: string, name: string) => tag.match(new RegExp(`\\s${name}="([^"]*)"`, 'i'))?.[1]
+
+/**
+ * Route of an internal page link ("/SLODKO-MI/en/produkt/oreo/#x" → "/en/produkt/oreo/"), or null for
+ * external links, in-page anchors and files (images, PDFs…).
+ */
+function linkRoute(href: string): string | null {
+  const basePath = deployBase.replace(/\/?$/, '/')
+  const pathname = href.split(/[?#]/)[0]
+  const rest = pathname.startsWith(`${base}/`) ? pathname.slice(base.length + 1) : pathname.startsWith(basePath) ? pathname.slice(basePath.length) : null
+  if (rest === null || /\.[a-z0-9]+$/i.test(rest)) return null
+  return `/${rest}`
+}
+
 // ── 1. Tidy every page's <head> ──────────────────────────────────────────────────
 // vite-react-ssg adds <link rel=preload as=font> for EVERY font file (all Manrope subsets,
 // .woff fallbacks). Keep only the Anton preloads that Layout adds through <Head> (data-rh).
@@ -93,6 +117,8 @@ if (existsSync(path.join(notFoundDir, 'index.html'))) {
 
 // ── 3. SEO sanity check ──────────────────────────────────────────────────────────
 const indexable: string[] = []
+/** Indexable page URL → its hreflang alternates (hreflang → URL) and its own language */
+const alternates = new Map<string, { lang: string; links: Map<string, string> }>()
 
 for (const file of htmlFiles(out).sort()) {
   const rel = path.relative(out, file)
@@ -105,7 +131,19 @@ for (const file of htmlFiles(out).sort()) {
 
   if (!/<title[^>]*>[^<]+<\/title>/.test(html)) errors.push(`${rel}: missing <title>`)
   if (!/<meta[^>]*name="description"[^>]*content="[^"]+"/.test(html)) errors.push(`${rel}: missing meta description`)
-  if (!/<html[^>]*\blang="pl"/.test(html)) warnings.push(`${rel}: <html> has no lang="pl"`)
+  // Every language version is a separate page: its <html lang> and internal links must stay in its language
+  // (404.html is the default-language 404). Language switcher links carry hreflang/lang and are exempt.
+  const locale = route ? localeOf(route) : defaultLang
+  const lang = html.match(/<html[^>]*\slang="([^"]*)"/i)?.[1]
+  if (lang !== locale.htmlLang) errors.push(`${rel}: <html lang="${lang ?? ''}"> — expected "${locale.htmlLang}" for this URL`)
+  const strays = new Set<string>()
+  for (const [tag] of html.matchAll(/<a\b[^>]*>/gi)) {
+    const href = attr(tag, 'href')
+    const target = href && linkRoute(href)
+    if (target && !attr(tag, 'hreflang') && !attr(tag, 'lang') && localeOf(target).code !== locale.code) strays.add(href)
+  }
+  if (strays.size)
+    errors.push(`${rel}: links to another language version (${[...strays].join(', ')}) — internal links must keep the "${locale.code}" prefix`)
   if (h1 !== 1) warnings.push(`${rel}: ${h1} <h1> elements (expected exactly 1)`)
   for (const [, json] of html.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)) {
     try {
@@ -119,7 +157,32 @@ for (const file of htmlFiles(out).sort()) {
   if (noindex || !route) continue
   if (!canonical) warnings.push(`${rel}: missing <link rel="canonical">`)
   else if (canonical !== urlOf(route)) warnings.push(`${rel}: canonical ${canonical} ≠ expected ${urlOf(route)}`)
+  const links = new Map<string, string>()
+  for (const [tag] of html.matchAll(/<link\b[^>]*>/gi)) {
+    const hreflang = attr(tag, 'hreflang')
+    const href = attr(tag, 'href')
+    if (attr(tag, 'rel') === 'alternate' && hreflang && href) links.set(hreflang, href)
+  }
+  alternates.set(urlOf(route), { lang: locale.htmlLang, links })
   indexable.push(route)
+}
+
+// hreflang: each indexable page lists every language version (itself included) and x-default (= the default
+// language), and every version it names is an indexable page of this build that names it back
+const expectedLangs = [...locales.map((l) => l.htmlLang), 'x-default']
+for (const [url, { lang, links }] of alternates) {
+  const missing = expectedLangs.filter((l) => !links.has(l))
+  if (missing.length) errors.push(`${url}: no hreflang alternate for ${missing.join(', ')}`)
+  if (links.has(lang) && links.get(lang) !== url) errors.push(`${url}: hreflang="${lang}" points to ${links.get(lang)} instead of the page itself`)
+  if (links.has('x-default') && links.get('x-default') !== links.get(defaultLang.htmlLang))
+    errors.push(`${url}: hreflang="x-default" must point to the "${defaultLang.htmlLang}" version`)
+  for (const [l, href] of links) {
+    if (l === 'x-default') continue
+    const target = alternates.get(href)
+    if (!target) errors.push(`${url}: hreflang="${l}" → ${href} is not an indexable page of this build`)
+    else if (target.lang !== l) errors.push(`${url}: hreflang="${l}" → ${href}, which is the "${target.lang}" version`)
+    else if (target.links.get(lang) !== url) errors.push(`${url}: hreflang="${l}" → ${href}, which does not link back with hreflang="${lang}"`)
+  }
 }
 
 // The privacy policy must identify the data controller (GDPR art. 13): full business name, NIP/REGON
@@ -129,10 +192,15 @@ if (policy && !/\bNIP\b/.test(JSON.stringify(policy.sections.filter((s) => s.ena
 
 // ── 4. sitemap.xml + robots.txt ──────────────────────────────────────────────────
 // No <lastmod>: the build date would mark every URL as changed on each weekly reviews redeploy.
+// Every language version is listed with the same hreflang alternates as in its <head> (checked above).
 const sitemap = [
   '<?xml version="1.0" encoding="UTF-8"?>',
-  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-  ...indexable.map((route) => `  <url><loc>${urlOf(route)}</loc></url>`),
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+  ...indexable.flatMap((route) => [
+    `  <url><loc>${urlOf(route)}</loc>`,
+    ...[...(alternates.get(urlOf(route))?.links ?? [])].map(([l, href]) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${href}"/>`),
+    '  </url>',
+  ]),
   '</urlset>',
   '',
 ].join('\n')
@@ -140,9 +208,9 @@ if (!preview) writeFileSync(path.join(out, 'sitemap.xml'), sitemap)
 writeFileSync(path.join(out, 'robots.txt'), `User-agent: *\nAllow: /\n${preview ? '' : `\nSitemap: ${base}/sitemap.xml\n`}`)
 
 // ── 5. llms.txt — plain-Markdown business summary for AI search engines (llmstxt.org) ──
-// Polish short day names, as DAY_SHORT in src/content/index.ts (not importable from Node)
-const DAY_SHORT: Record<string, string> = { Mo: 'pon', Tu: 'wt', We: 'śr', Th: 'czw', Fr: 'pt', Sa: 'sob', Su: 'nd' }
-const DAY_ORDER = Object.keys(DAY_SHORT)
+// Short day names of the default language (site.json → ui.days, Polish defaults in schema.ts)
+const DAY_SHORT: Record<string, string> = site.ui.days.short
+const DAY_ORDER = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
 function dayRange(days: string[]): string {
   const idx = days.map((d) => DAY_ORDER.indexOf(d))
@@ -210,6 +278,10 @@ const llms = [
   '## Strony',
   '',
   ...pages.filter((p) => !p.seo.noindex).map((p) => `- [${p.seo.title}](${urlOf(p.path)}): ${p.seo.description}`),
+  '',
+  '## Languages',
+  '',
+  ...locales.map((l) => `- [${l.label}](${urlOf(l.code === defaultLocale ? '/' : `/${l.code}`)}) (${l.htmlLang})`),
   '',
 ].join('\n')
 writeFileSync(path.join(out, 'llms.txt'), llms)

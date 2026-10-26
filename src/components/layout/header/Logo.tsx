@@ -1,9 +1,10 @@
 import { SmartLink } from '@/components/ui/SmartLink'
-import { site } from '@/content'
+import { useContent } from '@/content'
 import { cn } from '@/lib/utils'
 
 /** Filled wordmark pill linking home: cream Anton wordmark + tiny "Smakuje Ci?" line. */
 export function Logo({ location, onClick, className }: { location: string; onClick?: () => void; className?: string }) {
+  const { site } = useContent()
   return (
     <SmartLink
       href="/"

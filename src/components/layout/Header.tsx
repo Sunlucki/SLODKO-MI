@@ -1,13 +1,14 @@
 import { useLocation } from 'react-router-dom'
-import { getPage } from '@/content'
+import { stripLocale, useContent, type Localized } from '@/content'
 import { cn } from '@/lib/utils'
 import { HeaderActions } from './header/HeaderActions'
+import { LanguageSwitcher } from './header/LanguageSwitcher'
 import { Logo } from './header/Logo'
 import { MobileMenu } from './header/MobileMenu'
 
 /** True when the page opens with a hero frame — the header then sits in the frame's notches. */
-function startsWithHero(pathname: string): boolean {
-  return getPage(pathname)?.sections.find((s) => s.enabled)?.type === 'hero'
+function startsWithHero(c: Localized, pathname: string): boolean {
+  return c.getPage(stripLocale(pathname))?.sections.find((s) => s.enabled)?.type === 'hero'
 }
 
 /**
@@ -17,12 +18,13 @@ function startsWithHero(pathname: string): boolean {
  */
 export default function Header() {
   const { pathname } = useLocation()
-  const framed = startsWithHero(pathname)
+  const c = useContent()
+  const framed = startsWithHero(c, pathname)
 
   return (
     <header className={cn('z-40 flex items-start justify-between gap-3 p-(--nf-inset)', framed ? 'absolute inset-x-0 top-0' : 'relative')}>
       <Logo location="header" className="h-(--nf-item) w-[calc(var(--nf-left)-var(--nf-gap))]" />
-      <HeaderActions menuButton={<MobileMenu />} />
+      <HeaderActions lead={<LanguageSwitcher />} menuButton={<MobileMenu />} />
     </header>
   )
 }

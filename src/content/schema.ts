@@ -423,9 +423,17 @@ export const Ui = z
         countForms: z
           .tuple([text, text, text])
           .default(['opinia', 'opinie', 'opinii'])
-          .describe('Review count noun for 1 / 2–4 / 5+ (Polish plural); "w Google" after it is fixed'),
+          .describe('Review count noun for the plural categories one / few / many (Intl.PluralRules of the language; English: ["review", "reviews", "reviews"])'),
         readMore: text.default('Czytaj całość').describe('Expands a long review'),
         readLess: text.default('Zwiń').describe('Collapses an expanded review'),
+        carouselLabel: text.default('Opinie klientów').describe('Screen-reader name of the reviews carousel'),
+        carouselRole: text.default('karuzela').describe('Screen-reader role description of the carousel'),
+        slideRole: text.default('opinia').describe('Screen-reader role description of one review'),
+        slideLabel: text.default('{n} z {total}').describe('Screen-reader label of a review slide; {n} and {total} are replaced'),
+        ratingLabel: text.default('Ocena {rating} na 5').describe('Screen-reader label of the stars; {rating} is replaced'),
+        averageLabel: text.default('Średnia ocena {rating} na 5').describe('Screen-reader text of the overall rating; {rating} is replaced'),
+        previous: text.default('Poprzednia opinia'),
+        next: text.default('Następna opinia'),
       })
       .prefault({}),
     visit: z
@@ -439,6 +447,54 @@ export const Ui = z
         specialHours: text.default('Zmiany w godzinach').describe('Heading above upcoming dates from specialHours (next 14 days)'),
         showMap: text.default('Pokaż mapę'),
         mapNote: text.default('Mapa ładuje się z Google po kliknięciu.').describe('Privacy note under the map button'),
+        mapTitle: text.default('Mapa Google — {name}').describe('Accessible title of the map; {name} is replaced with site.legalName'),
+        today: text.default('dziś').describe('Screen-reader marker of today\'s row in the hours table'),
+      })
+      .prefault({}),
+    common: z
+      .strictObject({
+        skipToContent: text.default('Przejdź do treści'),
+        mainNav: text.default('Menu główne').describe('Screen-reader name of the main navigation'),
+        menu: text.default('Menu').describe('Screen-reader name of the menu dialog'),
+        openMenu: text.default('Otwórz menu'),
+        closeMenu: text.default('Zamknij menu'),
+        call: text.default('Zadzwoń: {phone}').describe('Label of round phone buttons; {phone} is replaced with contact.phoneDisplay'),
+        language: text.default('Język strony').describe('Label of the language switcher'),
+        illustration: text.default('Ilustracja').describe('Label on AI-generated illustrations'),
+        previousProduct: text.default('Poprzedni produkt'),
+        nextProduct: text.default('Następny produkt'),
+        pauseAnimation: text.default('Zatrzymaj przewijany napis').describe('Pause switch of the moving text bands'),
+        breadcrumb: text.default('Nawigacja okruszkowa').describe('Screen-reader name of the breadcrumb'),
+        errorTitle: text.default('Coś poszło nie tak').describe('Heading shown when a page fails to load'),
+        errorText: text.default('Odśwież stronę, aby spróbować ponownie.'),
+      })
+      .prefault({}),
+    layout: z
+      .strictObject({
+        copyright: text.default('© {year} {name}').describe('Footer copyright line; {year} and {name} (site.legalName) are replaced'),
+        reload: text.default('Odśwież').describe('Button on the error page that reloads the page'),
+      })
+      .prefault({}),
+    days: z
+      .strictObject({
+        short: z
+          .strictObject({ Mo: text, Tu: text, We: text, Th: text, Fr: text, Sa: text, Su: text })
+          .default({ Mo: 'pon', Tu: 'wt', We: 'śr', Th: 'czw', Fr: 'pt', Sa: 'sob', Su: 'nd' }),
+        long: z
+          .strictObject({ Mo: text, Tu: text, We: text, Th: text, Fr: text, Sa: text, Su: text })
+          .default({ Mo: 'Poniedziałek', Tu: 'Wtorek', We: 'Środa', Th: 'Czwartek', Fr: 'Piątek', Sa: 'Sobota', Su: 'Niedziela' }),
+      })
+      .prefault({})
+      .describe('Day names in the opening hours'),
+    allergenNames: z
+      .partialRecord(z.enum(ALLERGENS), text)
+      .default({})
+      .describe('Display names of allergens (key = value used in products.json); missing ones show the key itself'),
+    sections: z
+      .strictObject({
+        reviewCountSource: text
+          .default('w')
+          .describe('Word between the review count and the fixed word "Google" under the reviews ("123 opinii w Google")'),
       })
       .prefault({}),
   })
@@ -452,6 +508,32 @@ export const Site = z.strictObject({
   tagline: text,
   description: text.describe('Business description (used in structured data and defaults)'),
   url: z.string().url().describe('Canonical production URL without trailing slash (env SITE_URL overrides it at build time)'),
+  i18n: z
+    .strictObject({
+      defaultLocale: z.string().regex(/^[a-z]{2}$/).describe('Language of the files in src/data (served at "/")'),
+      locales: z
+        .array(
+          z.strictObject({
+            code: z.string().regex(/^[a-z]{2}$/).describe('URL prefix and folder name in src/data/i18n, e.g. "uk"'),
+            label: text.describe('Language name in that language, e.g. "Українська"'),
+            short: text.max(3).describe('Short label in the switcher, e.g. "UA"'),
+            htmlLang: z.string().regex(/^[a-z]{2}(-[A-Z]{2})?$/).describe('BCP 47 tag for <html lang> and hreflang, e.g. "uk"'),
+            ogLocale: z.string().regex(/^[a-z]{2}_[A-Z]{2}$/).describe('Open Graph locale, e.g. "uk_UA"'),
+          }),
+        )
+        .min(1)
+        .describe('Every language the site is published in; translations live in src/data/i18n/<code>/'),
+      autoDetect: z.boolean().default(true).describe('Send first-time visitors to the version in their browser language (never bots)'),
+      fallbackLocale: z.string().regex(/^[a-z]{2}$/).optional().describe('Version for browsers in a language the site does not have'),
+    })
+    .superRefine((i18n, ctx) => {
+      const codes = i18n.locales.map((l) => l.code)
+      if (new Set(codes).size !== codes.length) ctx.addIssue({ code: 'custom', path: ['locales'], message: 'Locale codes must be unique' })
+      if (!codes.includes(i18n.defaultLocale)) ctx.addIssue({ code: 'custom', path: ['defaultLocale'], message: `"${i18n.defaultLocale}" is not in locales` })
+      if (i18n.fallbackLocale && !codes.includes(i18n.fallbackLocale))
+        ctx.addIssue({ code: 'custom', path: ['fallbackLocale'], message: `"${i18n.fallbackLocale}" is not in locales` })
+    })
+    .describe('Languages of the site'),
   logo: z.strictObject({ wordmark: text, sub: z.string().optional() }),
   contact: z.strictObject({
     phone: z.string().regex(/^\+\d{9,15}$/, 'E.164, e.g. +48511228221'),

@@ -1,3 +1,4 @@
+import { useContent } from '@/content'
 import { cn } from '@/lib/utils'
 
 const toggle =
@@ -10,6 +11,7 @@ const toggle =
  * before the app has loaded), and stays still with prefers-reduced-motion.
  */
 export function Ticker({ items, className }: { items: string[]; className?: string }) {
+  const { site } = useContent()
   const chars = items.join('').length
   const reps = Math.max(1, Math.ceil(200 / chars))
   const runs = Array.from({ length: reps * 2 }, (_, i) => i)
@@ -32,7 +34,7 @@ export function Ticker({ items, className }: { items: string[]; className?: stri
       </div>
       {/* WCAG 2.2.2: moving text needs a visible way to stop it */}
       <label className="absolute inset-y-0 left-0 flex items-center bg-caramel px-3 motion-reduce:hidden lg:pl-4">
-        <input type="checkbox" role="switch" aria-label="Zatrzymaj przewijany pasek" className="peer sr-only" />
+        <input type="checkbox" role="switch" aria-label={site.ui.common.pauseAnimation} className="peer sr-only" />
         <span aria-hidden className={cn(toggle, 'grid peer-checked:hidden')}>
           <svg viewBox="0 0 24 24" width={16} height={16} fill="currentColor">
             <rect x="6" y="5" width="4" height="14" rx="1" />

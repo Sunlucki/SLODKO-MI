@@ -1,4 +1,5 @@
-import { DAY_NAMES, DAY_SHORT, site } from '@/content'
+import type { Localized } from '@/content'
+import type { SiteT } from '@/content/schema'
 
 const WEEK = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'] as const
 export type Day = (typeof WEEK)[number]
@@ -18,16 +19,17 @@ export interface HoursRow {
   time?: Time
 }
 
-function timeFor(day: Day): Time | undefined {
+function timeFor(site: SiteT, day: Day): Time | undefined {
   const entry = site.hours.find((h) => h.days.includes(day))
   return entry && 'opens' in entry ? { opens: entry.opens, closes: entry.closes } : undefined
 }
 
 /** Opening hours as table rows, Monday first; consecutive days with identical hours share one row. */
-export function hoursRows(): HoursRow[] {
+export function hoursRows(site: SiteT): HoursRow[] {
+  const { short, long } = site.ui.days
   const groups: { days: Day[]; time?: Time }[] = []
   for (const day of WEEK) {
-    const time = timeFor(day)
+    const time = timeFor(site, day)
     const last = groups.at(-1)
     if (last && last.time?.opens === time?.opens && last.time?.closes === time?.closes) last.days.push(day)
     else groups.push({ days: [day], time })
@@ -37,8 +39,8 @@ export function hoursRows(): HoursRow[] {
     return {
       days,
       time,
-      label: ends.map((d) => DAY_SHORT[d]).join('–'),
-      fullLabel: ends.map((d) => DAY_NAMES[d]).join(' – '),
+      label: ends.map((d) => short[d]).join('–'),
+      fullLabel: ends.map((d) => long[d]).join(' – '),
     }
   })
 }
@@ -49,7 +51,6 @@ const closingMinutes = (hhmm: string) => (hhmm === '00:00' ? 24 * 60 : toMinutes
 
 const UPCOMING_DAYS = 14
 const DAY_OF_WEEK: Day[] = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] // Date#getUTCDay() order
-const longDate = new Intl.DateTimeFormat('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' })
 
 export interface SpecialDay {
   date: string
@@ -73,7 +74,8 @@ export interface WarsawStatus {
 }
 
 /** Current day, open/closed state and upcoming special days in the shop's time zone. Client-only (depends on the clock). */
-export function warsawStatus(date = new Date()): WarsawStatus {
+export function warsawStatus(c: Localized, date = new Date()): WarsawStatus {
+  // en-GB only to read the parts reliably ("Mon", 24-hour clock) — nothing here is displayed
   const parts = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Europe/Warsaw',
     year: 'numeric',
@@ -89,16 +91,18 @@ export function warsawStatus(date = new Date()): WarsawStatus {
   const today = `${get('year')}-${get('month')}-${get('day')}`
   const now = Number(get('hour')) * 60 + Number(get('minute'))
 
-  const special = site.specialHours.find((s) => s.date === today)
-  const time = special ? ('opens' in special ? { opens: special.opens, closes: special.closes } : undefined) : timeFor(day)
+  const special = c.site.specialHours.find((s) => s.date === today)
+  const time = special ? ('opens' in special ? { opens: special.opens, closes: special.closes } : undefined) : timeFor(c.site, day)
   const open = Boolean(time && now >= toMinutes(time.opens) && now < closingMinutes(time.closes))
 
-  return { day, open, special: Boolean(special), upcoming: specialDaysFrom(today) }
+  return { day, open, special: Boolean(special), upcoming: specialDaysFrom(c, today) }
 }
 
-/** site.specialHours from `today` (YYYY-MM-DD) through the next 14 days. */
-export function specialDaysFrom(today: string): SpecialDay[] {
+/** site.specialHours from `today` (YYYY-MM-DD) through the next 14 days, labelled in the page's language. */
+export function specialDaysFrom({ site, lang }: Localized, today: string): SpecialDay[] {
   const end = new Date(Date.parse(`${today}T00:00:00Z`) + UPCOMING_DAYS * 86_400_000).toISOString().slice(0, 10)
+  const dayMonth = new Intl.DateTimeFormat(lang, { day: '2-digit', month: '2-digit', timeZone: 'UTC' })
+  const longDate = new Intl.DateTimeFormat(lang, { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' })
   return site.specialHours
     .filter((s) => s.date >= today && s.date < end)
     .sort((a, b) => a.date.localeCompare(b.date))
@@ -106,7 +110,7 @@ export function specialDaysFrom(today: string): SpecialDay[] {
       const d = new Date(`${s.date}T00:00:00Z`)
       return {
         date: s.date,
-        label: `${DAY_SHORT[DAY_OF_WEEK[d.getUTCDay()]]} ${s.date.slice(8)}.${s.date.slice(5, 7)}`,
+        label: `${site.ui.days.short[DAY_OF_WEEK[d.getUTCDay()]]} ${dayMonth.format(d)}`,
         fullLabel: longDate.format(d),
         today: s.date === today,
         time: 'opens' in s ? { opens: s.opens, closes: s.closes } : undefined,

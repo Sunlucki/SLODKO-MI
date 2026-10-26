@@ -6,6 +6,7 @@ const advance = (c: string) => (c === ' ' ? 0.24 : c === 'I' ? 0.23 : c === 'M' 
 
 /** Giant display wordmark that always fills its container's width (scales like an image, never overflows). */
 export function Wordmark({ text }: { text: string }) {
+  // The wordmark is the Polish brand name in every language (never translated)
   const upper = text.toLocaleUpperCase('pl-PL')
   const fontSize = WIDTH / [...upper].reduce((sum, c) => sum + advance(c), 0)
   const capHeight = fontSize * 0.86

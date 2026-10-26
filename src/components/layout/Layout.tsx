@@ -3,27 +3,51 @@ import { Outlet, useLocation, useNavigationType } from 'react-router-dom'
 import { Head } from 'vite-react-ssg'
 import antonLatin from '@/assets/fonts/anton-latin.woff2?url'
 import antonPl from '@/assets/fonts/anton-pl.woff2?url'
+import displayCyrillic from '@/assets/fonts/display-cyrillic.woff2?url'
 import CookieBanner from '@/components/consent/CookieBanner'
-import { site } from '@/content'
+import { ContentProvider, defaultLocale, localeFromPath, locales, useContent } from '@/content'
 import { trackPageView } from '@/lib/analytics'
 import Footer from './Footer'
 import { frameCss } from './frame'
 import Header from './Header'
 
-/** Injects theme colours from site.json as CSS variables (SSR, no flash). */
+/**
+ * First visit of a session on a default-language URL: go to the version in the browser's language
+ * (bots and Lighthouse excluded; an explicit choice in the switcher is stored and always wins).
+ * Inline in <head>, so the redirect happens before anything is painted.
+ */
+function autoDetectScript(fallback: string): string {
+  const codes = JSON.stringify(locales.map((l) => l.code))
+  return (
+    `(function(){try{var L=${codes},D=${JSON.stringify(defaultLocale)},F=${JSON.stringify(fallback)},B=${JSON.stringify(import.meta.env.BASE_URL)},k='slodkomi-lang';` +
+    `if(/bot|crawl|spider|slurp|lighthouse|headless|preview|facebookexternalhit|whatsapp|telegram/i.test(navigator.userAgent))return;` +
+    `if(localStorage.getItem(k)||sessionStorage.getItem(k+'-checked'))return;sessionStorage.setItem(k+'-checked','1');` +
+    `var p=location.pathname.slice(B.length-1),first=p.split('/')[1];if(first!==D&&L.indexOf(first)>-1)return;` +
+    `var want=F,langs=navigator.languages||[navigator.language];for(var i=0;i<langs.length;i++){var c=String(langs[i]||'').slice(0,2).toLowerCase();if(L.indexOf(c)>-1){want=c;break}}` +
+    `if(want!==D)location.replace(B+want+p+location.search+location.hash)}catch(e){}})()`
+  )
+}
+
+/** Languages written in Cyrillic: their headlines use the Cyrillic stand-in of the display font (globals.css). */
+const CYRILLIC = ['ru', 'uk', 'be', 'bg', 'sr', 'mk']
+
+/** Injects theme colours from site.json as CSS variables (SSR, no flash), the page language and auto-detection. */
 function ThemeStyle() {
+  const { site, lang } = useContent()
   const c = site.theme.colors
   const css =
     `:root{--c-cream:${c.cream};--c-ink:${c.ink};--c-brand:${c.brand};--c-brand-deep:${c.brandDeep};--c-blush:${c.blush};--c-caramel:${c.caramel}}` +
     frameCss(c)
   return (
     <Head>
-      <html lang="pl" />
+      <html lang={lang} />
+      {site.i18n.autoDetect && locales.length > 1 && <script>{autoDetectScript(site.i18n.fallbackLocale ?? defaultLocale)}</script>}
       <style>{css}</style>
       <meta name="theme-color" content={c.brandDeep} />
-      {/* Display font of the LCP headline (Polish letters live in the second file) */}
+      {/* Display font of the LCP headline (Polish letters live in the second file, Cyrillic ones in the third) */}
       <link rel="preload" as="font" type="font/woff2" href={antonLatin} crossOrigin="" />
       <link rel="preload" as="font" type="font/woff2" href={antonPl} crossOrigin="" />
+      {CYRILLIC.includes(lang.split('-')[0]) && <link rel="preload" as="font" type="font/woff2" href={displayCyrillic} crossOrigin="" />}
     </Head>
   )
 }
@@ -113,6 +137,16 @@ function ScrollManager() {
 }
 
 export default function Layout() {
+  const { pathname } = useLocation()
+  return (
+    <ContentProvider locale={localeFromPath(pathname)}>
+      <Page />
+    </ContentProvider>
+  )
+}
+
+function Page() {
+  const { site } = useContent()
   return (
     <>
       <ThemeStyle />
@@ -120,7 +154,7 @@ export default function Layout() {
         href="#main"
         className="sr-only z-[100] rounded-full bg-ink px-4 py-2 text-cream focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
       >
-        Przejdź do treści
+        {site.ui.common.skipToContent}
       </a>
       {/* Fixed at the bottom, but first in the DOM: keyboard and screen-reader users meet it before the content it covers */}
       <CookieBanner />

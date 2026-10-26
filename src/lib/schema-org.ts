@@ -1,25 +1,27 @@
 // JSON-LD builders (schema.org) + absolute URL helpers shared with <Seo>.
+// Builders take the language version of the page (useContent()): names, descriptions and URLs are
+// in that language; inLanguage is set where schema.org defines it (CreativeWork: WebSite, FAQPage).
 // No aggregateRating/review markup: Google treats it as self-serving for LocalBusiness
 // and does not allow re-publishing third-party (Google) reviews as structured data.
-import { catalog, images, site } from '@/content'
+import { contentFor, defaultLocale, images, type Localized } from '@/content'
 import type { ProductT } from '@/content/schema'
 
 export interface Crumb {
   name: string
-  /** Path without base, e.g. "/" or "/produkt/oreo" */
+  /** Path without base and language prefix, e.g. "/" or "/produkt/oreo" */
   path: string
 }
 
 const CONTEXT = 'https://schema.org'
 const DAYS: Record<string, string> = { Mo: 'Monday', Tu: 'Tuesday', We: 'Wednesday', Th: 'Thursday', Fr: 'Friday', Sa: 'Saturday', Su: 'Sunday' }
 
-/** Production origin + deploy base, no trailing slash (env SITE_URL wins over site.json). */
+/** Production origin + deploy base, no trailing slash (env SITE_URL wins over site.json; same in every language). */
 export function siteUrl(): string {
-  return (import.meta.env.SITE_URL || site.url).replace(/\/$/, '')
+  return (import.meta.env.SITE_URL || contentFor(defaultLocale).site.url).replace(/\/$/, '')
 }
 
 /**
- * Absolute URL of a page. Every route is pre-rendered to <path>/index.html and the host
+ * Absolute URL of a page (pass the path with its language prefix, e.g. c.localize(path)). Every route is pre-rendered to <path>/index.html and the host
  * redirects "/produkt/oreo" → "/produkt/oreo/", so non-root pages use the trailing-slash form.
  */
 export function pageUrl(path: string): string {
@@ -52,18 +54,20 @@ export function socialImage(key: string): { url: string; width: number; height: 
   return { url: imageUrl(key), width, height: Math.round((img.height * width) / img.width) }
 }
 
-const bakeryId = () => `${pageUrl('/')}#bakery`
+const homeUrl = (c: Localized) => pageUrl(c.localize('/'))
+const bakeryId = (c: Localized) => `${homeUrl(c)}#bakery`
 
-export function bakeryJsonLd(): object {
+export function bakeryJsonLd(c: Localized): object {
+  const { site } = c
   const { address, contact, links } = site
   return {
     '@context': CONTEXT,
     '@type': 'Bakery',
-    '@id': bakeryId(),
+    '@id': bakeryId(c),
     name: site.name,
     legalName: site.legalName,
     description: site.description,
-    url: pageUrl('/'),
+    url: homeUrl(c),
     image: imageUrl(site.seo.ogImage),
     logo: `${siteUrl()}/apple-touch-icon.png`,
     telephone: contact.phone,
@@ -97,17 +101,18 @@ export function bakeryJsonLd(): object {
   }
 }
 
-export function websiteJsonLd(): object {
+export function websiteJsonLd(c: Localized): object {
+  const { site } = c
   return {
     '@context': CONTEXT,
     '@type': 'WebSite',
-    '@id': `${pageUrl('/')}#website`,
-    url: pageUrl('/'),
+    '@id': `${homeUrl(c)}#website`,
+    url: homeUrl(c),
     name: site.name,
     alternateName: site.legalName,
     description: site.description,
-    inLanguage: 'pl-PL',
-    publisher: { '@id': bakeryId() },
+    inLanguage: c.lang,
+    publisher: { '@id': bakeryId(c) },
   }
 }
 
@@ -116,8 +121,9 @@ export function websiteJsonLd(): object {
  * is emitted only where the site publishes the price (site.catalog.showPrices); otherwise a schema.org
  * MenuItem, which Google does not validate as a rich result.
  */
-export function productJsonLd(product: ProductT): object {
-  const url = pageUrl(`/produkt/${product.slug}`)
+export function productJsonLd(product: ProductT, c: Localized): object {
+  const { site, catalog } = c
+  const url = pageUrl(c.localize(`/produkt/${product.slug}`))
   const item = {
     '@id': `${url}#product`,
     name: product.name,
@@ -139,15 +145,16 @@ export function productJsonLd(product: ProductT): object {
       priceCurrency: product.currency,
       availability: product.available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       url,
-      seller: { '@type': 'Bakery', name: site.legalName, url: pageUrl('/') },
+      seller: { '@type': 'Bakery', name: site.legalName, url: homeUrl(c) },
     },
   }
 }
 
-export function faqJsonLd(items: { question: string; answer: string }[]): object {
+export function faqJsonLd(items: { question: string; answer: string }[], c: Localized): object {
   return {
     '@context': CONTEXT,
     '@type': 'FAQPage',
+    inLanguage: c.lang,
     mainEntity: items.map((item) => ({
       '@type': 'Question',
       name: item.question,
@@ -156,10 +163,10 @@ export function faqJsonLd(items: { question: string; answer: string }[]): object
   }
 }
 
-export function breadcrumbJsonLd(trail: Crumb[]): object {
+export function breadcrumbJsonLd(trail: Crumb[], c: Localized): object {
   return {
     '@context': CONTEXT,
     '@type': 'BreadcrumbList',
-    itemListElement: trail.map((crumb, i) => ({ '@type': 'ListItem', position: i + 1, name: crumb.name, item: pageUrl(crumb.path) })),
+    itemListElement: trail.map((crumb, i) => ({ '@type': 'ListItem', position: i + 1, name: crumb.name, item: pageUrl(c.localize(crumb.path)) })),
   }
 }

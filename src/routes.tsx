@@ -1,13 +1,30 @@
 import type { RouteRecord } from 'vite-react-ssg'
 import Layout from '@/components/layout/Layout'
 import RouteError from '@/components/layout/RouteError'
-import { pages, products } from '@/content'
+import { contentFor, defaultLocale, locales } from '@/content'
 import NotFound from '@/pages/NotFound'
 import PageRenderer from '@/pages/PageRenderer'
 import ProductPage from '@/pages/ProductPage'
 
-// Every JSON file in src/data/pages becomes a pre-rendered route, so an LLM can add,
-// remove or restructure pages by editing content only. Product pages come from products.json.
+// Every JSON file in src/data/pages becomes a pre-rendered route in every language
+// ("/", "/en/", "/ru/"…), so an LLM can add, remove or restructure pages by editing content only.
+// Product pages come from products.json.
+const localeRoutes = locales.flatMap(({ code }) => {
+  const c = contentFor(code)
+  const prefix = code === defaultLocale ? '' : `${code}/`
+  return [
+    ...c.pages.map((page) => {
+      const path = (prefix + page.path.replace(/^\/|\/$/g, '')).replace(/\/$/, '')
+      return path ? { path, element: <PageRenderer page={page} /> } : { index: true, element: <PageRenderer page={page} /> }
+    }),
+    {
+      path: `${prefix}produkt/:slug`,
+      element: <ProductPage />,
+      getStaticPaths: () => c.products.map((p) => `${prefix}produkt/${p.slug}`),
+    },
+  ]
+})
+
 export const routes: RouteRecord[] = [
   {
     path: '/',
@@ -15,17 +32,6 @@ export const routes: RouteRecord[] = [
     // Recovers tabs whose client-side navigation fails after a redeploy
     errorElement: <RouteError />,
     entry: 'src/components/layout/Layout.tsx',
-    children: [
-      ...pages.map((page) =>
-        page.path === '/' ? { index: true, element: <PageRenderer page={page} /> } : { path: page.path.replace(/^\/|\/$/g, ''), element: <PageRenderer page={page} /> },
-      ),
-      {
-        path: 'produkt/:slug',
-        element: <ProductPage />,
-        getStaticPaths: () => products.map((p) => `produkt/${p.slug}`),
-      },
-      { path: '404', element: <NotFound /> },
-      { path: '*', element: <NotFound /> },
-    ],
+    children: [...localeRoutes, { path: '404', element: <NotFound /> }, { path: '*', element: <NotFound /> }],
   },
 ]

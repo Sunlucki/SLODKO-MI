@@ -3,13 +3,14 @@ import { useLocation } from 'react-router-dom'
 import { CtaButton, IconLink } from '@/components/ui/Button'
 import { Close, Facebook, Instagram, Menu, Phone } from '@/components/ui/icons'
 import { SmartLink } from '@/components/ui/SmartLink'
-import { site } from '@/content'
+import { fmt, useContent } from '@/content'
 import { trackEngagement } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
+import { LanguageLinks } from '../languages'
 import { HeaderActions } from './HeaderActions'
 import { Logo } from './Logo'
 
-const roundButton =
+export const roundButton =
   'inline-grid size-(--nf-item) shrink-0 cursor-pointer place-items-center rounded-full bg-brand-deep text-cream transition-colors duration-200 hover:bg-ink'
 
 /**
@@ -17,6 +18,9 @@ const roundButton =
  * the close button sit exactly where the header's logo and menu button were. Focus trap, Escape, scroll lock.
  */
 export function MobileMenu({ className }: { className?: string }) {
+  const { site } = useContent()
+  const { common } = site.ui
+  const callLabel = fmt(common.call, { phone: site.contact.phoneDisplay })
   const [open, setOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
@@ -69,7 +73,7 @@ export function MobileMenu({ className }: { className?: string }) {
       <button
         ref={buttonRef}
         type="button"
-        aria-label="Otwórz menu"
+        aria-label={common.openMenu}
         aria-expanded={open}
         aria-controls={id}
         onClick={() => {
@@ -87,22 +91,27 @@ export function MobileMenu({ className }: { className?: string }) {
           id={id}
           role="dialog"
           aria-modal="true"
-          aria-label="Menu"
+          aria-label={common.menu}
           className="fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-cream p-(--nf-inset) transition-opacity duration-300 starting:opacity-0"
         >
           <div className="nf-menu relative flex min-h-full flex-col px-6 pt-[calc(var(--nf-item)+var(--nf-gap)+2.5rem)] pb-8 text-cream transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] starting:translate-y-6 md:px-10 lg:px-14">
             <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3">
               <Logo location="menu" onClick={follow} className="h-(--nf-item) w-[calc(var(--nf-left)-var(--nf-gap))]" />
               <HeaderActions
+                lead={
+                  <IconLink href="@phone" label={callLabel} location="menu" variant="primary" className="size-(--nf-item)">
+                    <Phone />
+                  </IconLink>
+                }
                 menuButton={
-                  <button ref={closeRef} type="button" aria-label="Zamknij menu" onClick={close} className={roundButton}>
+                  <button ref={closeRef} type="button" aria-label={common.closeMenu} onClick={close} className={roundButton}>
                     <Close />
                   </button>
                 }
               />
             </div>
 
-            <nav aria-label="Menu główne">
+            <nav aria-label={common.mainNav}>
               <ul className="flex flex-col gap-1">
                 {site.nav.map((link, i) => (
                   <li key={link.href}>
@@ -126,6 +135,12 @@ export function MobileMenu({ className }: { className?: string }) {
               <div className="flex flex-wrap items-center gap-2">
                 <CtaButton cta={{ ...site.header.cta, variant: 'light' }} location="menu" size="lg" />
               </div>
+              <nav aria-label={common.language}>
+                <LanguageLinks
+                  className="flex flex-wrap gap-2"
+                  linkClassName="inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-bold ring-2 ring-cream/40 transition-colors ring-inset hover:bg-cream/10 aria-[current=page]:bg-cream aria-[current=page]:text-brand-deep aria-[current=page]:ring-cream"
+                />
+              </nav>
               <div className="flex flex-wrap items-end justify-between gap-6">
                 <address className="text-sm leading-relaxed text-cream/90 not-italic">
                   {site.address.street}
@@ -143,7 +158,7 @@ export function MobileMenu({ className }: { className?: string }) {
                       <Facebook />
                     </IconLink>
                   )}
-                  <IconLink href="@phone" label={`Zadzwoń: ${site.contact.phoneDisplay}`} location="menu">
+                  <IconLink href="@phone" label={callLabel} location="menu">
                     <Phone />
                   </IconLink>
                 </div>

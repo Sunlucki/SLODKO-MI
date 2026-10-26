@@ -1,5 +1,6 @@
 import type { AnchorHTMLAttributes, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { useContent } from '@/content'
 import type { ProductT } from '@/content/schema'
 import { trackAction, type TrackLocation } from '@/lib/analytics'
 import { resolveHref } from '@/lib/links'
@@ -15,7 +16,7 @@ interface Props extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
 
 /** The only way components render content links: resolves @tokens, handles base path and fires tracking. */
 export function SmartLink({ href, location, product, onClick, children, ...rest }: Props) {
-  const link = resolveHref(href)
+  const link = resolveHref(href, useContent())
   const handleClick: Props['onClick'] = (e) => {
     if (link.action) trackAction(link.action, location, product)
     onClick?.(e)

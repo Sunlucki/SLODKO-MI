@@ -1,9 +1,10 @@
-import { site } from '@/content'
+import { useContent } from '@/content'
 import { openConsentSettings } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 
 /** Re-opens the cookie settings (required by GDPR: withdrawing consent must be as easy as giving it). */
 export default function ConsentSettingsButton({ className }: { className?: string }) {
+  const { site } = useContent()
   return (
     <button
       type="button"

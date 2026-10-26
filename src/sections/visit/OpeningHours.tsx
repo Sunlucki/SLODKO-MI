@@ -1,29 +1,30 @@
 import { useEffect, useState } from 'react'
-import { site } from '@/content'
+import { useContent, type Localized } from '@/content'
 import { cn } from '@/lib/utils'
 import { hoursRows, specialDaysFrom, warsawStatus, type WarsawStatus } from './hours'
 
-const rows = hoursRows()
-// Pre-rendered list (as of the build date) so the section does not grow after hydration
-const builtUpcoming = specialDaysFrom(import.meta.env.BUILD_DATE)
-const ui = site.ui.visit
 const heading = 'text-[11px] font-extrabold tracking-[0.2em] text-brand-deep uppercase'
 
 /** Today's row and the open/closed badge depend on the clock, so they appear only after hydration (SSR HTML stays neutral). */
-function useWarsawStatus() {
+function useWarsawStatus(c: Localized) {
   const [status, setStatus] = useState<WarsawStatus | null>(null)
   useEffect(() => {
-    const tick = () => setStatus(warsawStatus())
+    const tick = () => setStatus(warsawStatus(c))
     tick()
     const id = setInterval(tick, 60_000)
     return () => clearInterval(id)
-  }, [])
+  }, [c])
   return status
 }
 
 export function OpeningHours() {
-  const status = useWarsawStatus()
-  const upcoming = status ? status.upcoming : builtUpcoming
+  const c = useContent()
+  const { site } = c
+  const ui = site.ui.visit
+  const status = useWarsawStatus(c)
+  const rows = hoursRows(site)
+  // Before hydration: the list as of the build date, so the section does not grow after hydration
+  const upcoming = status ? status.upcoming : specialDaysFrom(c, import.meta.env.BUILD_DATE)
   return (
     <div>
       {/* Fixed height: the badge appears after hydration without shifting the layout */}
@@ -54,7 +55,7 @@ export function OpeningHours() {
               <dt className="font-extrabold tracking-[0.08em] uppercase">
                 <span aria-hidden>{row.label}</span>
                 <span className="sr-only">{row.fullLabel}</span>
-                {today && <span className="sr-only"> (dziś)</span>}
+                {today && <span className="sr-only">{` (${ui.today})`}</span>}
               </dt>
               <dd className={cn('font-bold tabular-nums', !row.time && 'text-ink/70')}>
                 {row.time ? `${row.time.opens}–${row.time.closes}` : ui.closedDay}
@@ -79,7 +80,7 @@ export function OpeningHours() {
                 <dt className="font-extrabold tracking-[0.08em] uppercase">
                   <span aria-hidden>{day.label}</span>
                   <span className="sr-only">{day.fullLabel}</span>
-                  {day.today && <span className="sr-only"> (dziś)</span>}
+                  {day.today && <span className="sr-only">{` (${ui.today})`}</span>}
                 </dt>
                 <dd className="font-bold tabular-nums">{day.time ? `${day.time.opens}–${day.time.closes}` : ui.closedDay}</dd>
                 {day.note && <dd className="w-full text-xs font-semibold text-ink/70">{day.note}</dd>}

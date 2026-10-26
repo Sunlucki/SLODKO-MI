@@ -1,9 +1,9 @@
 import { Seo } from '@/components/Seo'
 import { CtaButton } from '@/components/ui/Button'
-import { site } from '@/content'
+import { useContent } from '@/content'
 
 export default function NotFound() {
-  const ui = site.ui.notFound
+  const ui = useContent().site.ui.notFound
   return (
     <section className="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center gap-6 px-4 py-24 text-center">
       <Seo title={ui.title} description={ui.description} path="/404" noindex />

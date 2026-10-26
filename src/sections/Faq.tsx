@@ -1,12 +1,19 @@
 import { Plus } from '@/components/ui/icons'
 import { Reveal } from '@/components/ui/Reveal'
 import { Container, Section, SectionHeading } from '@/components/ui/Section'
+import { contentFor, defaultLocale } from '@/content'
 import { trackEngagement } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 import type { SectionProps } from './types'
 
+/** Analytics reports stay in the default language: the question as written there (items match by position). */
+function reportedQuestion(path: string, id: string, index: number) {
+  const base = contentFor(defaultLocale).getPage(path)?.sections.find((s) => s.id === id)
+  return base?.type === 'faq' ? base.items[index]?.question : undefined
+}
+
 /** Native <details> accordion: works without JS, answers stay in the pre-rendered HTML. */
-export default function Faq({ section }: SectionProps<'faq'>) {
+export default function Faq({ section, page }: SectionProps<'faq'>) {
   const headingId = `${section.id}-title`
   // Light panels on light tones, solid cream on dark ones so the text keeps its contrast.
   const panel = section.tone === 'brand' || section.tone === 'ink' ? 'bg-cream' : 'bg-white/60'
@@ -17,10 +24,10 @@ export default function Faq({ section }: SectionProps<'faq'>) {
           {section.heading}
         </SectionHeading>
         <Reveal className="mt-12 space-y-3 md:mt-16">
-          {section.items.map((item) => (
+          {section.items.map((item, i) => (
             <details
               key={item.question}
-              onToggle={(e) => e.currentTarget.open && trackEngagement('open_faq', item.question)}
+              onToggle={(e) => e.currentTarget.open && trackEngagement('open_faq', reportedQuestion(page.path, section.id, i) ?? item.question)}
               className={cn('group rounded-2xl border border-brand-deep/25 text-ink transition-colors [&[open]]:border-brand-deep/60', panel)}
             >
               <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 py-4 sm:px-7 sm:py-5 [&::-webkit-details-marker]:hidden">

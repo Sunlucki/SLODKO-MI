@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { ChevronDown } from '@/components/ui/icons'
 import { SmartLink } from '@/components/ui/SmartLink'
-import { site } from '@/content'
+import { useContent } from '@/content'
 import { CONSENT_OPEN_EVENT, getConsent, initTracking, replayEarlyClicks, trackingConfigured, updateConsent, type Consent } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 
@@ -19,7 +19,7 @@ const choiceButton =
  * Works at any place in the DOM; early in the document puts it first in the keyboard and screen-reader order.
  */
 export default function CookieBanner() {
-  const t = site.consent
+  const t = useContent().site.consent
   const id = useId()
   const [open, setOpen] = useState(false)
   const [expanded, setExpanded] = useState(false)

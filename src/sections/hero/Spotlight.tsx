@@ -3,7 +3,7 @@ import { AiBadge } from '@/components/ui/AiBadge'
 import { ChevronLeft, ChevronRight } from '@/components/ui/icons'
 import { Picture } from '@/components/ui/Picture'
 import { SmartLink } from '@/components/ui/SmartLink'
-import { formatPrice } from '@/content'
+import { useContent } from '@/content'
 import type { ProductT } from '@/content/schema'
 import { trackEngagement, trackSelectItem } from '@/lib/analytics'
 
@@ -15,6 +15,7 @@ const navButton =
  * notch holding the two round arrows. Cycles through the spotlight products (SSR renders the first).
  */
 export function Spotlight({ label, products }: { label: string; products: ProductT[] }) {
+  const { formatPrice, site } = useContent()
   const [index, setIndex] = useState(0)
   const product = products[index]
   const many = products.length > 1
@@ -29,10 +30,10 @@ export function Spotlight({ label, products }: { label: string; products: Produc
     <div className="nf-card relative h-full min-h-[9.5rem] text-cream">
       {many && (
         <div className="absolute top-0 right-0 z-10 flex gap-1.5">
-          <button type="button" aria-label="Poprzedni produkt" onClick={() => go(-1)} className={navButton}>
+          <button type="button" aria-label={site.ui.common.previousProduct} onClick={() => go(-1)} className={navButton}>
             <ChevronLeft width={18} height={18} />
           </button>
-          <button type="button" aria-label="Następny produkt" onClick={() => go(1)} className={navButton}>
+          <button type="button" aria-label={site.ui.common.nextProduct} onClick={() => go(1)} className={navButton}>
             <ChevronRight width={18} height={18} />
           </button>
         </div>

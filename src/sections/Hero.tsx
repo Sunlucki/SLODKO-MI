@@ -3,7 +3,7 @@ import { AiBadge } from '@/components/ui/AiBadge'
 import { CtaButton, IconLink } from '@/components/ui/Button'
 import { MapPin, SquiggleArrow } from '@/components/ui/icons'
 import { Picture } from '@/components/ui/Picture'
-import { getProduct, images } from '@/content'
+import { images, useContent } from '@/content'
 import type { ProductT } from '@/content/schema'
 import { cn } from '@/lib/utils'
 import { Spotlight } from './hero/Spotlight'
@@ -19,6 +19,7 @@ const compactOnPhones = 'max-sm:[&>span]:h-12 max-sm:[&>span:first-child]:px-6 m
  * ticker band runs along the bottom edge. Phones read: headline → product note → photo → text + buttons.
  */
 export default function Hero({ section }: SectionProps<'hero'>) {
+  const { getProduct } = useContent()
   const titleId = `${section.id}-title`
   // Transparent cut-outs float freely; regular photos get a round "plate" crop.
   const cutout = images[section.image.src]?.alpha ?? false

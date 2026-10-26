@@ -3,7 +3,7 @@ import CurvedLoop from '@/components/CurvedLoop'
 import { CtaButton } from '@/components/ui/Button'
 import { Reveal } from '@/components/ui/Reveal'
 import { Container, headingToneClass, Section, toneClass } from '@/components/ui/Section'
-import { site } from '@/content'
+import { useContent } from '@/content'
 import type { ToneT } from '@/content/schema'
 import { cn } from '@/lib/utils'
 import { ShowcaseImage } from './parts/ShowcaseImage'
@@ -25,6 +25,7 @@ const bandToneClass: Record<ToneT, string> = {
  * The pause button (WCAG 2.2.2) appears once the band moves; with prefers-reduced-motion it never moves.
  */
 function CurvedBand({ text, tone }: { text: string; tone: ToneT }) {
+  const { site } = useContent()
   const [mounted, setMounted] = useState(false)
   const [paused, setPaused] = useState(false)
   useEffect(() => setMounted(true), [])
@@ -50,7 +51,7 @@ function CurvedBand({ text, tone }: { text: string; tone: ToneT }) {
       {mounted && (
         <button
           type="button"
-          aria-label="Zatrzymaj przewijany napis"
+          aria-label={site.ui.common.pauseAnimation}
           aria-pressed={paused}
           onClick={() => setPaused((p) => !p)}
           // Panel colours: on phones the button covers the end of the band
@@ -74,6 +75,7 @@ function CurvedBand({ text, tone }: { text: string; tone: ToneT }) {
 
 export default function CtaBanner({ section }: SectionProps<'cta'>) {
   const headingId = `${section.id}-title`
+  const { site } = useContent()
   const { tone, image } = section
   return (
     <Section id={section.id} labelledBy={headingId} className="px-2 py-2 sm:px-3 sm:py-3 md:py-3">

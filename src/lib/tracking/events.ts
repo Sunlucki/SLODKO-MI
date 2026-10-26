@@ -31,7 +31,7 @@ export const trackingConfigured = ga4Enabled || metaEnabled || tiktokEnabled || 
 
 let started = false
 let debug = false
-let lastPage: { path: string; title: string } | null = null
+let lastPage: { path: string; title: string; language?: string } | null = null
 /** Item views of the current page, re-sent with its page_view to destinations that gain consent on it. */
 const PAGE_SCOPED = ['view_item', 'view_item_list']
 let pageEvents: { path: string; ev: TrackEvent }[] = []
@@ -157,18 +157,19 @@ export function dispatch(ev: TrackEvent) {
   send(ev)
 }
 
-function pageViewEvent({ path, title }: { path: string; title: string }, href = location.href): TrackEvent {
+// page_language, not "language": gtag treats an event's `language` as the browser-language field (ul) and would overwrite it
+function pageViewEvent({ path, title, language }: { path: string; title: string; language?: string }, href = location.href): TrackEvent {
   return {
     name: 'page_view',
-    params: { page_location: href, page_path: path, page_title: title },
+    params: { page_location: href, page_path: path, page_title: title, page_language: language },
     meta: { name: 'PageView' },
     tiktok: { name: 'page' },
   }
 }
 
-export function dispatchPageView(path: string, title: string) {
+export function dispatchPageView(path: string, title: string, language: string) {
   if (typeof window === 'undefined') return
-  lastPage = { path, title }
+  lastPage = { path, title, language }
   pageEvents = currentPageEvents()
   dispatch(pageViewEvent(lastPage))
 }

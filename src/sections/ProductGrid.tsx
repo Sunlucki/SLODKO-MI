@@ -1,4 +1,4 @@
-import { productsFor } from '@/content'
+import { useContent } from '@/content'
 import { ProductList } from '@/components/product/ProductList'
 import { CtaButton } from '@/components/ui/Button'
 import { Reveal } from '@/components/ui/Reveal'
@@ -7,7 +7,7 @@ import type { SectionProps } from './types'
 
 /** "Meet your new favourites": heading + sticker, optional intro, product cards, optional CTA. */
 export default function ProductGrid({ section }: SectionProps<'productGrid'>) {
-  const list = productsFor(section.source, section.limit)
+  const list = useContent().productsFor(section.source, section.limit)
   if (!list.length) return null
   const headingId = `${section.id}-heading`
   return (

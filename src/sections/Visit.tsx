@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { site } from '@/content'
+import { useContent } from '@/content'
 import { CtaButton } from '@/components/ui/Button'
 import { MapPin, Phone } from '@/components/ui/icons'
 import { Reveal } from '@/components/ui/Reveal'
@@ -15,6 +15,7 @@ function Label({ children }: { children: ReactNode }) {
 }
 
 export default function Visit({ section }: SectionProps<'visit'>) {
+  const { site } = useContent()
   const { address, contact } = site
   const headingId = `${section.id}-title`
   const hasPanel = section.showMap || Boolean(section.image)

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { site } from '@/content'
+import { fmt, useContent } from '@/content'
 import type { ImageT } from '@/content/schema'
 import { Picture } from '@/components/ui/Picture'
 import { MapPin } from '@/components/ui/icons'
@@ -9,6 +9,7 @@ const sizes = '(min-width: 1152px) 540px, (min-width: 1024px) 47vw, calc(100vw -
 
 /** Photo panel; with `showMap` it offers a click-to-load Google Map (nothing is requested from Google before the click). */
 export function MapPanel({ id, image, showMap }: { id: string; image?: ImageT; showMap: boolean }) {
+  const { site } = useContent()
   const [open, setOpen] = useState(false)
   const frame = useRef<HTMLIFrameElement>(null)
   const noteId = `${id}-map-note`
@@ -24,7 +25,7 @@ export function MapPanel({ id, image, showMap }: { id: string; image?: ImageT; s
         <iframe
           ref={frame}
           src={site.links.mapEmbed}
-          title={`Mapa Google — ${site.legalName}`}
+          title={fmt(site.ui.visit.mapTitle, { name: site.legalName })}
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
           className="absolute inset-0 size-full border-0"
