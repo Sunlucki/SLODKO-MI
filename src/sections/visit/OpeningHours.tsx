@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import { site } from '@/content'
 import { cn } from '@/lib/utils'
-import { hoursRows, warsawStatus, type WarsawStatus } from './hours'
+import { hoursRows, specialDaysFrom, warsawStatus, type WarsawStatus } from './hours'
 
 const rows = hoursRows()
+// Pre-rendered list (as of the build date) so the section does not grow after hydration
+const builtUpcoming = specialDaysFrom(import.meta.env.BUILD_DATE)
 const ui = site.ui.visit
 const heading = 'text-[11px] font-extrabold tracking-[0.2em] text-brand-deep uppercase'
 
-/** Today's row, the open/closed badge and upcoming special days depend on the clock, so they appear only after hydration (SSR HTML stays neutral). */
+/** Today's row and the open/closed badge depend on the clock, so they appear only after hydration (SSR HTML stays neutral). */
 function useWarsawStatus() {
   const [status, setStatus] = useState<WarsawStatus | null>(null)
   useEffect(() => {
@@ -21,6 +23,7 @@ function useWarsawStatus() {
 
 export function OpeningHours() {
   const status = useWarsawStatus()
+  const upcoming = status ? status.upcoming : builtUpcoming
   return (
     <div>
       {/* Fixed height: the badge appears after hydration without shifting the layout */}
@@ -60,11 +63,11 @@ export function OpeningHours() {
           )
         })}
       </dl>
-      {status && status.upcoming.length > 0 && (
+      {upcoming.length > 0 && (
         <div className="mt-4">
           <h4 className={heading}>{ui.specialHours}</h4>
           <dl className="mt-2 space-y-1 text-sm sm:text-base">
-            {status.upcoming.map((day) => (
+            {upcoming.map((day) => (
               <div
                 key={day.date}
                 aria-current={day.today ? 'date' : undefined}

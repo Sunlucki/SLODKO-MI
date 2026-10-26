@@ -32,6 +32,11 @@ ErrorDocument 403 /404.html
   # Certificate validation (Let's Encrypt / AutoSSL) must stay reachable over plain HTTP
   RewriteRule ^\.well-known/ - [L]
 
+  # Explicit …/index.html → the folder URL (only for client requests, not internal DirectoryIndex lookups)
+  RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html[\s?] [NC]
+  RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+  RewriteRule ^(.*/)?index\.html$ https://%1/$1 [R=301,L,NE]
+
   # Folder without trailing slash → https://example.pl/…/ (also drops www; DirectorySlash
   # alone would redirect to http:// behind a TLS proxy and cost an extra hop)
   RewriteCond %{REQUEST_FILENAME} -d

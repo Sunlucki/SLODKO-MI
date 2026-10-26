@@ -41,9 +41,9 @@ export function MapPanel({ id, image, showMap }: { id: string; image?: ImageT; s
                   setOpen(true)
                   trackEngagement('open_map')
                 }}
-                className="group inline-flex items-center gap-1 font-sans text-xs font-extrabold tracking-[0.08em] uppercase focus-visible:outline-none"
+                className="group inline-flex items-center gap-1 rounded-full font-sans text-xs font-extrabold tracking-[0.08em] uppercase"
               >
-                <span className="inline-flex h-12 items-center rounded-full bg-cream px-6 text-brand-deep transition-colors group-hover:bg-white group-focus-visible:ring-4 group-focus-visible:ring-caramel">
+                <span className="inline-flex h-12 items-center rounded-full bg-cream px-6 text-brand-deep transition-colors group-hover:bg-white">
                   {site.ui.visit.showMap}
                 </span>
                 <span aria-hidden className="inline-grid size-12 place-items-center rounded-full bg-caramel text-ink transition-transform duration-300 group-hover:-rotate-12">

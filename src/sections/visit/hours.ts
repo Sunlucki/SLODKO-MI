@@ -93,8 +93,13 @@ export function warsawStatus(date = new Date()): WarsawStatus {
   const time = special ? ('opens' in special ? { opens: special.opens, closes: special.closes } : undefined) : timeFor(day)
   const open = Boolean(time && now >= toMinutes(time.opens) && now < closingMinutes(time.closes))
 
+  return { day, open, special: Boolean(special), upcoming: specialDaysFrom(today) }
+}
+
+/** site.specialHours from `today` (YYYY-MM-DD) through the next 14 days. */
+export function specialDaysFrom(today: string): SpecialDay[] {
   const end = new Date(Date.parse(`${today}T00:00:00Z`) + UPCOMING_DAYS * 86_400_000).toISOString().slice(0, 10)
-  const upcoming = site.specialHours
+  return site.specialHours
     .filter((s) => s.date >= today && s.date < end)
     .sort((a, b) => a.date.localeCompare(b.date))
     .map((s) => {
@@ -108,5 +113,4 @@ export function warsawStatus(date = new Date()): WarsawStatus {
         note: s.note,
       }
     })
-  return { day, open, special: Boolean(special), upcoming }
 }

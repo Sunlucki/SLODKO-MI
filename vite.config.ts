@@ -13,7 +13,9 @@ export default defineConfig(({ mode }) => {
   return {
     base: env.VITE_BASE || '/',
     define: {
-      'import.meta.env.SITE_URL': JSON.stringify(env.SITE_URL || ''),
+      // Shop-local date of the build: the pre-rendered HTML lists special hours from this day on
+    'import.meta.env.BUILD_DATE': JSON.stringify(new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Warsaw' }).format(new Date())),
+    'import.meta.env.SITE_URL': JSON.stringify(env.SITE_URL || ''),
     },
     plugins: [contentPlugin(), react(), tailwindcss()],
     resolve: {

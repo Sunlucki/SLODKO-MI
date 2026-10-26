@@ -10,6 +10,8 @@ interface ImportMetaEnv {
   readonly VITE_GTM_ID?: string
   /** TikTok Pixel ID */
   readonly VITE_TIKTOK_PIXEL_ID?: string
+  /** Shop-local build date "YYYY-MM-DD", injected by vite.config.ts `define` */
+  readonly BUILD_DATE: string
   /** Canonical production URL, injected by vite.config.ts `define` ("" when unset) */
   readonly SITE_URL: string
 }
