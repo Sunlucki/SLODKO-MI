@@ -26,7 +26,7 @@ export function resolveHref(href: string): ResolvedLink {
     case '@reviews':
       return ext(site.links.reviews, { name: 'click_reviews', kind: 'read' })
     case '@writeReview':
-      return ext(site.links.writeReview, { name: 'click_reviews', kind: 'write' })
+      return ext(site.links.writeReview ?? site.links.reviews, { name: 'click_reviews', kind: 'write' })
   }
   if (href.startsWith('tel:')) return ext(href, { name: 'click_phone' })
   if (/^(https?:|mailto:)/.test(href)) {

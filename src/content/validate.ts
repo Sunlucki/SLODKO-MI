@@ -112,6 +112,7 @@ export function loadContent(root = process.cwd()): { content?: Content; errors: 
   const checkHref = (where: string, href: string, currentPath: string) => {
     if ((LINK_TOKENS as readonly string[]).includes(href)) {
       if (href === '@facebook' && !site.links.facebook) errors.push(`${where}: "@facebook" used but site.links.facebook is empty`)
+      if (href === '@writeReview' && !site.links.writeReview) errors.push(`${where}: "@writeReview" used but site.links.writeReview is empty`)
       return
     }
     if (/^(https?:|mailto:|tel:)/.test(href)) return

@@ -179,6 +179,11 @@
           "type": "string",
           "minLength": 1,
           "description": "Polish alt text describing the image (accessibility + SEO)"
+        },
+        "aiGenerated": {
+          "default": false,
+          "description": "true = AI-generated illustration, not a real photo of the product/place; it is shown with a visible \"Ilustracja\" label",
+          "type": "boolean"
         }
       },
       "required": [

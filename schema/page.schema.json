@@ -219,6 +219,11 @@
           "type": "string",
           "minLength": 1,
           "description": "Polish alt text describing the image (accessibility + SEO)"
+        },
+        "aiGenerated": {
+          "default": false,
+          "description": "true = AI-generated illustration, not a real photo of the product/place; it is shown with a visible \"Ilustracja\" label",
+          "type": "boolean"
         }
       },
       "required": [
@@ -605,6 +610,13 @@
         },
         "writeLabel": {
           "default": "Napisz opinię",
+          "description": "Shown only when site.links.writeReview is set",
+          "type": "string",
+          "minLength": 1
+        },
+        "notice": {
+          "default": "Opinie pochodzą z Map Google. Pokazujemy wybrane opinie z oceną 4–5 gwiazdek. Nie weryfikujemy, czy ich autorzy kupili nasze produkty.",
+          "description": "Required information on where reviews come from and whether they are verified (EU Omnibus directive)",
           "type": "string",
           "minLength": 1
         }

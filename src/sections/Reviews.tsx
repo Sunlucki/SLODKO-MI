@@ -5,7 +5,7 @@ import { Picture } from '@/components/ui/Picture'
 import { Reveal } from '@/components/ui/Reveal'
 import { Container, headingToneClass, Section, SectionHeading } from '@/components/ui/Section'
 import { SmartLink } from '@/components/ui/SmartLink'
-import { reviews } from '@/content'
+import { reviews, site } from '@/content'
 import type { ReviewsT } from '@/content/schema'
 import { trackEngagement } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
@@ -242,7 +242,9 @@ export default function Reviews({ section }: SectionProps<'reviews'>) {
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <CtaButton cta={{ label: section.readAllLabel, href: '@reviews', variant: dark ? 'light' : 'primary' }} location={LOCATION} />
-            <CtaButton cta={{ label: section.writeLabel, href: '@writeReview', variant: 'secondary' }} location={LOCATION} withCircle={false} />
+            {site.links.writeReview && (
+              <CtaButton cta={{ label: section.writeLabel, href: '@writeReview', variant: 'secondary' }} location={LOCATION} withCircle={false} />
+            )}
           </div>
         </div>
       </Container>

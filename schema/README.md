@@ -109,7 +109,8 @@ Google reviews carousel (data from reviews.json, refreshed by npm run reviews:fe
 | `maxItems` | integer |  | (default: `5`) |
 | `minRating` | integer |  | Hide reviews below this star rating (default: `4`) |
 | `readAllLabel` | string |  | (default: `"Wszystkie opinie w Google"`) |
-| `writeLabel` | string |  | (default: `"Napisz opinię"`) |
+| `writeLabel` | string |  | Shown only when site.links.writeReview is set (default: `"Napisz opinię"`) |
+| `notice` | string |  | Required information on where reviews come from and whether they are verified (EU Omnibus directive) (default: `"Opinie pochodzą z Map Google. Pokazujemy wybrane opinie z oceną 4–5 gwiazdek. Nie weryfikujemy, czy ich autorzy kupili nasze produkty."`) |
 
 ### `visit`
 

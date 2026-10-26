@@ -147,9 +147,9 @@
           "description": "All Google reviews — target of @reviews"
         },
         "writeReview": {
+          "description": "Google \"write a review\" form (needs the Place ID; set by npm run reviews:fetch) — target of @writeReview",
           "type": "string",
-          "format": "uri",
-          "description": "Write a Google review — target of @writeReview"
+          "format": "uri"
         },
         "instagram": {
           "type": "string",
@@ -170,7 +170,6 @@
         "googleMaps",
         "directions",
         "reviews",
-        "writeReview",
         "instagram",
         "mapEmbed"
       ]
@@ -246,6 +245,62 @@
         ]
       },
       "description": "Regular opening hours"
+    },
+    "specialHours": {
+      "default": [],
+      "description": "Exceptions to the regular hours for specific dates (holidays, events), e.g. {\"date\":\"2026-11-01\",\"opens\":\"10:00\",\"closes\":\"19:00\",\"note\":\"Wszystkich Świętych\"}",
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              "closed": {
+                "type": "boolean",
+                "const": true
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "date",
+              "closed"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              "opens": {
+                "type": "string",
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "closes": {
+                "type": "string",
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "date",
+              "opens",
+              "closes"
+            ]
+          }
+        ]
+      }
     },
     "hoursNote": {
       "type": "string"
@@ -573,6 +628,11 @@
           "type": "string",
           "minLength": 1,
           "description": "Polish alt text describing the image (accessibility + SEO)"
+        },
+        "aiGenerated": {
+          "default": false,
+          "description": "true = AI-generated illustration, not a real photo of the product/place; it is shown with a visible \"Ilustracja\" label",
+          "type": "boolean"
         }
       },
       "required": [

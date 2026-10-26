@@ -49,6 +49,10 @@ export const Image = z
         'Must exist in src/generated/images.json (run `npm run images` after adding a file to assets/images).',
     ),
     alt: text.describe('Polish alt text describing the image (accessibility + SEO)'),
+    aiGenerated: z
+      .boolean()
+      .default(false)
+      .describe('true = AI-generated illustration, not a real photo of the product/place; it is shown with a visible "Ilustracja" label'),
   })
   .describe('Responsive image (WebP, 480/720/960/1600 px variants generated automatically)')
 
@@ -171,7 +175,10 @@ export const ReviewsSection = z
     maxItems: z.number().int().min(1).max(10).default(5),
     minRating: z.number().int().min(1).max(5).default(4).describe('Hide reviews below this star rating'),
     readAllLabel: text.default('Wszystkie opinie w Google'),
-    writeLabel: text.default('Napisz opinię'),
+    writeLabel: text.default('Napisz opinię').describe('Shown only when site.links.writeReview is set'),
+    notice: text
+      .default('Opinie pochodzą z Map Google. Pokazujemy wybrane opinie z oceną 4–5 gwiazdek. Nie weryfikujemy, czy ich autorzy kupili nasze produkty.')
+      .describe('Required information on where reviews come from and whether they are verified (EU Omnibus directive)'),
   })
   .describe('Google reviews carousel (data from reviews.json, refreshed by npm run reviews:fetch)')
 
@@ -406,7 +413,7 @@ export const Site = z.object({
     googleMaps: z.string().url().describe('Place on Google Maps'),
     directions: z.string().url().describe('Route link — target of @directions'),
     reviews: z.string().url().describe('All Google reviews — target of @reviews'),
-    writeReview: z.string().url().describe('Write a Google review — target of @writeReview'),
+    writeReview: z.string().url().optional().describe('Google "write a review" form (needs the Place ID; set by npm run reviews:fetch) — target of @writeReview'),
     instagram: z.string().url(),
     facebook: z.string().url().optional(),
     mapEmbed: z.string().url().describe('Google Maps embed URL (loaded on click)'),
@@ -420,6 +427,15 @@ export const Site = z.object({
     )
     .min(1)
     .describe('Regular opening hours'),
+  specialHours: z
+    .array(
+      z.union([
+        z.object({ date: z.iso.date(), closed: z.literal(true), note: z.string().optional() }),
+        z.object({ date: z.iso.date(), opens: TIME, closes: TIME, note: z.string().optional() }),
+      ]),
+    )
+    .default([])
+    .describe('Exceptions to the regular hours for specific dates (holidays, events), e.g. {"date":"2026-11-01","opens":"10:00","closes":"19:00","note":"Wszystkich Świętych"}'),
   hoursNote: z.string().optional(),
   servesCuisine: z.array(text).default([]),
   priceRange: z.string().optional().describe('e.g. "20–40 zł"'),
