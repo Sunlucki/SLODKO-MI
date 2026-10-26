@@ -1,0 +1,112 @@
+{
+  "$schema": "../../schema/site.schema.json",
+  "name": "Słodko Mi",
+  "legalName": "Słodko Mi Smakuje Ci?",
+  "tagline": "TEJ, czas na cynamonkę",
+  "description": "Słodko Mi to cukiernia na poznańskiej Wildzie specjalizująca się w codziennie świeżo wypiekanych cynamonkach. Każdego ranka przygotowujemy ciasto od podstaw, ręcznie zwijamy każdą cynamonkę i wypiekamy wszystko na świeżo tego samego dnia. Do cynamonek serwujemy kawę — na miejscu albo na wynos.",
+  "url": "https://sunlucki.github.io/SLODKO-MI",
+  "logo": { "wordmark": "SŁODKO MI", "sub": "Smakuje Ci?" },
+  "contact": {
+    "phone": "+48511228221",
+    "phoneDisplay": "511 228 221"
+  },
+  "address": {
+    "street": "ul. 28 Czerwca 1956 r. 177/13",
+    "postalCode": "61-525",
+    "city": "Poznań",
+    "district": "Wilda",
+    "country": "PL",
+    "entranceNote": "Wejście od ul. Hetmańskiej",
+    "geo": { "lat": 52.3850017, "lng": 16.9150474 }
+  },
+  "links": {
+    "order": "https://wolt.com/pl/pol/poznan/restaurant/slodko-mi-smakuje-ci",
+    "googleMaps": "https://maps.google.com/?cid=6862084484005861608",
+    "directions": "https://www.google.com/maps/dir/?api=1&destination=S%C5%82odko%20Mi%20Smakuje%20Ci%3F%2C%2028%20Czerwca%201956%20r.%20177%2C%2061-525%20Pozna%C5%84",
+    "reviews": "https://www.google.com/maps/place/S%C5%82odko+Mi+Smakuje+Ci%3F/@52.3850017,16.9150474,17z/data=!4m8!3m7!1s0x47045bf5e38539e3:0x5f3b057b37e398e8!8m2!3d52.3850017!4d16.9150474!9m1!1b1",
+    "writeReview": "https://www.google.com/maps/place/S%C5%82odko+Mi+Smakuje+Ci%3F/@52.3850017,16.9150474,17z/data=!4m8!3m7!1s0x47045bf5e38539e3:0x5f3b057b37e398e8!8m2!3d52.3850017!4d16.9150474!9m1!1b1",
+    "instagram": "https://www.instagram.com/slodkomi.poznan/",
+    "facebook": "https://www.facebook.com/61591586317583",
+    "mapEmbed": "https://www.google.com/maps?q=S%C5%82odko%20Mi%20Smakuje%20Ci%3F%2C%2028%20Czerwca%201956%20r.%20177%2C%20Pozna%C5%84&z=17&hl=pl&output=embed"
+  },
+  "hours": [
+    { "days": ["Mo"], "closed": true },
+    { "days": ["Tu", "We", "Th", "Fr", "Sa", "Su"], "opens": "10:00", "closes": "19:00" }
+  ],
+  "hoursNote": "W święta godziny mogą się różnić — aktualne godziny zawsze sprawdzisz w Google.",
+  "servesCuisine": ["Cynamonki", "Wypieki", "Kawa"],
+  "priceRange": "20–40 zł",
+  "nav": [
+    { "label": "Smaki", "href": "/#smaki" },
+    { "label": "O nas", "href": "/#o-nas" },
+    { "label": "Opinie", "href": "/#opinie" },
+    { "label": "Dojazd", "href": "/#dojazd" }
+  ],
+  "header": {
+    "cta": { "label": "Zamów na Wolt", "href": "@order", "variant": "primary" }
+  },
+  "footer": {
+    "columns": [
+      {
+        "title": "Smaki",
+        "links": [
+          { "label": "Klasyczna z lukrem", "href": "/produkt/klasyczna-z-lukrem" },
+          { "label": "Sernik z truskawką", "href": "/produkt/sernik-z-truskawka" },
+          { "label": "Szarlotka", "href": "/produkt/szarlotka" },
+          { "label": "Wszystkie smaki", "href": "/#smaki" }
+        ]
+      },
+      {
+        "title": "Odwiedź nas",
+        "links": [
+          { "label": "Wyznacz trasę", "href": "@directions" },
+          { "label": "Zadzwoń", "href": "@phone" },
+          { "label": "Zamów na Wolt", "href": "@order" },
+          { "label": "Opinie w Google", "href": "@reviews" }
+        ]
+      },
+      {
+        "title": "Obserwuj",
+        "links": [
+          { "label": "Instagram", "href": "@instagram" },
+          { "label": "Facebook", "href": "@facebook" }
+        ]
+      }
+    ],
+    "image": { "src": "photos/kawa-sernik", "alt": "Cynamonka sernik z truskawką i cappuccino na metalowej tacy" },
+    "note": "Cukiernia z cynamonkami · Poznań, Wilda"
+  },
+  "catalog": {
+    "showPrices": false,
+    "productCta": { "label": "Zamów na Wolt", "href": "@order", "variant": "primary" }
+  },
+  "theme": {
+    "colors": {
+      "cream": "#FFF4EA",
+      "ink": "#2B1714",
+      "brand": "#E8386F",
+      "brandDeep": "#B8174A",
+      "blush": "#F7CDD0",
+      "caramel": "#F6C453"
+    }
+  },
+  "seo": {
+    "titleTemplate": "%s | Słodko Mi",
+    "ogImage": "og/default",
+    "keywords": ["cynamonki Poznań", "cynamonki Wilda", "cukiernia Wilda", "cinnamon rolls Poznań", "słodkie Poznań", "Słodko Mi"]
+  },
+  "consent": {
+    "title": "Ciasteczka? Tylko te z cynamonem… i kilka cyfrowych",
+    "text": "Używamy plików cookie, żeby mierzyć ruch na stronie (Google Analytics) i lepiej docierać z reklamami (Meta Pixel). Niezbędne pliki działają zawsze, resztę włączasz Ty.",
+    "acceptAll": "Akceptuję wszystkie",
+    "rejectAll": "Tylko niezbędne",
+    "settings": "Ustawienia",
+    "save": "Zapisz wybór",
+    "analyticsLabel": "Analityczne",
+    "analyticsText": "Statystyki odwiedzin (Google Analytics 4).",
+    "marketingLabel": "Marketingowe",
+    "marketingText": "Pomiar skuteczności reklam na Instagramie i Facebooku (Meta Pixel).",
+    "policyLabel": "Polityka prywatności",
+    "policyHref": "/polityka-prywatnosci"
+  }
+}

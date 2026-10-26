@@ -1,0 +1,182 @@
+{
+  "og/default": {
+    "width": 1200,
+    "height": 630,
+    "widths": [
+      480,
+      960,
+      1200
+    ],
+    "alpha": false
+  },
+  "photos/biscoff-blacha": {
+    "width": 1500,
+    "height": 2000,
+    "widths": [
+      480,
+      960,
+      1500
+    ],
+    "alpha": false
+  },
+  "photos/blacha-zlota": {
+    "width": 1500,
+    "height": 2000,
+    "widths": [
+      480,
+      960,
+      1500
+    ],
+    "alpha": false
+  },
+  "photos/blachy": {
+    "width": 1600,
+    "height": 2000,
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "alpha": false
+  },
+  "photos/kawa-sernik": {
+    "width": 1125,
+    "height": 2000,
+    "widths": [
+      480,
+      960,
+      1125
+    ],
+    "alpha": false
+  },
+  "photos/krem": {
+    "width": 1600,
+    "height": 2000,
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "alpha": false
+  },
+  "photos/lopatka": {
+    "width": 1600,
+    "height": 2000,
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "alpha": false
+  },
+  "photos/przekroj": {
+    "width": 1500,
+    "height": 2000,
+    "widths": [
+      480,
+      960,
+      1500
+    ],
+    "alpha": false
+  },
+  "photos/pudelka": {
+    "width": 1599,
+    "height": 2000,
+    "widths": [
+      480,
+      960,
+      1599
+    ],
+    "alpha": false
+  },
+  "photos/sernik-blacha": {
+    "width": 1500,
+    "height": 2000,
+    "widths": [
+      480,
+      960,
+      1500
+    ],
+    "alpha": false
+  },
+  "photos/szczypce": {
+    "width": 1600,
+    "height": 2000,
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "alpha": false
+  },
+  "photos/zespol": {
+    "width": 1600,
+    "height": 2000,
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "alpha": false
+  },
+  "products/biscoff": {
+    "width": 1600,
+    "height": 1600,
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "alpha": false
+  },
+  "products/klasyczna-z-lukrem": {
+    "width": 1600,
+    "height": 1600,
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "alpha": false
+  },
+  "products/klasyczna-z-serkiem": {
+    "width": 1600,
+    "height": 1600,
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "alpha": false
+  },
+  "products/oreo": {
+    "width": 1600,
+    "height": 1600,
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "alpha": false
+  },
+  "products/sernik-z-truskawka": {
+    "width": 1600,
+    "height": 1600,
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "alpha": false
+  },
+  "products/szarlotka": {
+    "width": 1600,
+    "height": 1600,
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "alpha": false
+  }
+}

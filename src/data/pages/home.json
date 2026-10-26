@@ -1,0 +1,143 @@
+{
+  "$schema": "../../../schema/page.schema.json",
+  "path": "/",
+  "seo": {
+    "title": "Świeże cynamonki na Wildzie, Poznań",
+    "description": "Słodko Mi — cukiernia z cynamonkami na poznańskiej Wildzie. 7 smaków, codziennie wypiekane na świeżo. 28 Czerwca 1956 r. 177/13, wejście od Hetmańskiej."
+  },
+  "sections": [
+    {
+      "id": "start",
+      "type": "hero",
+      "headline": [
+        { "text": "TEJ, POZNAŃ…" },
+        { "text": "CZAS NA" },
+        { "text": "CYNAMONKĘ", "accent": true }
+      ],
+      "description": "Puszyste, wilgotne, codziennie wypiekane na świeżo. Na Wildzie, wejście od Hetmańskiej.",
+      "image": { "src": "products/sernik-z-truskawka", "alt": "Cynamonka sernik z truskawką i kruszonką" },
+      "note": { "title": "Sernik z truskawką", "subtitle": "nasz bestseller" },
+      "aside": "Każdego ranka robimy ciasto od podstaw, ręcznie zwijamy każdą cynamonkę i pieczemy wszystko tego samego dnia.",
+      "primaryCta": { "label": "Zamów na Wolt", "href": "@order", "variant": "light" },
+      "secondaryCta": { "label": "Wyznacz trasę", "href": "@directions", "variant": "light" },
+      "spotlight": { "label": "Bestsellery", "productSlugs": ["sernik-z-truskawka", "szarlotka", "oreo"] },
+      "ticker": ["Puszyste", "Wilgotne", "Codziennie wypiekane na świeżo", "7 smaków", "Wilda · wejście od Hetmańskiej", "TEJ, czas na cynamonkę"]
+    },
+    {
+      "id": "o-nas",
+      "type": "about",
+      "tone": "cream",
+      "heading": "Puszyste. Wilgotne. Prosto z pieca.",
+      "sticker": "Robione na miejscu",
+      "body": [
+        "Słodko Mi to mała cukiernia na poznańskiej Wildzie, która robi jedną rzecz i robi ją porządnie: cynamonki. Każdego ranka przygotowujemy ciasto od podstaw, ręcznie zwijamy każdą cynamonkę i pieczemy wszystko tego samego dnia."
+      ],
+      "images": [
+        { "src": "photos/lopatka", "alt": "Złocista cynamonka podawana na łopatce" },
+        { "src": "photos/szczypce", "alt": "Cynamonka Oreo nakładana szczypcami do pudełka" }
+      ],
+      "cta": { "label": "Poznaj smaki", "href": "/#smaki", "variant": "primary" }
+    },
+    {
+      "id": "w-srodku",
+      "type": "split",
+      "left": {
+        "title": ["ZAJRZYJ", "DO ŚRODKA."],
+        "image": { "src": "photos/blacha-zlota", "alt": "Blacha złocistych cynamonek prosto z pieca" }
+      },
+      "right": {
+        "tone": "caramel",
+        "heading": "TO, CO NAJLEPSZE",
+        "image": { "src": "products/szarlotka", "alt": "Cynamonka szarlotka z kruszonką i karmelem" },
+        "caption": "Pełne nadzienia i robione tego samego dnia.",
+        "cta": { "label": "Zobacz smaki", "href": "/#smaki", "variant": "primary" }
+      }
+    },
+    {
+      "id": "smaki",
+      "type": "productGrid",
+      "tone": "cream",
+      "heading": "Poznaj nasze smaki.",
+      "sticker": "7 wariantów",
+      "source": { "mode": "all" }
+    },
+    {
+      "id": "opinie",
+      "type": "reviews",
+      "tone": "cream",
+      "heading": "Nie wierz nam na słowo.",
+      "sticker": "Opinie z Google",
+      "backgroundImage": { "src": "photos/zespol", "alt": "Zespół Słodko Mi przed witryną z cynamonkami i różowym neonem" },
+      "maxItems": 5,
+      "minRating": 4,
+      "readAllLabel": "Wszystkie opinie w Google",
+      "writeLabel": "Napisz opinię"
+    },
+    {
+      "id": "instagram",
+      "type": "gallery",
+      "tone": "cream",
+      "heading": "Prosto z naszej blachy.",
+      "sticker": "@slodkomi.poznan",
+      "images": [
+        { "src": "photos/krem", "alt": "Cynamonki z kleksami kremu na blasze" },
+        { "src": "photos/sernik-blacha", "alt": "Cynamonki sernikowe z truskawką i kruszonką na blasze" },
+        { "src": "photos/biscoff-blacha", "alt": "Cynamonki Biscoff polane karmelem" },
+        { "src": "photos/przekroj", "alt": "Przekrój cynamonki z nadzieniem owocowym i kremem" },
+        { "src": "photos/blachy", "alt": "Kilka blach z różnymi smakami cynamonek" }
+      ],
+      "cta": { "label": "Obserwuj na Instagramie", "href": "@instagram", "variant": "primary" }
+    },
+    {
+      "id": "dojazd",
+      "type": "visit",
+      "tone": "blush",
+      "heading": "Wpadnij na Wildę.",
+      "sticker": "Wejście od Hetmańskiej",
+      "intro": "Jesteśmy przy 28 Czerwca 1956 r. 177/13. Wejście jest od strony ul. Hetmańskiej — przystanek tuż obok, więc najwygodniej dojechać komunikacją.",
+      "image": { "src": "photos/pudelka", "alt": "Cynamonki zapakowane na wynos w pudełkach" },
+      "showMap": true
+    },
+    {
+      "id": "faq",
+      "type": "faq",
+      "tone": "cream",
+      "heading": "Pytania i odpowiedzi.",
+      "items": [
+        {
+          "question": "Gdzie dokładnie jesteście?",
+          "answer": "Poznań, Wilda, ul. 28 Czerwca 1956 r. 177/13. Wejście jest od strony ul. Hetmańskiej — od 28 Czerwca nie wejdziesz."
+        },
+        {
+          "question": "Czy macie dostawę?",
+          "answer": "Tak — zamówisz nas przez Wolt. Możesz też zjeść na miejscu albo wziąć cynamonki na wynos."
+        },
+        {
+          "question": "Ile macie smaków?",
+          "answer": "Siedem: klasyczna z lukrem, klasyczna z serkiem, Biscoff, Oreo, szarlotka z kruszonką i karmelem, sernik z truskawką i kruszonką oraz malina z kokosem."
+        },
+        {
+          "question": "Czy cynamonki są świeże?",
+          "answer": "Codziennie rano przygotowujemy ciasto od podstaw, ręcznie zwijamy każdą cynamonkę i pieczemy wszystko tego samego dnia."
+        },
+        {
+          "question": "Czy jest kawa?",
+          "answer": "Tak, do cynamonek serwujemy kawę — na miejscu i na wynos."
+        },
+        {
+          "question": "Czy mogę zamówić większą ilość?",
+          "answer": "Jasne. Napisz do nas na Instagramie albo zadzwoń — napisz, ile sztuk i na którą godzinę, a przygotujemy."
+        }
+      ]
+    },
+    {
+      "id": "zamow",
+      "type": "cta",
+      "tone": "brand",
+      "heading": "Cynamonka już czeka.",
+      "text": "Zamów z dostawą przez Wolt albo wpadnij do nas na Wildę.",
+      "primaryCta": { "label": "Zamów na Wolt", "href": "@order", "variant": "light" },
+      "secondaryCta": { "label": "Zadzwoń", "href": "@phone", "variant": "secondary" }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "shadcn": {
+      "command": "npx",
+      "args": ["shadcn@latest", "mcp"]
+    },
+    "slodkomi-content": {
+      "command": "npx",
+      "args": ["tsx", "scripts/content-mcp.ts"]
+    }
+  }
+}

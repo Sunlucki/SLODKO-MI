@@ -1,0 +1,48 @@
+{
+  "name": "slodko-mi",
+  "private": true,
+  "version": "1.0.0",
+  "description": "SŁODKO MI — cynamonki na poznańskiej Wildzie. Statyczny landing + katalog, treść w JSON edytowalna przez dowolny LLM.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run content:check && vite-react-ssg build && node scripts/postbuild.mjs",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "content:check": "tsx scripts/validate-content.ts",
+    "content:schema": "tsx scripts/export-schema.ts",
+    "images": "node scripts/process-images.mjs",
+    "reviews:fetch": "tsx scripts/fetch-google-reviews.ts",
+    "ai": "tsx scripts/ai-edit.ts",
+    "mcp": "tsx scripts/content-mcp.ts"
+  },
+  "dependencies": {
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource/anton": "^5.3.0",
+    "clsx": "^2.1.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^6.30.6",
+    "tailwind-merge": "^3.7.0",
+    "vite-react-ssg": "^0.9.2"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "beasties": "^0.1.0",
+    "fast-json-patch": "^3.1.1",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.5",
+    "zod": "^4.6.7"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "../../../schema/page.schema.json",
+  "path": "/polityka-prywatnosci",
+  "seo": {
+    "title": "Polityka prywatności i cookies",
+    "description": "Jak Słodko Mi przetwarza dane osobowe i korzysta z plików cookie (Google Analytics, Meta Pixel)."
+  },
+  "sections": [
+    {
+      "id": "polityka",
+      "type": "text",
+      "tone": "cream",
+      "heading": "Polityka prywatności i cookies",
+      "blocks": [
+        { "kind": "subheading", "text": "Administrator danych" },
+        {
+          "kind": "paragraph",
+          "text": "Administratorem danych osobowych jest Słodko Mi Smakuje Ci?, ul. 28 Czerwca 1956 r. 177/13, 61-525 Poznań. W sprawach prywatności skontaktujesz się z nami telefonicznie (511 228 221) albo przez Instagram @slodkomi.poznan."
+        },
+        { "kind": "subheading", "text": "Jakie dane zbieramy" },
+        {
+          "kind": "paragraph",
+          "text": "Strona nie ma formularzy ani kont użytkowników. Dane zbieramy wyłącznie przez pliki cookie i podobne technologie — i tylko te, na które się zgodzisz."
+        },
+        {
+          "kind": "list",
+          "items": [
+            "Niezbędne: zapamiętanie Twojego wyboru w banerze cookies (pamięć przeglądarki). Działają zawsze.",
+            "Analityczne (za zgodą): Google Analytics 4 — anonimowe statystyki odwiedzin, np. które strony oglądasz i skąd przychodzisz. Dostawca: Google Ireland Ltd.",
+            "Marketingowe (za zgodą): Meta Pixel — pomiar skuteczności naszych reklam na Instagramie i Facebooku. Dostawca: Meta Platforms Ireland Ltd.",
+            "Mapa Google ładuje się dopiero po kliknięciu „Pokaż mapę”. Wtedy Google może zapisać własne pliki cookie."
+          ]
+        },
+        { "kind": "subheading", "text": "Podstawa prawna i czas przechowywania" },
+        {
+          "kind": "paragraph",
+          "text": "Pliki analityczne i marketingowe stosujemy wyłącznie na podstawie Twojej zgody (art. 6 ust. 1 lit. a RODO). Zgodę możesz w każdej chwili wycofać, klikając „Ustawienia cookies” w stopce strony. Dane analityczne przechowujemy nie dłużej niż 14 miesięcy."
+        },
+        { "kind": "subheading", "text": "Twoje prawa" },
+        {
+          "kind": "paragraph",
+          "text": "Masz prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przenoszenia oraz sprzeciwu, a także prawo wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych."
+        },
+        { "kind": "subheading", "text": "Linki zewnętrzne" },
+        {
+          "kind": "paragraph",
+          "text": "Przyciski „Zamów na Wolt”, Instagram, Facebook i Google Maps prowadzą do serwisów zewnętrznych, które mają własne zasady prywatności."
+        }
+      ]
+    }
+  ]
+}

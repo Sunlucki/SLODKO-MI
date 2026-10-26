@@ -1,0 +1,39 @@
+{
+  "$schema": "../../schema/reviews.schema.json",
+  "source": "google",
+  "rating": 4.9,
+  "count": 220,
+  "fetchedAt": "2026-10-26",
+  "items": [
+    {
+      "author": "Mariusz Pufal",
+      "rating": 5,
+      "text": "Według opinii moich dzieci 9 i 11 lat, to najlepsze cynamonki jakie kiedykolwiek jedli, osobiście również podzielam ich zdanie. :-) Zdecydowanie polecam, można zjeść na miejscu, można też zabrać ze sobą do domu. Genialne!!!",
+      "relativeTime": "tydzień temu"
+    },
+    {
+      "author": "Marta Mrówka",
+      "rating": 5,
+      "text": "Jestem bardzo miło zaskoczona tym miejscem i tymi cynamonkami. Będąc w Stanach Zjednoczonych zajadaliśmy się nimi codziennie i muszę przyznać, że te pobiły dotąd znane mi smaki. Dla mnie są numerem 1. Puszyste, miękkie i z obfitym nadzieniem. Uważam, że jest to najlepsze miejsce w Poznaniu z cynamonkami. Serdecznie polecam i napewno tu jeszcze wrócę. 😁🫠",
+      "relativeTime": "2 miesiące temu"
+    },
+    {
+      "author": "Zuzanna Kurdek",
+      "rating": 5,
+      "text": "Pyszne, puszyste cynamonki 🥰 duuuża cynamonka i spora ilość kremu, spokojnie można wziąć jedną na dwie osoby, świetna lokalizacja, w końcu coś w tej części Wildy, no i przede wszystkim przemiła obsługa, bardzo polecam! 🥰",
+      "relativeTime": "3 miesiące temu"
+    },
+    {
+      "author": "Hanna Linkiewicz",
+      "rating": 5,
+      "text": "Cynamonki są pyszne idealnie wypieczone. Polecam szarlotkę i sernik z truskawką. Bardzo miła atmosfera. Zdecydowanie warto odwiedzić my wrócimy jak tylko będziemy w Poznaniu.",
+      "relativeTime": "3 miesiące temu"
+    },
+    {
+      "author": "Harevok",
+      "rating": 5,
+      "text": "Właśnie spróbowałem ich cynamonki o smaku kokosowym i jestem zachwycony! To zdecydowanie jedna z najlepszych, jakie zdarzyło mi się jeść. (…) Wypiek i smak: Cynamonka była nie tylko smaczna, ale też pachniała świeżością. Ciasto było puszyste i wilgotne. (…) Właściciel: Pan za ladą jest przemiły, wesoły, gadatliwy i potrafi świetnie doradzić. Widać, że pieczenie to jego pasja, a wypieki są robione na miejscu, co dzień nowe. (…)",
+      "relativeTime": "2 miesiące temu"
+    }
+  ]
+}
