@@ -1,0 +1,575 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SŁODKO MI — global settings",
+  "description": "Contract for src/data/site.json. Generated from src/content/schema.ts by `npm run content:schema` — do not edit by hand.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Brand name used in titles and wordmark"
+    },
+    "legalName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Name as on Google Maps"
+    },
+    "tagline": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Business description (used in structured data and defaults)"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Canonical production URL without trailing slash (env SITE_URL overrides it at build time)"
+    },
+    "logo": {
+      "type": "object",
+      "properties": {
+        "wordmark": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sub": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "wordmark"
+      ]
+    },
+    "contact": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "pattern": "^\\+\\d{9,15}$"
+        },
+        "phoneDisplay": {
+          "type": "string",
+          "minLength": 1
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+        }
+      },
+      "required": [
+        "phone",
+        "phoneDisplay"
+      ]
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "street": {
+          "type": "string",
+          "minLength": 1
+        },
+        "postalCode": {
+          "type": "string",
+          "pattern": "^\\d{2}-\\d{3}$"
+        },
+        "city": {
+          "type": "string",
+          "minLength": 1
+        },
+        "district": {
+          "type": "string",
+          "minLength": 1
+        },
+        "country": {
+          "default": "PL",
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 2
+        },
+        "entranceNote": {
+          "type": "string",
+          "minLength": 1,
+          "description": "How to find the entrance"
+        },
+        "geo": {
+          "type": "object",
+          "properties": {
+            "lat": {
+              "type": "number"
+            },
+            "lng": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "lat",
+            "lng"
+          ]
+        }
+      },
+      "required": [
+        "street",
+        "postalCode",
+        "city",
+        "district",
+        "entranceNote",
+        "geo"
+      ]
+    },
+    "links": {
+      "type": "object",
+      "properties": {
+        "order": {
+          "type": "string",
+          "format": "uri",
+          "description": "Online ordering (Wolt) — target of @order"
+        },
+        "googleMaps": {
+          "type": "string",
+          "format": "uri",
+          "description": "Place on Google Maps"
+        },
+        "directions": {
+          "type": "string",
+          "format": "uri",
+          "description": "Route link — target of @directions"
+        },
+        "reviews": {
+          "type": "string",
+          "format": "uri",
+          "description": "All Google reviews — target of @reviews"
+        },
+        "writeReview": {
+          "type": "string",
+          "format": "uri",
+          "description": "Write a Google review — target of @writeReview"
+        },
+        "instagram": {
+          "type": "string",
+          "format": "uri"
+        },
+        "facebook": {
+          "type": "string",
+          "format": "uri"
+        },
+        "mapEmbed": {
+          "type": "string",
+          "format": "uri",
+          "description": "Google Maps embed URL (loaded on click)"
+        }
+      },
+      "required": [
+        "order",
+        "googleMaps",
+        "directions",
+        "reviews",
+        "writeReview",
+        "instagram",
+        "mapEmbed"
+      ]
+    },
+    "hours": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "days": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "Mo",
+                    "Tu",
+                    "We",
+                    "Th",
+                    "Fr",
+                    "Sa",
+                    "Su"
+                  ]
+                }
+              },
+              "opens": {
+                "type": "string",
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "closes": {
+                "type": "string",
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+              }
+            },
+            "required": [
+              "days",
+              "opens",
+              "closes"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "days": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "Mo",
+                    "Tu",
+                    "We",
+                    "Th",
+                    "Fr",
+                    "Sa",
+                    "Su"
+                  ]
+                }
+              },
+              "closed": {
+                "type": "boolean",
+                "const": true
+              }
+            },
+            "required": [
+              "days",
+              "closed"
+            ]
+          }
+        ]
+      },
+      "description": "Regular opening hours"
+    },
+    "hoursNote": {
+      "type": "string"
+    },
+    "servesCuisine": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "priceRange": {
+      "description": "e.g. \"20–40 zł\"",
+      "type": "string"
+    },
+    "nav": {
+      "maxItems": 6,
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NavLink"
+      }
+    },
+    "header": {
+      "type": "object",
+      "properties": {
+        "cta": {
+          "$ref": "#/$defs/Cta"
+        }
+      },
+      "required": [
+        "cta"
+      ]
+    },
+    "footer": {
+      "type": "object",
+      "properties": {
+        "columns": {
+          "maxItems": 4,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "links": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/NavLink"
+                }
+              }
+            },
+            "required": [
+              "title",
+              "links"
+            ]
+          }
+        },
+        "image": {
+          "$ref": "#/$defs/Image"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "columns",
+        "image"
+      ]
+    },
+    "catalog": {
+      "type": "object",
+      "properties": {
+        "showPrices": {
+          "type": "boolean",
+          "description": "false hides prices everywhere (cards, product pages, structured data)"
+        },
+        "productCta": {
+          "description": "Main button on product pages",
+          "$ref": "#/$defs/Cta"
+        }
+      },
+      "required": [
+        "showPrices",
+        "productCta"
+      ]
+    },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "colors": {
+          "type": "object",
+          "properties": {
+            "cream": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "description": "Page background"
+            },
+            "ink": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "description": "Main text (chocolate)"
+            },
+            "brand": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "description": "Signature raspberry pink (display text, accents)"
+            },
+            "brandDeep": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "description": "Darker brand for frames/buttons — must keep ≥4.5:1 contrast with cream"
+            },
+            "blush": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "description": "Soft pink panels"
+            },
+            "caramel": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "description": "Warm yellow accent / stickers"
+            }
+          },
+          "required": [
+            "cream",
+            "ink",
+            "brand",
+            "brandDeep",
+            "blush",
+            "caramel"
+          ]
+        }
+      },
+      "required": [
+        "colors"
+      ],
+      "description": "Design tokens injected as CSS variables"
+    },
+    "seo": {
+      "type": "object",
+      "properties": {
+        "titleTemplate": {
+          "type": "string",
+          "format": "includes",
+          "pattern": "%s",
+          "description": "\"%s\" is replaced with the page title"
+        },
+        "ogImage": {
+          "type": "string",
+          "description": "Default social image key, e.g. \"og/default\""
+        },
+        "keywords": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "titleTemplate",
+        "ogImage"
+      ]
+    },
+    "consent": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "acceptAll": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rejectAll": {
+          "type": "string",
+          "minLength": 1
+        },
+        "settings": {
+          "type": "string",
+          "minLength": 1
+        },
+        "save": {
+          "type": "string",
+          "minLength": 1
+        },
+        "analyticsLabel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "analyticsText": {
+          "type": "string",
+          "minLength": 1
+        },
+        "marketingLabel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "marketingText": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policyLabel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policyHref": {
+          "$ref": "#/$defs/Href"
+        }
+      },
+      "required": [
+        "title",
+        "text",
+        "acceptAll",
+        "rejectAll",
+        "settings",
+        "save",
+        "analyticsLabel",
+        "analyticsText",
+        "marketingLabel",
+        "marketingText",
+        "policyLabel",
+        "policyHref"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "legalName",
+    "tagline",
+    "description",
+    "url",
+    "logo",
+    "contact",
+    "address",
+    "links",
+    "hours",
+    "nav",
+    "header",
+    "footer",
+    "catalog",
+    "theme",
+    "seo",
+    "consent"
+  ],
+  "$defs": {
+    "NavLink": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "href": {
+          "$ref": "#/$defs/Href"
+        }
+      },
+      "required": [
+        "label",
+        "href"
+      ]
+    },
+    "Href": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Link target. Internal path (\"/produkt/oreo\", \"/#smaki\"), absolute URL, or a token resolved from site.json: @order (Wolt), @phone, @directions (Google Maps route), @instagram, @facebook, @reviews (Google reviews), @writeReview. Prefer tokens — they are tracked automatically (Meta Pixel + GA4)."
+    },
+    "Cta": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Button text (Polish, short, uppercase is styled automatically)"
+        },
+        "href": {
+          "$ref": "#/$defs/Href"
+        },
+        "variant": {
+          "default": "primary",
+          "description": "primary = filled brand, secondary = outline, light = cream fill (for dark backgrounds)",
+          "type": "string",
+          "enum": [
+            "primary",
+            "secondary",
+            "light"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "href"
+      ],
+      "description": "Call-to-action button"
+    },
+    "Image": {
+      "type": "object",
+      "properties": {
+        "src": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Image key = path inside public/images WITHOUT size suffix and extension, e.g. \"products/oreo\" or \"photos/zespol\". Must exist in src/generated/images.json (run `npm run images` after adding a file to assets/images)."
+        },
+        "alt": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Polish alt text describing the image (accessibility + SEO)"
+        }
+      },
+      "required": [
+        "src",
+        "alt"
+      ],
+      "description": "Responsive image (WebP, 600/1200 px variants generated automatically)"
+    }
+  }
+}

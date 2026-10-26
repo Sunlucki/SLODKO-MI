@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SŁODKO MI — product catalogue",
+  "description": "Contract for src/data/products.json. Generated from src/content/schema.ts by `npm run content:schema` — do not edit by hand.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "categories": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Category"
+      }
+    },
+    "products": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Product"
+      }
+    }
+  },
+  "required": [
+    "categories",
+    "products"
+  ],
+  "$defs": {
+    "Category": {
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "slug",
+        "name"
+      ]
+    },
+    "Product": {
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "URL: /produkt/<slug>. Changing it changes the URL."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Category slug from products.json → categories"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Price in PLN; null = not published"
+        },
+        "currency": {
+          "default": "PLN",
+          "type": "string",
+          "const": "PLN"
+        },
+        "unit": {
+          "default": "szt",
+          "type": "string",
+          "enum": [
+            "szt",
+            "kg",
+            "box"
+          ]
+        },
+        "shortDescription": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 140,
+          "description": "One line for product cards"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Full description for the product page"
+        },
+        "ingredients": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "allergens": {
+          "default": [],
+          "description": "EU allergens in Polish (14 regulated allergens)",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "gluten",
+              "skorupiaki",
+              "jaja",
+              "ryby",
+              "orzeszki ziemne",
+              "soja",
+              "mleko",
+              "orzechy",
+              "seler",
+              "gorczyca",
+              "sezam",
+              "dwutlenek siarki",
+              "łubin",
+              "mięczaki"
+            ]
+          }
+        },
+        "weight": {
+          "description": "e.g. \"ok. 250 g\"",
+          "type": "string"
+        },
+        "images": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Image"
+          },
+          "description": "First image = card + main photo (cut-out preferred)"
+        },
+        "available": {
+          "default": true,
+          "type": "boolean"
+        },
+        "featured": {
+          "default": false,
+          "description": "Shown where a section uses source.mode = \"featured\"",
+          "type": "boolean"
+        },
+        "badge": {
+          "description": "Small label on the card, e.g. \"Bestseller\", \"Nowość\"",
+          "type": "string",
+          "maxLength": 20
+        }
+      },
+      "required": [
+        "slug",
+        "name",
+        "category",
+        "price",
+        "shortDescription",
+        "description",
+        "images"
+      ]
+    },
+    "Image": {
+      "type": "object",
+      "properties": {
+        "src": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Image key = path inside public/images WITHOUT size suffix and extension, e.g. \"products/oreo\" or \"photos/zespol\". Must exist in src/generated/images.json (run `npm run images` after adding a file to assets/images)."
+        },
+        "alt": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Polish alt text describing the image (accessibility + SEO)"
+        }
+      },
+      "required": [
+        "src",
+        "alt"
+      ],
+      "description": "Responsive image (WebP, 600/1200 px variants generated automatically)"
+    }
+  }
+}

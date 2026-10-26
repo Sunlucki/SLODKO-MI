@@ -1,4 +1,79 @@
 {
+  "cutouts/biscoff": {
+    "width": 912,
+    "height": 912,
+    "widths": [
+      480,
+      912
+    ],
+    "alpha": true
+  },
+  "cutouts/klasyczna-z-lukrem": {
+    "width": 930,
+    "height": 930,
+    "widths": [
+      480,
+      930
+    ],
+    "alpha": true
+  },
+  "cutouts/klasyczna-z-serkiem": {
+    "width": 886,
+    "height": 886,
+    "widths": [
+      480,
+      886
+    ],
+    "alpha": true
+  },
+  "cutouts/malina-z-kokosem": {
+    "width": 1281,
+    "height": 1281,
+    "widths": [
+      480,
+      960,
+      1281
+    ],
+    "alpha": true
+  },
+  "cutouts/oreo": {
+    "width": 981,
+    "height": 981,
+    "widths": [
+      480,
+      960,
+      981
+    ],
+    "alpha": true
+  },
+  "cutouts/sernik-z-truskawka": {
+    "width": 935,
+    "height": 935,
+    "widths": [
+      480,
+      935
+    ],
+    "alpha": true
+  },
+  "cutouts/szarlotka": {
+    "width": 895,
+    "height": 895,
+    "widths": [
+      480,
+      895
+    ],
+    "alpha": true
+  },
+  "hero/cynamonka": {
+    "width": 1444,
+    "height": 2109,
+    "widths": [
+      480,
+      960,
+      1444
+    ],
+    "alpha": true
+  },
   "og/default": {
     "width": 1200,
     "height": 630,
@@ -40,6 +115,16 @@
     "alpha": false
   },
   "photos/kawa-sernik": {
+    "width": 1600,
+    "height": 2000,
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "alpha": false
+  },
+  "photos/krem": {
     "width": 1125,
     "height": 2000,
     "widths": [
@@ -49,23 +134,13 @@
     ],
     "alpha": false
   },
-  "photos/krem": {
-    "width": 1600,
-    "height": 2000,
-    "widths": [
-      480,
-      960,
-      1600
-    ],
-    "alpha": false
-  },
   "photos/lopatka": {
-    "width": 1600,
+    "width": 1125,
     "height": 2000,
     "widths": [
       480,
       960,
-      1600
+      1125
     ],
     "alpha": false
   },
@@ -80,12 +155,12 @@
     "alpha": false
   },
   "photos/pudelka": {
-    "width": 1599,
+    "width": 1600,
     "height": 2000,
     "widths": [
       480,
       960,
-      1599
+      1600
     ],
     "alpha": false
   },
@@ -100,12 +175,12 @@
     "alpha": false
   },
   "photos/szczypce": {
-    "width": 1600,
+    "width": 1599,
     "height": 2000,
     "widths": [
       480,
       960,
-      1600
+      1599
     ],
     "alpha": false
   },
@@ -140,6 +215,16 @@
     "alpha": false
   },
   "products/klasyczna-z-serkiem": {
+    "width": 1600,
+    "height": 1600,
+    "widths": [
+      480,
+      960,
+      1600
+    ],
+    "alpha": false
+  },
+  "products/malina-z-kokosem": {
     "width": 1600,
     "height": 1600,
     "widths": [

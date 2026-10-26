@@ -3,9 +3,14 @@
  * destination (GA4, Meta Pixel, GTM dataLayer, TikTok Pixel), respecting consent.
  *
  * Components must only call the functions below — never gtag/fbq directly.
- * Implementation details live in src/lib/tracking/*.
+ * Implementation details live in src/lib/tracking/*; the event mapping is documented in docs/TRACKING.md.
  */
+import { catalog, site } from '@/content'
 import type { ProductT } from '@/content/schema'
+import { dispatch, dispatchPageView } from './tracking/events'
+
+export { CONSENT_OPEN_EVENT, getConsent, openConsentSettings, type Consent } from './tracking/consent'
+export { initTracking, trackingConfigured, updateConsent } from './tracking/events'
 
 export type TrackAction =
   | { name: 'click_order'; provider: 'wolt' }
@@ -17,18 +22,103 @@ export type TrackAction =
 /** Where on the page the interaction happened, e.g. "header", "hero", "footer", "product:oreo". */
 export type TrackLocation = string
 
-export function trackAction(_action: TrackAction, _location: TrackLocation, _product?: ProductT): void {}
+const categoryName = (p: ProductT) => catalog.categories.find((c) => c.slug === p.category)?.name ?? p.category
 
-export function trackPageView(_path: string, _title: string): void {}
+/** Prices are shared only where the site publishes them (site.catalog.showPrices). */
+const priceOf = (p: ProductT) => (site.catalog.showPrices && p.price != null ? p.price : undefined)
+
+const gaItem = (p: ProductT, index?: number) => ({
+  item_id: p.slug,
+  item_name: p.name,
+  item_category: categoryName(p),
+  ...(priceOf(p) != null && { price: priceOf(p) }),
+  ...(index != null && { index }),
+})
+
+const tiktokContent = (p: ProductT) => ({
+  content_id: p.slug,
+  content_type: 'product',
+  content_name: p.name,
+  ...(priceOf(p) != null && { price: priceOf(p) }),
+})
+
+/** Meta/TikTok value fields: only when the product has a published price. */
+const valueOf = (p?: ProductT) => (p && priceOf(p) != null ? { value: priceOf(p), currency: p.currency } : {})
+
+export function trackAction(action: TrackAction, location: TrackLocation, product?: ProductT): void {
+  switch (action.name) {
+    case 'click_order':
+      return dispatch({
+        name: 'click_order',
+        params: { provider: action.provider, location, item_id: product?.slug },
+        meta: {
+          name: 'InitiateCheckout',
+          params: product && { content_ids: [product.slug], content_name: product.name, content_type: 'product', ...valueOf(product) },
+        },
+        tiktok: { name: 'InitiateCheckout', params: product && { contents: [tiktokContent(product)], ...valueOf(product) } },
+      })
+    case 'click_phone':
+      return dispatch({ name: 'click_phone', params: { location }, meta: { name: 'Contact' }, tiktok: { name: 'Contact' } })
+    case 'click_directions':
+      return dispatch({ name: 'click_directions', params: { location }, meta: { name: 'FindLocation' } })
+    case 'click_social':
+      return dispatch({
+        name: 'click_social',
+        params: { network: action.network, location },
+        meta: { name: 'SocialClick', custom: true, params: { network: action.network, location } },
+      })
+    case 'click_reviews':
+      return dispatch({
+        name: 'click_reviews',
+        params: { kind: action.kind, location },
+        meta: { name: 'ReviewsClick', custom: true, params: { kind: action.kind, location } },
+      })
+  }
+}
+
+/** Route change (called by Layout). GA4 page_view + Meta PageView + TikTok page. */
+export function trackPageView(path: string, title: string): void {
+  dispatchPageView(path, title)
+}
 
 /** Product page viewed (GA4 view_item, Meta ViewContent). */
-export function trackViewItem(_product: ProductT): void {}
+export function trackViewItem(product: ProductT): void {
+  dispatch({
+    name: 'view_item',
+    params: { currency: product.currency, value: priceOf(product), items: [gaItem(product)] },
+    meta: {
+      name: 'ViewContent',
+      params: {
+        content_ids: [product.slug],
+        content_name: product.name,
+        content_type: 'product',
+        content_category: categoryName(product),
+        ...valueOf(product),
+      },
+    },
+    tiktok: { name: 'ViewContent', params: { contents: [tiktokContent(product)], ...valueOf(product) } },
+  })
+}
 
 /** Product list scrolled into view (GA4 view_item_list). */
-export function trackViewItemList(_products: ProductT[], _listName: string): void {}
+export function trackViewItemList(products: ProductT[], listName: string): void {
+  dispatch({
+    name: 'view_item_list',
+    params: { item_list_name: listName, items: products.map((p, i) => gaItem(p, i)) },
+    meta: { name: 'ViewItemList', custom: true, params: { content_ids: products.map((p) => p.slug), content_type: 'product', list_name: listName } },
+  })
+}
 
 /** Product card clicked (GA4 select_item). */
-export function trackSelectItem(_product: ProductT, _listName: string, _index: number): void {}
+export function trackSelectItem(product: ProductT, listName: string, index: number): void {
+  dispatch({
+    name: 'select_item',
+    params: { item_list_name: listName, items: [gaItem(product, index)] },
+    meta: { name: 'SelectItem', custom: true, params: { content_ids: [product.slug], content_name: product.name, list_name: listName, index } },
+  })
+}
 
 /** Map embed opened / FAQ item opened / review carousel used, etc. */
-export function trackEngagement(_name: 'open_map' | 'open_faq' | 'review_navigate' | 'open_menu', _detail?: string): void {}
+export function trackEngagement(name: 'open_map' | 'open_faq' | 'review_navigate' | 'open_menu', detail?: string): void {
+  dispatch({ name, params: { detail } })
+}

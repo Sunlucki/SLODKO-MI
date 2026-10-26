@@ -9,3 +9,4 @@ dist
 coverage
 .ai-edit-backup
 .tmp
+.vite-react-ssg-temp

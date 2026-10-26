@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SŁODKO MI — Google reviews",
+  "description": "Contract for src/data/reviews.json. Generated from src/content/schema.ts by `npm run content:schema` — do not edit by hand.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "const": "google"
+    },
+    "rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "fetchedAt": {
+      "type": "string",
+      "description": "ISO date of the last refresh"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Review"
+      }
+    }
+  },
+  "required": [
+    "source",
+    "rating",
+    "count",
+    "fetchedAt",
+    "items"
+  ],
+  "$defs": {
+    "Review": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rating": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relativeTime": {
+          "description": "As shown by Google, e.g. \"2 miesiące temu\"",
+          "type": "string"
+        },
+        "publishTime": {
+          "description": "ISO date if known",
+          "type": "string"
+        },
+        "authorPhoto": {
+          "type": "string",
+          "format": "uri"
+        },
+        "authorUrl": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "author",
+        "rating",
+        "text"
+      ]
+    }
+  }
+}

@@ -9,10 +9,10 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "npm run content:check && vite-react-ssg build && node scripts/postbuild.mjs",
+    "build": "npm run content:check && vite-react-ssg build && tsx scripts/postbuild.ts",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "content:check": "tsx scripts/validate-content.ts",
+    "content:check": "tsx scripts/validate-content.ts && tsx scripts/export-schema.ts --check",
     "content:schema": "tsx scripts/export-schema.ts",
     "images": "node scripts/process-images.mjs",
     "reviews:fetch": "tsx scripts/fetch-google-reviews.ts",

@@ -1,0 +1,928 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SŁODKO MI — page",
+  "description": "Contract for src/data/pages/*.json. Generated from src/content/schema.ts by `npm run content:schema` — do not edit by hand.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string",
+      "pattern": "^\\/([a-z0-9-]+\\/?)*$",
+      "description": "URL path of the page. Every file in src/data/pages becomes a pre-rendered route."
+    },
+    "seo": {
+      "$ref": "#/$defs/Seo"
+    },
+    "sections": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/HeroSection"
+          },
+          {
+            "$ref": "#/$defs/AboutSection"
+          },
+          {
+            "$ref": "#/$defs/SplitSection"
+          },
+          {
+            "$ref": "#/$defs/ProductGridSection"
+          },
+          {
+            "$ref": "#/$defs/ReviewsSection"
+          },
+          {
+            "$ref": "#/$defs/VisitSection"
+          },
+          {
+            "$ref": "#/$defs/GallerySection"
+          },
+          {
+            "$ref": "#/$defs/FaqSection"
+          },
+          {
+            "$ref": "#/$defs/CtaSection"
+          },
+          {
+            "$ref": "#/$defs/TextSection"
+          }
+        ]
+      },
+      "description": "Ordered list of blocks — reorder, add, remove or disable to change page structure"
+    }
+  },
+  "required": [
+    "path",
+    "seo",
+    "sections"
+  ],
+  "$defs": {
+    "Seo": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 70,
+          "description": "<title> (max ~60 chars recommended)"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 170,
+          "description": "Meta description (max ~155 chars recommended)"
+        },
+        "ogImage": {
+          "description": "Image key for social previews (defaults to site.seo.ogImage)",
+          "type": "string"
+        },
+        "noindex": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "title",
+        "description"
+      ]
+    },
+    "HeroSection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique id within the page; also used as the #anchor for navigation links"
+        },
+        "enabled": {
+          "default": true,
+          "description": "false hides the section without deleting it",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "const": "hero"
+        },
+        "headline": {
+          "minItems": 1,
+          "maxItems": 4,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "accent": {
+                "default": false,
+                "description": "true = highlighted colour",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "text"
+            ]
+          },
+          "description": "Huge display headline, one entry per line"
+        },
+        "description": {
+          "description": "Short supporting sentence under the headline",
+          "type": "string",
+          "minLength": 1
+        },
+        "image": {
+          "description": "Main hero image — ideally a cut-out PNG/WebP with transparent background",
+          "$ref": "#/$defs/Image"
+        },
+        "note": {
+          "description": "Small annotation top-right with a hand-drawn arrow pointing at the image",
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "subtitle": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "title"
+          ]
+        },
+        "aside": {
+          "description": "Short paragraph on the right side of the hero",
+          "type": "string"
+        },
+        "primaryCta": {
+          "$ref": "#/$defs/Cta"
+        },
+        "secondaryCta": {
+          "description": "Rendered as a round icon button next to the primary one",
+          "$ref": "#/$defs/Cta"
+        },
+        "spotlight": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Caption above the mini card, e.g. \"Bestseller\""
+            },
+            "productSlugs": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Slugs from products.json shown in the mini carousel (bottom-right)"
+            }
+          },
+          "required": [
+            "label",
+            "productSlugs"
+          ]
+        },
+        "ticker": {
+          "default": [],
+          "description": "Phrases scrolling in the marquee strip at the bottom of the hero",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "headline",
+        "image",
+        "primaryCta"
+      ],
+      "description": "Top hero block in a rounded frame"
+    },
+    "Image": {
+      "type": "object",
+      "properties": {
+        "src": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Image key = path inside public/images WITHOUT size suffix and extension, e.g. \"products/oreo\" or \"photos/zespol\". Must exist in src/generated/images.json (run `npm run images` after adding a file to assets/images)."
+        },
+        "alt": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Polish alt text describing the image (accessibility + SEO)"
+        }
+      },
+      "required": [
+        "src",
+        "alt"
+      ],
+      "description": "Responsive image (WebP, 600/1200 px variants generated automatically)"
+    },
+    "Cta": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Button text (Polish, short, uppercase is styled automatically)"
+        },
+        "href": {
+          "$ref": "#/$defs/Href"
+        },
+        "variant": {
+          "default": "primary",
+          "description": "primary = filled brand, secondary = outline, light = cream fill (for dark backgrounds)",
+          "type": "string",
+          "enum": [
+            "primary",
+            "secondary",
+            "light"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "href"
+      ],
+      "description": "Call-to-action button"
+    },
+    "Href": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Link target. Internal path (\"/produkt/oreo\", \"/#smaki\"), absolute URL, or a token resolved from site.json: @order (Wolt), @phone, @directions (Google Maps route), @instagram, @facebook, @reviews (Google reviews), @writeReview. Prefer tokens — they are tracked automatically (Meta Pixel + GA4)."
+    },
+    "AboutSection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique id within the page; also used as the #anchor for navigation links"
+        },
+        "enabled": {
+          "default": true,
+          "description": "false hides the section without deleting it",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "const": "about"
+        },
+        "tone": {
+          "default": "cream",
+          "$ref": "#/$defs/Tone"
+        },
+        "heading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sticker": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "description": "Small tilted tag next to a heading (like a sticker), e.g. \"PROSTO Z PIECA\""
+        },
+        "body": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Paragraphs"
+        },
+        "images": {
+          "default": [],
+          "description": "Up to two small floating photos on the left and right",
+          "maxItems": 2,
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Image"
+          }
+        },
+        "cta": {
+          "$ref": "#/$defs/Cta"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "heading",
+        "body"
+      ],
+      "description": "Centered statement: big heading, paragraph(s), CTA, floating photos"
+    },
+    "Tone": {
+      "type": "string",
+      "enum": [
+        "cream",
+        "blush",
+        "brand",
+        "ink",
+        "caramel"
+      ],
+      "description": "Colour scheme of a block: cream (light), blush (soft pink), brand (raspberry, light text), ink (chocolate, light text), caramel (warm yellow)"
+    },
+    "SplitSection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique id within the page; also used as the #anchor for navigation links"
+        },
+        "enabled": {
+          "default": true,
+          "description": "false hides the section without deleting it",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "const": "split"
+        },
+        "left": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "minItems": 1,
+              "maxItems": 3,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": "Big white words over the photo/video, one per line"
+            },
+            "image": {
+              "$ref": "#/$defs/Image"
+            },
+            "video": {
+              "description": "If set, plays instead of the image",
+              "$ref": "#/$defs/Video"
+            }
+          },
+          "required": [
+            "title",
+            "image"
+          ]
+        },
+        "right": {
+          "type": "object",
+          "properties": {
+            "tone": {
+              "default": "caramel",
+              "$ref": "#/$defs/Tone"
+            },
+            "heading": {
+              "type": "string",
+              "minLength": 1
+            },
+            "image": {
+              "description": "Cut-out product image",
+              "$ref": "#/$defs/Image"
+            },
+            "caption": {
+              "type": "string",
+              "minLength": 1
+            },
+            "cta": {
+              "$ref": "#/$defs/Cta"
+            }
+          },
+          "required": [
+            "heading",
+            "image",
+            "caption"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "left",
+        "right"
+      ],
+      "description": "Two-column block: full-bleed photo/video with big words + coloured panel with product"
+    },
+    "Video": {
+      "type": "object",
+      "properties": {
+        "src": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Path inside public/, e.g. \"video/przekroj.mp4\" (muted, looped, autoplay when visible)"
+        },
+        "poster": {
+          "$ref": "#/$defs/Image"
+        }
+      },
+      "required": [
+        "src",
+        "poster"
+      ],
+      "description": "Short muted background video with an image poster"
+    },
+    "ProductGridSection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique id within the page; also used as the #anchor for navigation links"
+        },
+        "enabled": {
+          "default": true,
+          "description": "false hides the section without deleting it",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "const": "productGrid"
+        },
+        "tone": {
+          "default": "cream",
+          "$ref": "#/$defs/Tone"
+        },
+        "heading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sticker": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "description": "Small tilted tag next to a heading (like a sticker), e.g. \"PROSTO Z PIECA\""
+        },
+        "intro": {
+          "type": "string"
+        },
+        "source": {
+          "default": {
+            "mode": "all"
+          },
+          "description": "Which products to show",
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "const": "all"
+                }
+              },
+              "required": [
+                "mode"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "const": "featured"
+                }
+              },
+              "required": [
+                "mode"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "const": "category"
+                },
+                "category": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "mode",
+                "category"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "const": "manual"
+                },
+                "slugs": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "mode",
+                "slugs"
+              ]
+            }
+          ]
+        },
+        "limit": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "cta": {
+          "$ref": "#/$defs/Cta"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "heading"
+      ],
+      "description": "Grid of product cards from products.json"
+    },
+    "ReviewsSection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique id within the page; also used as the #anchor for navigation links"
+        },
+        "enabled": {
+          "default": true,
+          "description": "false hides the section without deleting it",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "const": "reviews"
+        },
+        "tone": {
+          "default": "cream",
+          "$ref": "#/$defs/Tone"
+        },
+        "heading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sticker": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "description": "Small tilted tag next to a heading (like a sticker), e.g. \"PROSTO Z PIECA\""
+        },
+        "backgroundImage": {
+          "$ref": "#/$defs/Image"
+        },
+        "maxItems": {
+          "default": 5,
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "minRating": {
+          "default": 4,
+          "description": "Hide reviews below this star rating",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "readAllLabel": {
+          "default": "Wszystkie opinie w Google",
+          "type": "string",
+          "minLength": 1
+        },
+        "writeLabel": {
+          "default": "Napisz opinię",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "heading",
+        "backgroundImage"
+      ],
+      "description": "Google reviews carousel (data from reviews.json, refreshed by npm run reviews:fetch)"
+    },
+    "VisitSection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique id within the page; also used as the #anchor for navigation links"
+        },
+        "enabled": {
+          "default": true,
+          "description": "false hides the section without deleting it",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "const": "visit"
+        },
+        "tone": {
+          "default": "blush",
+          "$ref": "#/$defs/Tone"
+        },
+        "heading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sticker": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "description": "Small tilted tag next to a heading (like a sticker), e.g. \"PROSTO Z PIECA\""
+        },
+        "intro": {
+          "type": "string"
+        },
+        "image": {
+          "description": "Photo of the place / team",
+          "$ref": "#/$defs/Image"
+        },
+        "showMap": {
+          "default": true,
+          "description": "Google Map loads only after a click (privacy + speed)",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "heading"
+      ],
+      "description": "Address, entrance hint, opening hours, phone, map and route button (data from site.json)"
+    },
+    "GallerySection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique id within the page; also used as the #anchor for navigation links"
+        },
+        "enabled": {
+          "default": true,
+          "description": "false hides the section without deleting it",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "const": "gallery"
+        },
+        "tone": {
+          "default": "cream",
+          "$ref": "#/$defs/Tone"
+        },
+        "heading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sticker": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "description": "Small tilted tag next to a heading (like a sticker), e.g. \"PROSTO Z PIECA\""
+        },
+        "intro": {
+          "type": "string"
+        },
+        "images": {
+          "minItems": 3,
+          "maxItems": 8,
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Image"
+          }
+        },
+        "cta": {
+          "$ref": "#/$defs/Cta"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "heading",
+        "images"
+      ],
+      "description": "Photo collage / Instagram teaser"
+    },
+    "FaqSection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique id within the page; also used as the #anchor for navigation links"
+        },
+        "enabled": {
+          "default": true,
+          "description": "false hides the section without deleting it",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "const": "faq"
+        },
+        "tone": {
+          "default": "cream",
+          "$ref": "#/$defs/Tone"
+        },
+        "heading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sticker": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "description": "Small tilted tag next to a heading (like a sticker), e.g. \"PROSTO Z PIECA\""
+        },
+        "items": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "question": {
+                "type": "string",
+                "minLength": 1
+              },
+              "answer": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "question",
+              "answer"
+            ]
+          }
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "heading",
+        "items"
+      ],
+      "description": "Questions & answers (also emitted as FAQPage structured data)"
+    },
+    "CtaSection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique id within the page; also used as the #anchor for navigation links"
+        },
+        "enabled": {
+          "default": true,
+          "description": "false hides the section without deleting it",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "const": "cta"
+        },
+        "tone": {
+          "default": "brand",
+          "$ref": "#/$defs/Tone"
+        },
+        "heading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string"
+        },
+        "primaryCta": {
+          "$ref": "#/$defs/Cta"
+        },
+        "secondaryCta": {
+          "$ref": "#/$defs/Cta"
+        },
+        "image": {
+          "$ref": "#/$defs/Image"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "heading",
+        "primaryCta"
+      ],
+      "description": "Bold banner with heading and buttons"
+    },
+    "TextSection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique id within the page; also used as the #anchor for navigation links"
+        },
+        "enabled": {
+          "default": true,
+          "description": "false hides the section without deleting it",
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "const": "text"
+        },
+        "tone": {
+          "default": "cream",
+          "$ref": "#/$defs/Tone"
+        },
+        "heading": {
+          "type": "string"
+        },
+        "blocks": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "paragraph"
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "kind",
+                  "text"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "subheading"
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "kind",
+                  "text"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "list"
+                  },
+                  "items": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "required": [
+                  "kind",
+                  "items"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "blocks"
+      ],
+      "description": "Plain text page content (privacy policy, about, etc.)"
+    }
+  }
+}

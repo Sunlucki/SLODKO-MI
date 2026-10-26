@@ -1,0 +1,108 @@
+# Production deploy (FTP → Apache shared hosting) + live preview on GitHub Pages.
+#
+# FTP setup (Settings → Secrets and variables → Actions):
+#   secrets:   FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, optional FTP_SERVER_DIR (default ./public_html/)
+#   variables: SITE_URL (production URL, e.g. https://slodkomi.pl — canonical, sitemap, og:url),
+#              optional VITE_BASE (sub-path, e.g. /slodkomi/ — see public/.htaccess),
+#              optional FTP_PROTOCOL (default ftps; use "ftp" only if the host has no TLS),
+#              optional VITE_GA_ID, VITE_META_PIXEL_ID, VITE_GTM_ID, VITE_TIKTOK_PIXEL_ID (also read from secrets)
+#   Without the FTP_SERVER secret the FTP job is skipped.
+#
+# GitHub Pages: Settings → Pages → Source: "GitHub Actions" (one-time). The preview runs without pixels.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  # Secrets cannot be used in a job-level `if`, so this job turns "is FTP configured?" into an output
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      ftp: ${{ steps.ftp.outputs.configured }}
+    steps:
+      - id: ftp
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        run: |
+          if [ -n "$FTP_SERVER" ]; then echo "configured=true" >> "$GITHUB_OUTPUT"
+          else echo "::notice::FTP_SERVER secret is not set — skipping the FTP deploy."; fi
+
+  build-ftp:
+    needs: check
+    if: needs.check.outputs.ftp == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          VITE_BASE: ${{ vars.VITE_BASE || '/' }}
+          VITE_GA_ID: ${{ vars.VITE_GA_ID || secrets.VITE_GA_ID }}
+          VITE_META_PIXEL_ID: ${{ vars.VITE_META_PIXEL_ID || secrets.VITE_META_PIXEL_ID }}
+          VITE_GTM_ID: ${{ vars.VITE_GTM_ID || secrets.VITE_GTM_ID }}
+          VITE_TIKTOK_PIXEL_ID: ${{ vars.VITE_TIKTOK_PIXEL_ID || secrets.VITE_TIKTOK_PIXEL_ID }}
+
+      # Uploads only changed files (state file .ftp-deploy-sync-state.json on the server)
+      # and removes files it uploaded earlier that are gone now (old hashed assets).
+      - name: Upload via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          local-dir: ./dist/
+          server-dir: ${{ secrets.FTP_SERVER_DIR || './public_html/' }}
+
+  pages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - uses: actions/configure-pages@v5
+
+      - name: Build for the /SLODKO-MI/ sub-path
+        run: npm run build
+        env:
+          VITE_BASE: /SLODKO-MI/
+          SITE_URL: https://sunlucki.github.io/SLODKO-MI
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./dist
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

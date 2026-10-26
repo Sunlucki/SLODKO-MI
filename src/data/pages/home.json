@@ -15,7 +15,7 @@
         { "text": "CYNAMONKĘ", "accent": true }
       ],
       "description": "Puszyste, wilgotne, codziennie wypiekane na świeżo. Na Wildzie, wejście od Hetmańskiej.",
-      "image": { "src": "products/sernik-z-truskawka", "alt": "Cynamonka sernik z truskawką i kruszonką" },
+      "image": { "src": "hero/cynamonka", "alt": "Dłoń trzymająca cynamonkę sernik z truskawką, kruszonką i białą czekoladą" },
       "note": { "title": "Sernik z truskawką", "subtitle": "nasz bestseller" },
       "aside": "Każdego ranka robimy ciasto od podstaw, ręcznie zwijamy każdą cynamonkę i pieczemy wszystko tego samego dnia.",
       "primaryCta": { "label": "Zamów na Wolt", "href": "@order", "variant": "light" },
@@ -43,12 +43,16 @@
       "type": "split",
       "left": {
         "title": ["ZAJRZYJ", "DO ŚRODKA."],
-        "image": { "src": "photos/blacha-zlota", "alt": "Blacha złocistych cynamonek prosto z pieca" }
+        "image": { "src": "photos/blacha-zlota", "alt": "Blacha złocistych cynamonek prosto z pieca" },
+        "video": {
+          "src": "video/smaki.mp4",
+          "poster": { "src": "photos/blacha-zlota", "alt": "Blacha złocistych cynamonek prosto z pieca" }
+        }
       },
       "right": {
         "tone": "caramel",
         "heading": "TO, CO NAJLEPSZE",
-        "image": { "src": "products/szarlotka", "alt": "Cynamonka szarlotka z kruszonką i karmelem" },
+        "image": { "src": "cutouts/szarlotka", "alt": "Cynamonka szarlotka z kruszonką i karmelem" },
         "caption": "Pełne nadzienia i robione tego samego dnia.",
         "cta": { "label": "Zobacz smaki", "href": "/#smaki", "variant": "primary" }
       }
