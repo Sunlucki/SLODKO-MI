@@ -1,0 +1,131 @@
+{
+  "$schema": "../../schema/undefined.schema.json",
+  "seo": {
+    "title": "Cinnamon Rolls in Poznań, Wilda – Baked Daily",
+    "description": "Fresh cinnamon rolls baked daily in Wilda, Poznan: 7 flavours incl. Biscoff and Oreo, coffee to stay or go, Wolt delivery. Entrance on ul. Hetmańska."
+  },
+  "sections": [
+    {
+      "id": "start",
+      "headline": [
+        { "text": "HEY, POZNAŃ…" },
+        { "text": "CINNAMON" },
+        { "text": "ROLL TIME" }
+      ],
+      "description": "Fresh cinnamon rolls in Wilda, Poznań — fluffy, moist and baked every day. Entrance on ul. Hetmańska.",
+      "image": { "alt": "Illustration: a hand holding a strawberry sernik cinnamon roll with crumble and white glaze" },
+      "note": { "title": "Sernik with strawberry", "subtitle": "one of our bestsellers" },
+      "aside": "Every morning we make the dough from scratch, roll each cinnamon roll by hand and bake everything the same day.",
+      "primaryCta": { "label": "Order on Wolt" },
+      "secondaryCta": { "label": "Get directions" },
+      "spotlight": { "label": "Bestsellers" },
+      "ticker": ["Fluffy", "Moist", "Baked fresh every day", "7 flavours", "Wilda · entrance on ul. Hetmańska", "Hey, it's cinnamon roll time"]
+    },
+    {
+      "id": "o-nas",
+      "heading": "Fluffy. Moist. Straight from the oven.",
+      "sticker": "Made in-house",
+      "body": [
+        "Słodko Mi is a small bakery in Poznań's Wilda district that does one thing and does it properly: cinnamon rolls. Every morning we make the dough from scratch, roll each cinnamon roll by hand and bake everything the same day.",
+        "Cynamonki, cinnamon rolls, cinnamon buns — call them what you like. We have 7 flavours, plus coffee to go with them: enjoy it here or take it away."
+      ],
+      "images": [
+        { "alt": "Golden iced cinnamon roll served on a spatula straight from the baking tray" },
+        { "alt": "Oreo cinnamon roll being placed in a takeaway box with tongs" }
+      ],
+      "cta": { "label": "Meet the flavours" }
+    },
+    {
+      "id": "w-srodku",
+      "left": {
+        "title": ["TAKE A PEEK", "INSIDE."],
+        "image": { "alt": "A tray of golden cinnamon rolls straight from the oven" },
+        "video": {
+          "poster": { "alt": "A tray of golden cinnamon rolls straight from the oven" }
+        }
+      },
+      "right": {
+        "heading": "THE GOOD STUFF",
+        "image": { "alt": "Szarlotka cinnamon roll with crumble and caramel" },
+        "caption": "Szarlotka, our bestseller: packed with filling and baked the same day in Wilda.",
+        "cta": { "label": "See the flavours" }
+      }
+    },
+    { "id": "smaki", "heading": "Meet our cinnamon roll flavours.", "sticker": "7 flavours" },
+    {
+      "id": "opinie",
+      "heading": "Don't just take our word for it.",
+      "sticker": "Google reviews",
+      "backgroundImage": {
+        "alt": "The Słodko Mi team in the bakery in Wilda, behind a display case full of cinnamon rolls, under a pink neon sign reading “Jeszcze jedna?” (“One more?”)"
+      },
+      "readAllLabel": "All reviews on Google",
+      "writeLabel": "Write a review",
+      "notice": "The reviews come from Google Maps and are quoted unchanged, in their original language (omitted passages are marked “(…)”). We show selected reviews rated 4–5 stars. We don't check whether their authors have bought our products — you'll find all the reviews on Google."
+    },
+    {
+      "id": "instagram",
+      "heading": "Fresh off our baking trays.",
+      "images": [
+        { "alt": "Freshly baked cinnamon rolls on a baking tray with dollops of cream" },
+        { "alt": "Raspberry and coconut and szarlotka (crumble and caramel) cinnamon rolls on a baking tray" },
+        { "alt": "Biscoff cinnamon rolls on a baking tray: cream, caramel glaze and crushed cookies" },
+        { "alt": "Cross-section of a raspberry and coconut cinnamon roll: fluffy dough, cream, coconut flakes and raspberry" },
+        { "alt": "Trays of fresh cinnamon rolls in several flavours, including Oreo" }
+      ],
+      "cta": { "label": "Follow us on Instagram" }
+    },
+    {
+      "id": "dojazd",
+      "heading": "Pop over to Wilda – directions and hours.",
+      "sticker": "Entrance on Hetmańska",
+      "intro": "You'll find us in Wilda, Poznań, at ul. 28 Czerwca 1956 r. 177/13 — the entrance is on ul. Hetmańska. There's a public transport stop right next door, so that's the easiest way to get here. We're open Tuesday to Sunday; on Mondays we take a rest.",
+      "image": { "alt": "Cinnamon rolls packed to take away in white boxes" },
+      "ctas": [
+        { "label": "Get directions" },
+        { "label": "Call us" },
+        { "label": "Order on Wolt" }
+      ]
+    },
+    {
+      "id": "faq",
+      "heading": "Questions and answers.",
+      "items": [
+        {
+          "question": "Where are you, and where's the entrance?",
+          "answer": "In Wilda, Poznań, at ul. 28 Czerwca 1956 r. 177/13. The entrance is on Hetmańska Street (ul. Hetmańska) — you can't get in from the 28 Czerwca side."
+        },
+        {
+          "question": "Do you deliver?",
+          "answer": "Yes — you can order our cinnamon rolls for delivery on Wolt. Or drop by and pick them up from us in Wilda."
+        },
+        {
+          "question": "How many cinnamon roll flavours do you have?",
+          "answer": "Seven: classic with icing, classic with cream cheese, Biscoff, Oreo, szarlotka (Polish apple pie) with crumble and caramel, sernik (Polish cheesecake) with strawberry and crumble, and raspberry with coconut."
+        },
+        {
+          "question": "Are your cinnamon rolls fresh?",
+          "answer": "Every morning we make the dough from scratch, roll each cinnamon roll by hand and bake everything the same day."
+        },
+        { "question": "Do you serve coffee?", "answer": "Yes, we serve coffee with our cinnamon rolls — to drink here or to take away." },
+        {
+          "question": "Can I order a bigger batch of cinnamon rolls?",
+          "answer": "Of course. Message us on Instagram or give us a call, and let us know how many you'd like and for what time — we'll have them ready."
+        },
+        {
+          "question": "Are you open on Sundays? And on Mondays?",
+          "answer": "On Sundays, yes! We're open Tuesday to Sunday, 10:00–19:00, and closed on Mondays. Hours may differ on public holidays — we post any changes next to our opening hours and on Google."
+        },
+        { "question": "Can I eat in?", "answer": "Of course — enjoy your cinnamon roll and coffee here with us, or take them away." }
+      ]
+    },
+    {
+      "id": "zamow",
+      "heading": "Your cinnamon roll is waiting.",
+      "text": "Order cinnamon rolls for delivery on Wolt, or pop over to Wilda and pick them up.",
+      "primaryCta": { "label": "Order on Wolt" },
+      "secondaryCta": { "label": "Call us" },
+      "marquee": "Hey, it's cinnamon roll time"
+    }
+  ]
+}

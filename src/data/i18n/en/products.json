@@ -1,0 +1,107 @@
+{
+  "categories": [{ "slug": "cynamonki", "name": "Cinnamon rolls" }],
+  "products": [
+    {
+      "slug": "klasyczna-z-lukrem",
+      "name": "Classic with icing",
+      "shortDescription": "Cinnamon and icing — nothing more, nothing less.",
+      "description": "Our classic. Fluffy, moist yeast dough, rolled by hand with a butter-cinnamon filling and finished with icing. We bake it on site every day, right here in Wilda. The perfect place to start getting to know Słodko Mi.",
+      "images": [
+        { "alt": "Classic cinnamon roll with a cinnamon swirl, drizzled with icing" },
+        { "alt": "Classic iced cinnamon roll on a white plate" }
+      ],
+      "seo": {
+        "title": "Classic Glazed Cinnamon Roll in Poznań",
+        "description": "Classic cinnamon roll: fluffy yeast dough, butter-cinnamon filling and sugar icing. Baked fresh daily in Wilda, Poznan. Eat in, take away or order on Wolt."
+      }
+    },
+    {
+      "slug": "klasyczna-z-serkiem",
+      "name": "Classic with cream cheese",
+      "shortDescription": "Creamy, with a thick layer of cream cheese frosting.",
+      "description": "Our classic cinnamon roll with a butter-cinnamon filling, topped with a generous layer of cream cheese frosting. Creamy, soft and extra fluffy. Like all our cinnamon rolls, it's rolled by hand and baked fresh every day.",
+      "images": [
+        { "alt": "Classic cinnamon roll under a thick layer of cream cheese frosting" },
+        { "alt": "Cinnamon roll with cream cheese frosting on a white plate" }
+      ],
+      "seo": {
+        "title": "Cream Cheese Cinnamon Roll in Poznań",
+        "description": "Classic cinnamon roll under a thick layer of cream cheese frosting. Baked fresh daily at Słodko Mi in Wilda, Poznan. Eat in, take away or order on Wolt."
+      }
+    },
+    {
+      "slug": "biscoff",
+      "name": "Biscoff",
+      "shortDescription": "Caramelly, with crushed Biscoff cookies.",
+      "description": "A cinnamon roll for caramel-cookie lovers: a creamy topping, caramel glaze and a generous handful of crushed Biscoff cookies. Sweet, caramelly and crunchy.",
+      "images": [
+        { "alt": "Biscoff cinnamon roll with cream, caramel glaze and crushed cookies" },
+        { "alt": "Biscoff cinnamon roll with a cookie crumb topping on a white plate" }
+      ],
+      "seo": {
+        "title": "Biscoff (Lotus) Cinnamon Roll in Poznań",
+        "description": "Biscoff cinnamon roll: creamy topping, caramel and crushed Biscoff (Lotus) cookies. Baked daily at Słodko Mi in Wilda, Poznan. Eat in or order on Wolt."
+      }
+    },
+    {
+      "slug": "oreo",
+      "name": "Oreo",
+      "shortDescription": "Oreo cream, crushed cookies and milk chocolate.",
+      "description": "A real treat for Oreo fans! Fluffy, pillowy yeast dough hides a butter-cinnamon filling with chunks of Oreo cookies. On top: silky Oreo cream and a generous helping of crushed cookies, all finished with a milk chocolate glaze.",
+      "ingredients": ["yeast dough", "butter-cinnamon filling", "Oreo cookies", "Oreo cream", "milk chocolate glaze"],
+      "images": [
+        { "alt": "Oreo cinnamon roll with cream and crushed Oreo cookies" },
+        { "alt": "Oreo cinnamon roll with cream and crushed cookies on a white plate" }
+      ],
+      "seo": {
+        "title": "Oreo Cinnamon Roll with Chocolate, Poznań",
+        "description": "Oreo cinnamon roll: Oreo chunks in the filling, Oreo cream, crushed cookies and a milk chocolate glaze. Baked daily in Wilda, Poznan. Also on Wolt."
+      }
+    },
+    {
+      "slug": "szarlotka",
+      "name": "Szarlotka with crumble & caramel",
+      "shortDescription": "Apples, cinnamon, crumble and caramel.",
+      "description": "Apples and cinnamon are a perfect match. This cinnamon roll tastes like homemade szarlotka, the Polish apple pie: with apples, crunchy crumble and caramel. One of our bestsellers.",
+      "images": [
+        { "alt": "Szarlotka cinnamon roll with apples, crunchy crumble and caramel" },
+        { "alt": "Szarlotka cinnamon roll with crumble and caramel on a white plate" }
+      ],
+      "badge": "Bestseller",
+      "seo": {
+        "title": "Apple Crumble & Caramel Cinnamon Roll, Poznań",
+        "description": "Polish szarlotka (apple pie) in a cinnamon roll: apples, cinnamon, crunchy crumble and caramel. A bestseller, baked daily in Wilda, Poznan. Also on Wolt."
+      }
+    },
+    {
+      "slug": "sernik-z-truskawka",
+      "name": "Sernik with strawberry & crumble",
+      "shortDescription": "Cheesecake cream, strawberry, crumble and white chocolate.",
+      "description": "This is no ordinary cinnamon roll. Sernik (Polish cheesecake) cream, strawberry, crumble and white chocolate — all on one roll. Packed with filling, fluffy and moist. One of our bestsellers.",
+      "images": [
+        { "alt": "Strawberry sernik cinnamon roll with crumble and cheesecake cream" },
+        { "alt": "Strawberry sernik cinnamon roll with crumble on a white plate" }
+      ],
+      "badge": "Bestseller",
+      "seo": {
+        "title": "Strawberry Cheesecake Cinnamon Roll, Poznań",
+        "description": "Strawberry cheesecake cinnamon roll: Polish sernik cream, strawberry, crumble and white chocolate. A bestseller, baked daily in Wilda, Poznan. On Wolt too."
+      }
+    },
+    {
+      "slug": "malina-z-kokosem",
+      "name": "Raspberry & coconut",
+      "shortDescription": "Tangy and coconutty — a little taste of summer in a cinnamon roll.",
+      "description": "Raspberry and coconut: tangy raspberries, cream and coconut flakes on a fluffy cinnamon roll. Fruity, creamy and a bit like summer — whatever the weather outside.",
+      "images": [
+        { "alt": "Illustration: raspberry and coconut cinnamon roll with cream, raspberries and coconut flakes" },
+        { "alt": "Cross-section of a raspberry and coconut cinnamon roll: fluffy dough, cream, coconut flakes and raspberry" },
+        { "alt": "Illustration: raspberry and coconut cinnamon roll on a white plate" }
+      ],
+      "seo": {
+        "title": "Raspberry & Coconut Cinnamon Roll, Poznań",
+        "description": "Raspberry and coconut cinnamon roll: tangy raspberries, cream and coconut flakes. Baked fresh daily in Wilda, Poznan. Eat in, take away or order on Wolt."
+      }
+    }
+  ]
+}

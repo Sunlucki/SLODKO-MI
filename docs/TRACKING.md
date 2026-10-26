@@ -78,7 +78,7 @@ Scripts are injected by `whenIdle()`: on the first `pointerdown` / `keydown` / `
 
 ### The banner
 
-- Texts come from `src/data/site.json` → `consent` (title, text, acceptAll, rejectAll, settings, save, analyticsLabel/Text, marketingLabel/Text, policyLabel, policyHref).
+- Texts come from `src/data/site.json` → `consent` (title, text, acceptAll, rejectAll, settings, save, analyticsLabel/Text, marketingLabel/Text, policyLabel, policyHref, reopenLabel), in the page's language (translation overlays in `src/data/i18n/<locale>/site.json`). The policy link gets the language prefix. One decision covers every language version (same origin, same `localStorage` key).
 - "Akceptuję wszystkie" and "Tylko niezbędne" have identical styles (equal prominence). Switches start off (no pre-ticked boxes).
 - Rendered only after mount (not in the pre-rendered HTML → no hydration mismatch), `position: fixed` (no layout shift), non-modal `role="dialog"` with `aria-labelledby` / `aria-describedby`. It works anywhere in the DOM; placed early (before the header) it comes first in the keyboard and screen-reader order.
 - While it is open, `scroll-padding-bottom` on `<html>` and `padding-bottom` on `<body>` equal its height (plus its gap to the edge), so a focused element is always scrolled above it, down to the last footer link (WCAG 2.2 SC 2.4.11). Both are removed when it closes.
@@ -90,7 +90,7 @@ Every event is also pushed to the dataLayer as `{ event, ...params, event_id }` 
 
 | Facade call | GA4 (`gtag('event', …)`) | Meta Pixel | TikTok Pixel |
 | --- | --- | --- | --- |
-| `trackPageView(path, title)` (Layout, every route) | `page_view` `{ page_location, page_path, page_title }` | `track PageView` | `ttq.page()` |
+| `trackPageView(path, title)` (Layout, every route) | `page_view` `{ page_location, page_path, page_title, page_language }` | `track PageView` | `ttq.page()` |
 | `trackViewItem(product)` (product page) | `view_item` `{ currency, value?, items: [{ item_id: slug, item_name, item_category, price? }] }` | `track ViewContent` `{ content_ids: [slug], content_name, content_type: 'product', content_category, currency?, value? }` | `ViewContent` `{ contents: [{ content_id, content_type, content_name, price? }], currency?, value? }` |
 | `trackViewItemList(products, listName)` | `view_item_list` `{ item_list_name, items[] (with index) }` | `trackCustom ViewItemList` `{ content_ids, content_type, list_name }` | — |
 | `trackSelectItem(product, listName, index)` | `select_item` `{ item_list_name, items: [item with index] }` | `trackCustom SelectItem` `{ content_ids, content_name, list_name, index }` | — |
@@ -103,10 +103,17 @@ Every event is also pushed to the dataLayer as `{ event, ...params, event_id }` 
 
 Notes:
 
+- `page_language` is the language version of the page (`pl`, `en`, `ru`, `uk` — the URL prefix, `pl` for `/`). It is not
+  called `language` on purpose: gtag treats an event's `language` as the browser-language field and would overwrite it.
+  `page_path` keeps the prefix (`/en/produkt/oreo/`), so reports can also filter by path.
+- **Product names are language-independent.** `view_item`, `view_item_list`, `select_item`, `click_order` and the Meta /
+  TikTok item events always report the product as in the default (Polish) files — `item_name` / `content_name` =
+  `products.json → name`, `item_category` = Polish category name, `item_id` = slug — whichever language the visitor
+  views (`reported()` in `src/lib/analytics.ts`). One flavour is one row in reports; split by `page_language` instead.
 - `location` is the place of the click passed by the component (`header`, `hero`, `footer`, `product:oreo`, …).
 - `currency` is the product's `currency` (PLN). `value` / `price` are sent only when the product has a price **and** `site.catalog.showPrices` is `true`: the site never shares a price it does not publish.
 - Optional params that are empty are left out of GA4/Meta/TikTok calls. In the dataLayer they are pushed as `undefined`, which resets the key in GTM's data model (no stale `item_id` from a previous click).
-- Register `location`, `provider`, `network`, `kind`, `detail` as custom dimensions in GA4 (Admin → Custom definitions) to see them in reports. Mark `click_order` (and optionally `click_phone`, `click_directions`) as key events.
+- Register `location`, `provider`, `network`, `kind`, `detail`, `page_language` as custom dimensions in GA4 (Admin → Custom definitions) to see them in reports. Mark `click_order` (and optionally `click_phone`, `click_directions`) as key events.
 
 ## Vendor-side settings
 
@@ -114,7 +121,7 @@ Notes:
 - **Meta Pixel:** the stub sets `fbq.disablePushState = true`, so the pixel does not send its own PageView on SPA navigation. Optional: Events Manager → Settings → disable *Automatic events* if you only want the events above.
 - **TikTok Pixel:** check Events Manager for automatic/history-based page views and keep only the manual ones.
 - **GTM:** enable Consent Overview and give every tag the right *additional consent checks* (`analytics_storage` for analytics, `ad_storage` + `ad_user_data` for ads). The container loads with *any* consent; the custom `consent_update` event can trigger tags once consent is granted.
-- **Legal texts:** the banner (`site.json` → `consent`) and the privacy policy (`src/data/pages/polityka-prywatnosci.json`) must name every enabled vendor and its purpose; the build fails otherwise (see Configuration). *Marketing* grants `ad_storage`, `ad_user_data` and `ad_personalization`, so its text must cover ad measurement **and** ad personalisation/remarketing. Vendors added only inside GTM are not checked: name them in both texts and bump the number in the consent `VERSION`.
+- **Legal texts:** the banner (`site.json` → `consent`) and the privacy policy (`src/data/pages/polityka-prywatnosci.json`) must name every enabled vendor and its purpose; the build fails otherwise (see Configuration). The build checks only the Polish texts: update the translated banner (`src/data/i18n/<locale>/site.json` → `consent`) and the translated privacy policy (`src/data/i18n/<locale>/pages/polityka-prywatnosci.json`) in the same change. *Marketing* grants `ad_storage`, `ad_user_data` and `ad_personalization`, so its text must cover ad measurement **and** ad personalisation/remarketing. Vendors added only inside GTM are not checked: name them in both texts and bump the number in the consent `VERSION`.
 - **Content-Security-Policy:** if a CSP header is added (e.g. in `.htaccess`), allow at least `script-src https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com`, `connect-src https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://www.facebook.com https://analytics.tiktok.com` and `img-src https://www.facebook.com https://*.google-analytics.com https://www.googletagmanager.com`.
 
 ## Debugging

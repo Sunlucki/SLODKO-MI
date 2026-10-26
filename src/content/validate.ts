@@ -222,7 +222,7 @@ export function loadContent(root = process.cwd()): LoadResult {
       ['ink', 'caramel', 4.5],
       ['cream', 'ink', 4.5],
       ['brand', 'cream', 3], // large display text only
-      ['caramel', 'brandDeep', 3], // hero accent line, large
+      ['caramel', 'brandDeep', 4.5], // hero accent line + small text (logo line, header button, spotlight label)
     ]
     for (const [fg, bg, min] of pairs) {
       const ratio = contrast(c[fg], c[bg])

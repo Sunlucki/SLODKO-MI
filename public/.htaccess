@@ -8,8 +8,9 @@
 #   1. Build with the sub-path:  VITE_BASE=/slodkomi/ SITE_URL=https://example.pl/slodkomi npm run build
 #      (in GitHub Actions: repository variables VITE_BASE and SITE_URL, secret FTP_SERVER_DIR=./public_html/slodkomi/)
 #   2. Upload dist/ into public_html/slodkomi/.
-#   3. In THIS file change:  ErrorDocument 404 /slodkomi/404.html,  ErrorDocument 403 /slodkomi/404.html
-#      and   RewriteBase /slodkomi/
+#   3. In THIS file change:  ErrorDocument 404 /slodkomi/404.html,  ErrorDocument 403 /slodkomi/404.html,
+#      in each language block  m#^/slodkomi/en/#  and  /slodkomi/en/404.html  (same for ru, uk),
+#      and   RewriteBase /slodkomi/      (the build warns when an ErrorDocument path does not match VITE_BASE)
 #   WordPress' .htaccess in public_html/ does not interfere: its rules skip existing files/folders,
 #   and the rewrite rules of this (deeper) .htaccess replace the parent's ones for /slodkomi/.
 
@@ -20,6 +21,26 @@ DirectoryIndex index.html
 # /produkt/oreo → 301 /produkt/oreo/ (matches canonical URLs and the sitemap)
 DirectorySlash On
 AddDefaultCharset UTF-8
+
+# ── 404 page in the visitor's language ──────────────────────────────────────────────
+# Missing URLs under /en/, /ru/, /uk/ get that language's 404 page (built as <lang>/404.html; its language
+# switcher links to each home page). Apache applies <If> blocks after the rest of this file, so they override
+# the default below for their prefix. The default lines come last on purpose: a server that ignores <If>
+# but reads its contents still ends with the Polish 404 for every URL. A new language = one more block.
+# Check after a deploy:  curl -sI https://example.pl/en/xyz | head -1   (404) and that the page is English.
+<If "%{REQUEST_URI} =~ m#^/en/#">
+  ErrorDocument 404 /en/404.html
+  ErrorDocument 403 /en/404.html
+</If>
+<If "%{REQUEST_URI} =~ m#^/ru/#">
+  ErrorDocument 404 /ru/404.html
+  ErrorDocument 403 /ru/404.html
+</If>
+<If "%{REQUEST_URI} =~ m#^/uk/#">
+  ErrorDocument 404 /uk/404.html
+  ErrorDocument 403 /uk/404.html
+</If>
+# Default language (Polish) for every other missing URL
 ErrorDocument 404 /404.html
 # Folders without an index page (/produkt/, /images/ — Options -Indexes) answer 403: show the site's page, not Apache's
 ErrorDocument 403 /404.html

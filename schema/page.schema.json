@@ -237,7 +237,7 @@
         "alt"
       ],
       "additionalProperties": false,
-      "description": "Responsive image (WebP, 480/720/960/1600 px variants generated automatically)"
+      "description": "Responsive image (WebP, 480/600/720/960/1600 px variants generated automatically)"
     },
     "Cta": {
       "type": "object",

@@ -55,7 +55,7 @@ export const Image = z
       .default(false)
       .describe('true = AI-generated illustration, not a real photo of the product/place; it is shown with a visible "Ilustracja" label'),
   })
-  .describe('Responsive image (WebP, 480/720/960/1600 px variants generated automatically)')
+  .describe('Responsive image (WebP, 480/600/720/960/1600 px variants generated automatically)')
 
 export const Video = z
   .strictObject({
@@ -338,6 +338,22 @@ export const Product = z.strictObject({
   available: z.boolean().default(true),
   featured: z.boolean().default(false).describe('Shown where a section uses source.mode = "featured"'),
   badge: z.string().max(20).optional().describe('Small label on the card, e.g. "Bestseller", "Nowość"'),
+  seo: z
+    .strictObject({
+      title: text
+        .max(70)
+        .optional()
+        .describe(
+          '<title> of /produkt/<slug> WITHOUT the " | Słodko Mi" suffix that site.seo.titleTemplate adds (12 chars) — keep it ≤ 48 chars so the full title stays ≤ 60. ' +
+            'Name the search phrase, e.g. "Cynamonka Oreo z kremem i czekoladą – Poznań". Defaults to `name`.',
+        ),
+      description: text
+        .max(170)
+        .optional()
+        .describe('Meta description of /produkt/<slug> (≤ 155 chars recommended): only facts from this product + where to get it. Defaults to `shortDescription`.'),
+    })
+    .optional()
+    .describe('Search snippet of the product page; omit a field to fall back to name / shortDescription'),
 })
 
 export const Category = z.strictObject({ slug: z.string().regex(/^[a-z0-9-]+$/), name: text })
@@ -488,8 +504,8 @@ export const Ui = z
       .describe('Day names in the opening hours'),
     allergenNames: z
       .partialRecord(z.enum(ALLERGENS), text)
-      .default({})
-      .describe('Display names of allergens (key = value used in products.json); missing ones show the key itself'),
+      .default(Object.fromEntries(ALLERGENS.map((a) => [a, a])) as Partial<Record<(typeof ALLERGENS)[number], string>>)
+      .describe('Display names of allergens (key = value used in products.json); default = the Polish name, translations rename them'),
     sections: z
       .strictObject({
         reviewCountSource: text

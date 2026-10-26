@@ -3,7 +3,7 @@
   "name": "Słodko Mi",
   "legalName": "Słodko Mi Smakuje Ci?",
   "tagline": "TEJ, czas na cynamonkę",
-  "description": "Słodko Mi to cukiernia na poznańskiej Wildzie specjalizująca się w codziennie świeżo wypiekanych cynamonkach. Każdego ranka przygotowujemy ciasto od podstaw, ręcznie zwijamy każdą cynamonkę i wypiekamy wszystko na świeżo tego samego dnia. Do cynamonek serwujemy kawę — na miejscu albo na wynos.",
+  "description": "Słodko Mi to cukiernia na poznańskiej Wildzie specjalizująca się w codziennie świeżo wypiekanych cynamonkach. Każdego ranka przygotowujemy ciasto od podstaw, ręcznie zwijamy każdą cynamonkę i wypiekamy wszystko na świeżo tego samego dnia. Do cynamonek serwujemy kawę — na miejscu albo na wynos. Cynamonki z dostawą zamówisz przez Wolt.",
   "url": "https://sunlucki.github.io/SLODKO-MI",
   "i18n": {
     "defaultLocale": "pl",
@@ -123,7 +123,7 @@
       "cream": "#FFF4EA",
       "ink": "#2B1714",
       "brand": "#E8386F",
-      "brandDeep": "#AD1446",
+      "brandDeep": "#A81343",
       "blush": "#F7CDD0",
       "caramel": "#F6C453"
     }

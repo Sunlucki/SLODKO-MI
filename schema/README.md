@@ -22,6 +22,38 @@ or a token resolved from `site.json`: `@order`, `@phone`, `@directions`, `@insta
 A bare `#id` works only inside one page file — `site.json` and `products.json` must use `/#id`. The target section
 must exist and be shown: links to a section with `"enabled": false` (or a product grid without products) fail.
 
+## Translations (`src/data/i18n/<locale>/`)
+
+The files in `src/data` are the default language (Polish, served at `/`). Every other language of `site.json → i18n.locales`
+is a **text-only overlay** in `src/data/i18n/<locale>/` with the same file names: `site.json`, `products.json` and
+`pages/<name>.json` (`reviews.json` is never translated). Structure, links, images, prices, hours, colours and every setting
+come from the Polish file; a text the overlay leaves out — or a whole missing file — is shown in Polish.
+
+- **Same shape, texts only.** Put each translation at the path of the Polish text. Objects may contain only keys that exist
+  in the Polish file (the labels of `site.json → ui` count even where the Polish file relies on their defaults).
+- **Arrays of objects with `id` (sections) or `slug` (products, categories)** are matched by that key: every overlay item
+  contains its unchanged `id`/`slug`; order does not matter and items can be left out.
+- **All other arrays** (headline lines, paragraphs, list items, FAQ items, nav and footer links, buttons, ticker…) are matched
+  by position: item N translates item N, and the overlay is never longer than the Polish array. `null` keeps an item in Polish.
+- **Never in an overlay:** numbers, `true`/`false`, the settings subtrees and the technical keys (except the `id`/`slug`
+  that identifies an array item) — leave them out:
+  subtrees `contact`, `hours`, `i18n`, `links`, `theme`;
+  keys `category`, `closes`, `code`, `country`, `currency`, `date`, `days`, `defaultLocale`, `fallbackLocale`, `fetchedAt`, `href`, `htmlLang`, `id`, `kind`, `legalName`, `mode`, `ogImage`, `ogLocale`, `opens`, `path`, `policyHref`, `postalCode`, `productSlugs`, `publishTime`, `slug`, `slugs`, `src`, `tone`, `type`, `unit`, `url`, `variant`, `wordmark`.
+- **Facts stay the same.** Translate what the Polish text says — add no facts, prices, ingredients or promises. Keep brand
+  names (Słodko Mi, Wolt, Google, Biscoff, Oreo) and street names as in Polish. SEO limits apply in every language
+  (`seo.title` ≤ 60, `seo.description` ≤ 155 characters).
+- **Keep translations in sync.** When a Polish text changes, update its translation in every language in the same edit (or
+  remove it so it falls back to Polish). When items of a position-matched array are added, removed or reordered in Polish,
+  do the same in every translation — otherwise the translations shift to the wrong items.
+- **Missing texts** are listed by `npm run i18n:status -- --missing` (MCP: `translation_status`) with paths like
+  `sections[id=faq].items[2].answer`: `[id=…]`/`[slug=…]`/`[date=…]` is the item with that key, `[2]` the third item.
+- **Validation:** `npm run content:check` merges every overlay with the Polish file and validates the result — an unknown key,
+  a technical key, a wrong type or an `id`/`slug` the Polish file does not have is an error. `npm run i18n:check` fails while
+  texts are missing (CI only warns: missing texts fall back to Polish).
+
+Overlays have no JSON Schema of their own (every key is optional and only texts are allowed): `npm run content:check`
+validates them by merging them with the Polish file and checking the result against the schemas above.
+
 ## Section types
 
 A page is an ordered list of sections (`sections[]`). Each one has `id` (unique, also the `#anchor`), `type`

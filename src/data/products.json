@@ -10,7 +10,7 @@
       "currency": "PLN",
       "unit": "szt",
       "shortDescription": "Cynamon i lukier — nic więcej, nic mniej.",
-      "description": "Nasza klasyka. Puszyste, wilgotne ciasto drożdżowe, ręcznie zwinięte z maślano-cynamonowym nadzieniem i wykończone lukrem. Od niej najlepiej zacząć znajomość ze Słodko Mi.",
+      "description": "Nasza klasyka. Puszyste, wilgotne ciasto drożdżowe, ręcznie zwinięte z maślano-cynamonowym nadzieniem i wykończone lukrem. Pieczemy ją codziennie na miejscu, na Wildzie. Od niej najlepiej zacząć znajomość ze Słodko Mi.",
       "ingredients": [],
       "allergens": [],
       "images": [
@@ -18,7 +18,11 @@
         { "src": "products/klasyczna-z-lukrem", "alt": "Klasyczna cynamonka z lukrem na białym talerzu" }
       ],
       "available": true,
-      "featured": true
+      "featured": true,
+      "seo": {
+        "title": "Klasyczna cynamonka z lukrem – Poznań, Wilda",
+        "description": "Klasyczna cynamonka z lukrem: puszyste ciasto drożdżowe, maślano-cynamonowe nadzienie i lukier. Świeża codziennie na Wildzie. Na miejscu, na wynos, Wolt."
+      }
     },
     {
       "slug": "klasyczna-z-serkiem",
@@ -28,15 +32,19 @@
       "currency": "PLN",
       "unit": "szt",
       "shortDescription": "Kremowa — z grubą warstwą kremu na serku.",
-      "description": "Klasyczna cynamonka z maślano-cynamonowym nadzieniem, przykryta solidną warstwą kremu na serku. Kremowa, delikatna i bardzo puszysta.",
+      "description": "Klasyczna cynamonka z maślano-cynamonowym nadzieniem, przykryta solidną warstwą kremu na serku. Kremowa, delikatna i bardzo puszysta. Jak każdą naszą cynamonkę zwijamy ją ręcznie i pieczemy codziennie na świeżo.",
       "ingredients": [],
       "allergens": [],
       "images": [
-        { "src": "cutouts/klasyczna-z-serkiem", "alt": "Cynamonka przykryta grubą warstwą kremu na serku" },
+        { "src": "cutouts/klasyczna-z-serkiem", "alt": "Klasyczna cynamonka z serkiem pod grubą warstwą kremu serkowego" },
         { "src": "products/klasyczna-z-serkiem", "alt": "Cynamonka z kremem serkowym na białym talerzu" }
       ],
       "available": true,
-      "featured": false
+      "featured": false,
+      "seo": {
+        "title": "Cynamonka z serkiem (krem serkowy) – Poznań",
+        "description": "Cynamonka z serkiem: klasyczna cynamonka pod grubą warstwą kremu na serku. Pieczona codziennie na Wildzie w Poznaniu. Na miejscu, na wynos i w Wolt."
+      }
     },
     {
       "slug": "biscoff",
@@ -46,7 +54,7 @@
       "currency": "PLN",
       "unit": "szt",
       "shortDescription": "Karmelowo, z pokruszonymi ciasteczkami Biscoff.",
-      "description": "Cynamonka dla fanów karmelowych ciasteczek: kremowy wierzch i hojna porcja pokruszonych ciasteczek Biscoff. Słodko, karmelowo i chrupko.",
+      "description": "Cynamonka dla fanów karmelowych ciasteczek: kremowy wierzch, karmelowa polewa i hojna porcja pokruszonych ciasteczek Biscoff. Słodko, karmelowo i chrupko.",
       "ingredients": [],
       "allergens": [],
       "images": [
@@ -54,7 +62,11 @@
         { "src": "products/biscoff", "alt": "Cynamonka Biscoff z kruszonką z ciasteczek na białym talerzu" }
       ],
       "available": true,
-      "featured": false
+      "featured": false,
+      "seo": {
+        "title": "Cynamonka Biscoff (Lotus) – Poznań, Wilda",
+        "description": "Cynamonka Biscoff: kremowy wierzch, karmel i pokruszone ciasteczka Biscoff (Lotus). Świeża codziennie w Słodko Mi na Wildzie. Na miejscu lub z Wolt."
+      }
     },
     {
       "slug": "oreo",
@@ -72,7 +84,11 @@
         { "src": "products/oreo", "alt": "Cynamonka Oreo z kremem i pokruszonymi ciasteczkami na białym talerzu" }
       ],
       "available": true,
-      "featured": true
+      "featured": true,
+      "seo": {
+        "title": "Cynamonka Oreo z kremem i czekoladą – Poznań",
+        "description": "Cynamonka Oreo: nadzienie z kawałkami Oreo, krem z Oreo, pokruszone ciasteczka i polewa z mlecznej czekolady. Słodko Mi, Poznań, Wilda, także w Wolt."
+      }
     },
     {
       "slug": "szarlotka",
@@ -91,7 +107,11 @@
       ],
       "available": true,
       "featured": true,
-      "badge": "Bestseller"
+      "badge": "Bestseller",
+      "seo": {
+        "title": "Cynamonka szarlotka z kruszonką i karmelem",
+        "description": "Cynamonka jak domowa szarlotka: jabłka, cynamon, chrupiąca kruszonka i karmel. Nasz bestseller, pieczony codziennie na Wildzie w Poznaniu. Także w Wolt."
+      }
     },
     {
       "slug": "sernik-z-truskawka",
@@ -101,7 +121,7 @@
       "currency": "PLN",
       "unit": "szt",
       "shortDescription": "Sernikowy krem, truskawka, kruszonka i biała czekolada.",
-      "description": "To nie jest zwykła cynamonka. Sernik, truskawka, kruszonka i biała czekolada — wszystko na jednej. Pełna nadzienia, puszysta i wilgotna. Jeden z naszych bestsellerów.",
+      "description": "To nie jest zwykła cynamonka. Sernikowy krem, truskawka, kruszonka i biała czekolada — wszystko na jednej. Pełna nadzienia, puszysta i wilgotna. Jeden z naszych bestsellerów.",
       "ingredients": [],
       "allergens": [],
       "images": [
@@ -110,7 +130,11 @@
       ],
       "available": true,
       "featured": true,
-      "badge": "Bestseller"
+      "badge": "Bestseller",
+      "seo": {
+        "title": "Cynamonka sernik z truskawką i kruszonką",
+        "description": "Cynamonka sernik z truskawką: sernikowy krem, truskawka, kruszonka i biała czekolada. Bestseller Słodko Mi z Wildy w Poznaniu. Na miejscu lub z Wolt."
+      }
     },
     {
       "slug": "malina-z-kokosem",
@@ -120,16 +144,20 @@
       "currency": "PLN",
       "unit": "szt",
       "shortDescription": "Kwaskowo i kokosowo — trochę lata w cynamonce.",
-      "description": "Malina i kokos: kwaskowa owocowość i kremowa kokosowa słodycz na puszystej cynamonce. Trochę lata, niezależnie od pogody za oknem.",
+      "description": "Malina i kokos: kwaskowe maliny, krem i wiórki kokosowe na puszystej cynamonce. Owocowo, kremowo i trochę jak latem — niezależnie od pogody za oknem.",
       "ingredients": [],
       "allergens": [],
       "images": [
         { "src": "cutouts/malina-z-kokosem", "alt": "Ilustracja: cynamonka malina z kokosem z kremem, malinami i wiórkami kokosowymi", "aiGenerated": true },
-        { "src": "photos/przekroj", "alt": "Kawałek cynamonki malina z kokosem z kremem, wiórkami kokosowymi i maliną" },
+        { "src": "photos/przekroj", "alt": "Przekrój cynamonki malina z kokosem: puszyste ciasto, krem, wiórki kokosowe i malina" },
         { "src": "products/malina-z-kokosem", "alt": "Ilustracja: cynamonka malina z kokosem na białym talerzu", "aiGenerated": true }
       ],
       "available": true,
-      "featured": false
+      "featured": false,
+      "seo": {
+        "title": "Cynamonka malina z kokosem – Poznań, Wilda",
+        "description": "Cynamonka malina z kokosem: kwaskowe maliny, krem i wiórki kokosowe. Świeża codziennie w Słodko Mi na Wildzie w Poznaniu. Na miejscu, na wynos, Wolt."
+      }
     }
   ]
 }

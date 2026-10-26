@@ -1107,8 +1107,23 @@
           "additionalProperties": false
         },
         "allergenNames": {
-          "default": {},
-          "description": "Display names of allergens (key = value used in products.json); missing ones show the key itself",
+          "default": {
+            "gluten": "gluten",
+            "skorupiaki": "skorupiaki",
+            "jaja": "jaja",
+            "ryby": "ryby",
+            "orzeszki ziemne": "orzeszki ziemne",
+            "soja": "soja",
+            "mleko": "mleko",
+            "orzechy": "orzechy",
+            "seler": "seler",
+            "gorczyca": "gorczyca",
+            "sezam": "sezam",
+            "dwutlenek siarki": "dwutlenek siarki",
+            "łubin": "łubin",
+            "mięczaki": "mięczaki"
+          },
+          "description": "Display names of allergens (key = value used in products.json); default = the Polish name, translations rename them",
           "type": "object",
           "propertyNames": {
             "type": "string",
@@ -1248,7 +1263,7 @@
         "alt"
       ],
       "additionalProperties": false,
-      "description": "Responsive image (WebP, 480/720/960/1600 px variants generated automatically)"
+      "description": "Responsive image (WebP, 480/600/720/960/1600 px variants generated automatically)"
     }
   }
 }

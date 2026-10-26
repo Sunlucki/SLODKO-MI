@@ -14,10 +14,13 @@
     "typecheck": "tsc --noEmit",
     "content:check": "tsx scripts/validate-content.ts && tsx scripts/export-schema.ts --check",
     "content:schema": "tsx scripts/export-schema.ts",
+    "i18n:status": "tsx scripts/i18n-status.ts",
+    "i18n:check": "tsx scripts/i18n-status.ts --check",
     "images": "node scripts/process-images.mjs",
     "reviews:fetch": "tsx scripts/fetch-google-reviews.ts",
     "ai": "tsx scripts/ai-edit.ts",
-    "mcp": "tsx scripts/content-mcp.ts"
+    "mcp": "tsx scripts/content-mcp.ts",
+    "docs:reference": "tsx scripts/docs-content-reference.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

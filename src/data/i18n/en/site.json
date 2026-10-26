@@ -1,0 +1,177 @@
+{
+  "$schema": "../../schema/undefined.schema.json",
+  "name": "Słodko Mi",
+  "tagline": "Hey, it's cinnamon roll time",
+  "description": "Słodko Mi is a bakery in Poznań's Wilda district that specialises in cinnamon rolls baked fresh every day. Every morning we make the dough from scratch, roll each cinnamon roll by hand and bake everything fresh the same day. We serve coffee with our cinnamon rolls — to enjoy here or take away. You can order cinnamon rolls for delivery on Wolt.",
+  "logo": { "sub": "Smakuje Ci?" },
+  "address": { "street": "ul. 28 Czerwca 1956 r. 177/13", "city": "Poznań", "district": "Wilda", "entranceNote": "Entrance on ul. Hetmańska" },
+  "specialHours": [
+    { "date": "2026-10-29", "note": "Opening later than usual" },
+    { "date": "2026-10-31", "note": "See you on Sunday" },
+    { "date": "2026-11-01", "note": "All Saints' Day" }
+  ],
+  "hoursNote": "Hours may differ on public holidays — you'll always find our current hours on Google.",
+  "servesCuisine": ["Cinnamon rolls", "Baked goods", "Coffee"],
+  "priceRange": "20–40 zł",
+  "nav": [
+    { "label": "Flavours" },
+    { "label": "About" },
+    { "label": "Reviews" },
+    { "label": "Find us" }
+  ],
+  "header": {
+    "cta": { "label": "Order on Wolt" }
+  },
+  "footer": {
+    "columns": [
+      {
+        "title": "Flavours",
+        "links": [
+          { "label": "Classic with icing" },
+          { "label": "Sernik with strawberry" },
+          { "label": "Szarlotka" },
+          { "label": "All flavours" }
+        ]
+      },
+      {
+        "title": "Visit us",
+        "links": [
+          { "label": "Get directions" },
+          { "label": "Call us" },
+          { "label": "Order on Wolt" },
+          { "label": "Google reviews" }
+        ]
+      },
+      {
+        "title": "Follow us",
+        "links": [
+          { "label": "Instagram" },
+          { "label": "Facebook" }
+        ]
+      }
+    ],
+    "image": { "alt": "Strawberry sernik cinnamon roll and a cappuccino on a metal tray" },
+    "note": "Cinnamon roll bakery · Poznań, Wilda"
+  },
+  "catalog": {
+    "productCta": { "label": "Order on Wolt" },
+    "secondaryCta": { "label": "Get directions" }
+  },
+  "seo": {
+    "titleTemplate": "%s | Słodko Mi",
+    "keywords": ["cinnamon rolls Poznań", "cinnamon rolls Wilda", "bakery Wilda Poznań", "cinnamon buns Poznań", "cynamonki Poznań", "Słodko Mi"]
+  },
+  "consent": {
+    "title": "Cookies? Only cinnamon ones… and a few digital ones",
+    "text": "With your consent, we use Google Analytics (visitor statistics) and Meta Pixel (measuring and tailoring ads on Facebook and Instagram, including remarketing). Without your consent, we don't load these tools. You can change your choice at any time with the “Cookie settings” button in the footer.",
+    "acceptAll": "Accept all",
+    "rejectAll": "Essential only",
+    "settings": "Settings",
+    "save": "Save my choice",
+    "analyticsLabel": "Analytics",
+    "analyticsText": "Statistics on visits and clicks, with a pseudonymous identifier stored in cookies (Google Analytics 4).",
+    "marketingLabel": "Marketing",
+    "marketingText": "Measuring how well our ads work and tailoring them to you, including remarketing on Facebook and Instagram (Meta Pixel). This also covers Google's use of data for advertising.",
+    "policyLabel": "Privacy policy",
+    "reopenLabel": "Cookie settings"
+  },
+  "ui": {
+    "product": {
+      "breadcrumbHome": "Home",
+      "catalogLabel": "Flavours",
+      "unavailable": "Temporarily unavailable",
+      "allergensHeading": "Allergens",
+      "allergyNote": "Got an allergy? Ask our staff for the full list of ingredients.",
+      "ingredientsHeading": "Ingredients",
+      "otherProductsHeading": "More flavours"
+    },
+    "notFound": {
+      "title": "Page not found",
+      "description": "This page doesn't exist or has been moved.",
+      "heading": "No cinnamon rolls here",
+      "text": "This page doesn't exist or has been moved.",
+      "cta": { "label": "Back to home" }
+    },
+    "reviews": {
+      "sourcePrefix": "Reviews from",
+      "countForms": ["review", "reviews", "reviews"],
+      "readMore": "Read more",
+      "readLess": "Show less",
+      "carouselLabel": "Customer reviews",
+      "carouselRole": "carousel",
+      "slideRole": "review",
+      "slideLabel": "{n} of {total}",
+      "ratingLabel": "Rated {rating} out of 5",
+      "averageLabel": "Average rating: {rating} out of 5",
+      "previous": "Previous review",
+      "next": "Next review"
+    },
+    "visit": {
+      "address": "Address",
+      "hours": "Opening hours",
+      "phone": "Phone",
+      "openNow": "Open now",
+      "closedNow": "Closed",
+      "closedDay": "closed",
+      "specialHours": "Changes to our hours",
+      "showMap": "Show map",
+      "mapNote": "The map loads from Google when you click.",
+      "mapTitle": "Google map — {name}",
+      "today": "today"
+    },
+    "common": {
+      "skipToContent": "Skip to content",
+      "mainNav": "Main menu",
+      "menu": "Menu",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "call": "Call {phone}",
+      "language": "Website language",
+      "illustration": "Illustration",
+      "previousProduct": "Previous flavour",
+      "nextProduct": "Next flavour",
+      "pauseAnimation": "Pause the scrolling text",
+      "breadcrumb": "Breadcrumb",
+      "errorTitle": "Something went wrong",
+      "errorText": "Refresh the page to try again."
+    },
+    "layout": { "copyright": "© {year} {name}", "reload": "Refresh" },
+    "days": {
+      "short": {
+        "Mo": "Mon",
+        "Tu": "Tue",
+        "We": "Wed",
+        "Th": "Thu",
+        "Fr": "Fri",
+        "Sa": "Sat",
+        "Su": "Sun"
+      },
+      "long": {
+        "Mo": "Monday",
+        "Tu": "Tuesday",
+        "We": "Wednesday",
+        "Th": "Thursday",
+        "Fr": "Friday",
+        "Sa": "Saturday",
+        "Su": "Sunday"
+      }
+    },
+    "sections": { "reviewCountSource": "on" },
+    "allergenNames": {
+      "gluten": "gluten",
+      "skorupiaki": "crustaceans",
+      "jaja": "eggs",
+      "ryby": "fish",
+      "orzeszki ziemne": "peanuts",
+      "soja": "soya",
+      "mleko": "milk",
+      "orzechy": "tree nuts",
+      "seler": "celery",
+      "gorczyca": "mustard",
+      "sezam": "sesame",
+      "dwutlenek siarki": "sulphur dioxide",
+      "łubin": "lupin",
+      "mięczaki": "molluscs"
+    }
+  }
+}

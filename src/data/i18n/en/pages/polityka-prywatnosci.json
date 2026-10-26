@@ -1,0 +1,68 @@
+{
+  "seo": {
+    "title": "Privacy and Cookie Policy",
+    "description": "What data Słodko Mi processes: server logs, Google Analytics, Meta Pixel, Google Maps and reviews. Your rights and how to withdraw cookie consent."
+  },
+  "sections": [
+    {
+      "id": "polityka",
+      "heading": "Privacy and Cookie Policy",
+      "blocks": [
+        {
+          "text": "Last updated: 26 October 2026. Here we explain what data we process when you visit this website, for what purpose and on what legal basis, who we share it with and what rights you have."
+        },
+        { "text": "Data controller" },
+        {
+          "text": "The controller of your personal data is the Słodko Mi Smakuje Ci? bakery, ul. 28 Czerwca 1956 r. 177/13, 61-525 Poznań, Poland (entrance on ul. Hetmańska). For privacy matters, you can contact us by phone (+48 511 228 221), via Instagram (@slodkomi.poznan) or in person at the bakery."
+        },
+        { "text": "What data we process and why" },
+        { "text": "This website has no forms, user accounts or online shop. We process data in the situations described below." },
+        {
+          "items": [
+            "Visiting the website (server logs): the server that hosts the website automatically records your IP address, the date and time of your visit, the address of the page you opened, the address of the page you came from, and information about your browser and operating system. We need this data to display the website, protect it from abuse and fix errors — this is our legitimate interest (Article 6(1)(f) GDPR). This data is processed on our behalf by our hosting company and, for the preview version of the website, by GitHub Pages (GitHub, Inc., USA).",
+            "Your choice in the cookie banner: we store it only in your browser's storage, and it never reaches us. It is necessary for the website to remember your decision, so it does not require consent (Article 399 of the Polish Electronic Communications Law).",
+            "Statistics — Google Analytics 4 (only with “Analytics” consent): Google stores a pseudonymous browser identifier in cookies (e.g. _ga) and receives, among other things, your IP address, information about your device and browser, your approximate location, the pages you visit, where you came from and your clicks on buttons (e.g. “Order on Wolt”, “Call us”). This data is not anonymous. It shows us how you use the website so that we can improve it. Provider: Google Ireland Limited (Ireland). We use Google Consent Mode: without your consent, the Google Analytics script is not loaded at all.",
+            "Advertising — Meta Pixel (only with “Marketing” consent): we measure how well our ads on Facebook and Instagram work and tailor them to audiences, including showing ads to people who have visited the website (remarketing). Meta stores cookies (e.g. _fbp) and receives, among other things, your IP address, information about your browser, the pages you visit and the actions you take (e.g. viewing a flavour, clicking “Order on Wolt”). Meta may link this data to your Facebook or Instagram account. Provider: Meta Platforms Ireland Limited (Ireland). The same consent also allows Google to use data from Google Analytics for advertising purposes (Google Consent Mode ad signals).",
+            "Additional tools — Google Tag Manager and TikTok Pixel: we use them only when they are listed in the cookie banner. Google Tag Manager (Google Ireland Limited) loads measurement scripts once you have given any consent, and receives your IP address when it does so. TikTok Pixel (TikTok Technology Limited, Ireland) works only with “Marketing” consent and is used to measure and tailor our ads on TikTok, just as Meta Pixel does on Facebook and Instagram.",
+            "Google Maps: the map in the “Find us” section loads only after you click “Show map”. Your browser then connects to Google (Google Ireland Limited), which receives your IP address and may store its own cookies. We load the map at your request, in our legitimate interest in showing you how to get to us (Article 6(1)(f) GDPR).",
+            "Google reviews: in the reviews section we show selected, publicly available reviews from our Google Maps profile — the author's name or pseudonym (as shown on Google), the rating, the text and the approximate date. The source of this data is Google. We show them in our legitimate interest in presenting customer reviews (Article 6(1)(f) GDPR). If a review is yours and you don't want it shown here, let us know and we'll remove it from the website.",
+            "Contacting us: when you call or message us (e.g. on Instagram or Facebook), we process your phone number or profile name and the content of your message in order to reply and prepare your order (Article 6(1)(b) and (f) GDPR). Messages on social networks are also processed by their operator (Meta) under its own rules.",
+            "External links: the “Order on Wolt”, Instagram, Facebook, “Get directions” and Google reviews buttons take you to Wolt, Meta and Google services. Once you go there, those services process your data as separate controllers, under their own privacy policies. We record the click itself in our statistics only with your consent."
+          ]
+        },
+        { "text": "Consent and how to withdraw it" },
+        {
+          "text": "Analytics and marketing tools work only on the basis of your consent (Article 6(1)(a) GDPR in conjunction with Article 399 of the Polish Electronic Communications Law). Consent is voluntary — the website works normally without it. You can change or withdraw it at any time: click “Cookie settings” in the website footer, switch off the toggles you choose and click “Save my choice”, or choose “Essential only”. Withdrawing consent does not affect the lawfulness of processing carried out before it was withdrawn. You can delete cookies that have already been stored in your browser settings."
+        },
+        { "text": "Joint controllership with Meta" },
+        {
+          "text": "We are jointly responsible with Meta Platforms Ireland Limited for collecting data through Meta Pixel on our website and transmitting it to Meta (Article 26 GDPR). The terms of this cooperation are set out in Meta's Controller Addendum: we are responsible for informing you about the processing and for obtaining your consent, and Meta is responsible for the security of the data in its systems and for fulfilling your rights regarding the data it stores. You can exercise your rights with us or directly with Meta. For further processing, e.g. when displaying ads, Meta acts as an independent controller in accordance with its privacy policy (facebook.com/privacy/policy)."
+        },
+        { "text": "Recipients and transfers outside the EEA" },
+        {
+          "text": "Your data may be received by: our hosting company (acting on our behalf), Google, Meta, GitHub and — if used — TikTok, as well as public authorities where required by law. Google, Meta and GitHub may transfer data to the USA (including to Google LLC and Meta Platforms, Inc.). These companies participate in the EU-US Data Privacy Framework, for which the European Commission has found an adequate level of data protection (Article 45 GDPR). TikTok may transfer data outside the EEA on the basis of standard contractual clauses approved by the European Commission."
+        },
+        { "text": "How long we keep data" },
+        {
+          "items": [
+            "Server logs — for as long as needed to keep the website secure and running, in line with the hosting company's settings.",
+            "Google Analytics — visit data for up to 14 months; _ga cookies expire after 2 years at the latest.",
+            "Meta Pixel — the _fbp cookie expires after 90 days; data sent to Meta is kept in accordance with Meta's privacy policy.",
+            "Your choice in the cookie banner — 12 months, after which we'll ask you again.",
+            "Google reviews — until the review is deleted on Google, until you object, or until it is replaced by newer reviews.",
+            "Messages and calls — for as long as needed to deal with your enquiry or fulfil your order."
+          ]
+        },
+        { "text": "Your rights" },
+        {
+          "text": "You have the right to access your data, to have it corrected or erased, to restrict its processing, to data portability (when we process data on the basis of consent or a contract), and the right to object to processing based on our legitimate interest. You can withdraw your consent at any time. You also have the right to lodge a complaint with the President of the Polish Personal Data Protection Office (Prezes Urzędu Ochrony Danych Osobowych, ul. Stawki 2, 00-193 Warszawa). Data from Google and Meta tools is pseudonymous, so without the identifier from your browser we may not be able to find it."
+        },
+        {
+          "text": "With marketing consent, Meta (and Google and TikTok, if used) may build profiles to tailor ads. We do not make decisions about you based solely on automated processing that would produce legal effects (Article 22 GDPR)."
+        },
+        { "text": "Changes to this policy" },
+        { "text": "If we change the tools we use or the way we process data, we will update this page and the cookie banner texts." }
+      ]
+    }
+  ]
+}

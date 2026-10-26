@@ -5,9 +5,10 @@
  *
  * Matching rules when an overlay is applied to the (validated) default content:
  *  - objects: every overlay key must exist in the base
- *  - arrays of objects with "id" (sections) or "slug" (products, categories): matched by that key
+ *  - arrays of objects with "id" (sections), "slug" (products, categories) or "date" (special hours): matched by that key
  *  - other arrays (headline lines, paragraphs, FAQ items, nav links…): matched by position
- *  - strings: replaced, except technical keys (NOT_TRANSLATABLE) that must stay as in the base
+ *  - strings: replaced, except technical keys (NOT_TRANSLATABLE) and settings subtrees (SETTINGS) that must
+ *    stay as in the base; string items of an array inherit the array's key (e.g. productSlugs)
  */
 
 /** Keys whose string values are identifiers, URLs, dates or settings — never translated. */
@@ -31,8 +32,6 @@ export const NOT_TRANSLATABLE = new Set([
   'opens',
   'closes',
   'days',
-  'phone',
-  'email',
   'postalCode',
   'country',
   'currency',
@@ -50,13 +49,38 @@ export const NOT_TRANSLATABLE = new Set([
   'wordmark',
 ])
 
-/** Whole subtrees that are settings, not text. */
-const NOT_TRANSLATABLE_TREES = new Set(['links', 'theme', 'i18n', 'geo', 'hours', 'contact', 'allergens', 'source'])
+/**
+ * Settings subtrees (not text), as paths from the root of a content file; "*" stands for one id/slug.
+ * Matched only at these places, so e.g. footer link labels or ui.visit.hours stay translatable.
+ */
+const SETTINGS = [
+  ['links'],
+  ['theme'],
+  ['i18n'],
+  ['hours'],
+  ['contact'],
+  ['address', 'geo'],
+  ['products', '*', 'allergens'],
+  ['sections', '*', 'source'],
+]
+
+const isSettings = (path: string[]) => SETTINGS.some((pattern) => pattern.length <= path.length && pattern.every((seg, i) => seg === '*' || seg === path[i]))
+
+/** A string is technical when its own key is, or — for array items — when the array's key is (e.g. productSlugs). */
+const isTechnical = (path: string[]) => {
+  const key = path.at(-1) ?? ''
+  const owner = /^\d+$/.test(key) ? (path.at(-2) ?? '') : key
+  return NOT_TRANSLATABLE.has(key) || NOT_TRANSLATABLE.has(owner) || isSettings(path)
+}
 
 type Json = string | number | boolean | null | Json[] | { [k: string]: Json }
 
 const isObj = (v: unknown): v is Record<string, Json> => typeof v === 'object' && v !== null && !Array.isArray(v)
-const keyOf = (item: Json): string | null => (isObj(item) ? (typeof item.id === 'string' ? item.id : typeof item.slug === 'string' ? item.slug : null) : null)
+const keyOf = (item: Json): string | null => {
+  if (!isObj(item)) return null
+  for (const k of ['id', 'slug', 'date']) if (typeof item[k] === 'string') return item[k] as string
+  return null
+}
 
 /**
  * Applies a translation overlay to base content. Returns the merged copy; problems are pushed to
@@ -66,6 +90,12 @@ export function applyOverlay(base: Json, overlay: Json, errors: string[], path: 
   const where = path.join('.') || '(root)'
   const key = path.at(-1) ?? ''
   if (overlay === null || overlay === undefined) return base
+
+  // Settings first: their arrays/objects must not be merged item by item
+  if (isSettings(path)) {
+    if (JSON.stringify(overlay) !== JSON.stringify(base)) errors.push(`${where}: settings are not translated — remove this key from the translation file`)
+    return base
+  }
 
   if (Array.isArray(base)) {
     if (!Array.isArray(overlay)) {
@@ -79,7 +109,7 @@ export function applyOverlay(base: Json, overlay: Json, errors: string[], path: 
         const k = keyOf(item)
         const index = k === null ? -1 : base.findIndex((b) => keyOf(b) === k)
         if (index < 0) {
-          errors.push(`${where}: item ${k === null ? 'without "id"/"slug"' : `"${k}"`} does not exist in the default language`)
+          errors.push(`${where}: item ${k === null ? 'without "id"/"slug"/"date"' : `"${k}"`} does not exist in the default language`)
           continue
         }
         result[index] = applyOverlay(base[index], item, errors, [...path, String(k)])
@@ -95,10 +125,6 @@ export function applyOverlay(base: Json, overlay: Json, errors: string[], path: 
       errors.push(`${where}: expected an object (as in the default language)`)
       return base
     }
-    if (NOT_TRANSLATABLE_TREES.has(key)) {
-      errors.push(`${where}: settings are not translated — remove this key from the translation file`)
-      return base
-    }
     const result: Record<string, Json> = { ...base }
     for (const [k, v] of Object.entries(overlay)) {
       if (k === '$schema') continue
@@ -107,7 +133,7 @@ export function applyOverlay(base: Json, overlay: Json, errors: string[], path: 
         continue
       }
       // Matching keys inside keyed arrays must stay equal (they identify the item)
-      if ((k === 'id' || k === 'slug') && v === base[k]) continue
+      if ((k === 'id' || k === 'slug' || k === 'date') && v === base[k]) continue
       result[k] = applyOverlay(base[k], v, errors, [...path, k])
     }
     return result
@@ -118,7 +144,7 @@ export function applyOverlay(base: Json, overlay: Json, errors: string[], path: 
       errors.push(`${where}: expected text`)
       return base
     }
-    if (NOT_TRANSLATABLE.has(key) || path.some((p) => NOT_TRANSLATABLE_TREES.has(p))) {
+    if (isTechnical(path)) {
       if (overlay !== base) errors.push(`${where}: "${key}" is not translatable — remove it from the translation file`)
       return base
     }
@@ -138,8 +164,7 @@ export interface MissingText {
 
 /** Lists translatable texts of `base` that the overlay does not provide (shown in the default language). */
 export function missingTranslations(base: Json, overlay: Json | undefined, path: string[] = []): MissingText[] {
-  const key = path.at(-1) ?? ''
-  if (NOT_TRANSLATABLE_TREES.has(key)) return []
+  if (isSettings(path)) return []
   if (Array.isArray(base)) {
     const items = Array.isArray(overlay) ? overlay : []
     const keyed = base.length > 0 && base.every((item) => keyOf(item) !== null)
@@ -153,7 +178,7 @@ export function missingTranslations(base: Json, overlay: Json | undefined, path:
     const o = isObj(overlay) ? overlay : undefined
     return Object.entries(base).flatMap(([k, v]) => missingTranslations(v, o?.[k], [...path, k]))
   }
-  if (typeof base === 'string' && !NOT_TRANSLATABLE.has(key) && base.trim() && !/^(https?:|mailto:|tel:|@|\/|#)/.test(base)) {
+  if (typeof base === 'string' && !isTechnical(path) && base.trim() && !/^(https?:|mailto:|tel:|@|\/|#)/.test(base)) {
     return typeof overlay === 'string' && overlay.trim() ? [] : [{ path: path.join('.'), source: base }]
   }
   return []

@@ -50,8 +50,8 @@ function ProductView({ product }: { product: ProductT }) {
   return (
     <>
       <Seo
-        title={product.name}
-        description={product.shortDescription}
+        title={product.seo?.title ?? product.name}
+        description={product.seo?.description ?? product.shortDescription}
         path={path}
         ogImage={product.images[0].src}
         jsonLd={[productJsonLd(product, c), breadcrumbJsonLd(crumbs, c)]}

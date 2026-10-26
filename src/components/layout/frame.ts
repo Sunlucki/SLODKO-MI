@@ -94,9 +94,11 @@ export function frameCss(colors: SiteT['theme']['colors']): string {
       '--nf-card-notch-h': CARD.notch.h,
     }),
   )
+  // The content-box background sits under the solid middle slice (invisible); it lets contrast checkers (axe/Lighthouse),
+  // which ignore border-image, see that the text is not on the cream page background
   css.push(
     '.nf-hero,.nf-menu,.nf-card{position:relative;isolation:isolate}' +
-      ".nf-hero::before,.nf-menu::before,.nf-card::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-style:solid}",
+      ".nf-hero::before,.nf-menu::before,.nf-card::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-style:solid;background:content-box var(--c-brand-deep)}",
   )
   return css.join('')
 }

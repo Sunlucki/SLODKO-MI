@@ -20,7 +20,7 @@ function autoDetectScript(fallback: string): string {
   const codes = JSON.stringify(locales.map((l) => l.code))
   return (
     `(function(){try{var L=${codes},D=${JSON.stringify(defaultLocale)},F=${JSON.stringify(fallback)},B=${JSON.stringify(import.meta.env.BASE_URL)},k='slodkomi-lang';` +
-    `if(/bot|crawl|spider|slurp|lighthouse|headless|preview|facebookexternalhit|whatsapp|telegram/i.test(navigator.userAgent))return;` +
+    `if(navigator.webdriver||/bot|crawl|spider|slurp|lighthouse|headless|preview|facebookexternalhit|whatsapp|telegram/i.test(navigator.userAgent))return;` +
     `if(localStorage.getItem(k)||sessionStorage.getItem(k+'-checked'))return;sessionStorage.setItem(k+'-checked','1');` +
     `var p=location.pathname.slice(B.length-1),first=p.split('/')[1];if(first!==D&&L.indexOf(first)>-1)return;` +
     `var want=F,langs=navigator.languages||[navigator.language];for(var i=0;i<langs.length;i++){var c=String(langs[i]||'').slice(0,2).toLowerCase();if(L.indexOf(c)>-1){want=c;break}}` +
@@ -39,16 +39,20 @@ function ThemeStyle() {
     `:root{--c-cream:${c.cream};--c-ink:${c.ink};--c-brand:${c.brand};--c-brand-deep:${c.brandDeep};--c-blush:${c.blush};--c-caramel:${c.caramel}}` +
     frameCss(c)
   return (
-    <Head>
-      <html lang={lang} />
-      {site.i18n.autoDetect && locales.length > 1 && <script>{autoDetectScript(site.i18n.fallbackLocale ?? defaultLocale)}</script>}
-      <style>{css}</style>
-      <meta name="theme-color" content={c.brandDeep} />
-      {/* Display font of the LCP headline (Polish letters live in the second file, Cyrillic ones in the third) */}
-      <link rel="preload" as="font" type="font/woff2" href={antonLatin} crossOrigin="" />
-      <link rel="preload" as="font" type="font/woff2" href={antonPl} crossOrigin="" />
-      {CYRILLIC.includes(lang.split('-')[0]) && <link rel="preload" as="font" type="font/woff2" href={displayCyrillic} crossOrigin="" />}
-    </Head>
+    <>
+      {/* In the body on purpose: vite-react-ssg serializes only title/meta/link/script from <Head>, and the
+          frame + theme CSS must be in the pre-rendered HTML (the app bundle loads after the first paint) */}
+      <style dangerouslySetInnerHTML={{ __html: css }} />
+      <Head>
+        <html lang={lang} />
+        {site.i18n.autoDetect && locales.length > 1 && <script>{autoDetectScript(site.i18n.fallbackLocale ?? defaultLocale)}</script>}
+        <meta name="theme-color" content={c.brandDeep} />
+        {/* Display font of the LCP headline (Polish letters live in the second file, Cyrillic ones in the third) */}
+        <link rel="preload" as="font" type="font/woff2" href={antonLatin} crossOrigin="" />
+        <link rel="preload" as="font" type="font/woff2" href={antonPl} crossOrigin="" />
+        {CYRILLIC.includes(lang.split('-')[0]) && <link rel="preload" as="font" type="font/woff2" href={displayCyrillic} crossOrigin="" />}
+      </Head>
+    </>
   )
 }
 

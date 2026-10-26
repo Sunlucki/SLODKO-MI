@@ -16,15 +16,18 @@ function remember(code: string) {
 /**
  * The current page in every language. Plain links: switching is a full load of that language's
  * pre-rendered page. The #hash is added after hydration only, as the pre-rendered HTML has none.
+ * A 404 (unknown URL) exists in no language, so there the links lead to each language's home page.
  */
 function useLanguageLinks() {
-  const { locale } = useContent()
+  const { locale, getPage, getProduct } = useContent()
   const { pathname, hash } = useLocation()
   const [hydrated, setHydrated] = useState(false)
   useEffect(() => setHydrated(true), [])
-  const path = stripLocale(pathname).replace(/([^/])$/, '$1/')
+  const page = stripLocale(pathname).replace(/([^/])$/, '$1/')
+  const exists = Boolean(getPage(page) ?? getProduct(page.match(/^\/produkt\/([^/]+)\/$/)?.[1] ?? ''))
+  const path = exists ? page + (hydrated ? hash : '') : '/'
   const base = import.meta.env.BASE_URL.slice(0, -1)
-  return locales.map((l) => ({ ...l, current: l.code === locale, href: base + localizePath(path + (hydrated ? hash : ''), l.code) }))
+  return locales.map((l) => ({ ...l, current: l.code === locale, href: base + localizePath(path, l.code) }))
 }
 
 interface Props {

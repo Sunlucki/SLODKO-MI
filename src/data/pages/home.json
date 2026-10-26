@@ -2,8 +2,8 @@
   "$schema": "../../../schema/page.schema.json",
   "path": "/",
   "seo": {
-    "title": "Świeże cynamonki na Wildzie, Poznań",
-    "description": "Słodko Mi — cukiernia z cynamonkami na poznańskiej Wildzie. 7 smaków, codziennie wypiekane na świeżo. 28 Czerwca 1956 r. 177/13, wejście od Hetmańskiej."
+    "title": "Cynamonki Poznań, Wilda – świeże codziennie",
+    "description": "Świeże cynamonki na Wildzie w Poznaniu: 7 smaków, kawa na miejscu i na wynos, dostawa Wolt. 28 Czerwca 1956 r. 177/13, wejście od Hetmańskiej."
   },
   "sections": [
     {
@@ -14,7 +14,7 @@
         { "text": "CZAS NA" },
         { "text": "CYNAMONKĘ", "accent": true }
       ],
-      "description": "Puszyste, wilgotne, codziennie wypiekane na świeżo. Na Wildzie, wejście od Hetmańskiej.",
+      "description": "Świeże cynamonki na Wildzie w Poznaniu — puszyste, wilgotne, pieczone codziennie. Wejście od ul. Hetmańskiej.",
       "image": {
         "src": "hero/cynamonka",
         "alt": "Ilustracja: dłoń trzymająca cynamonkę sernik z truskawką, kruszonką i białą polewą",
@@ -34,11 +34,12 @@
       "heading": "Puszyste. Wilgotne. Prosto z pieca.",
       "sticker": "Robione na miejscu",
       "body": [
-        "Słodko Mi to mała cukiernia na poznańskiej Wildzie, która robi jedną rzecz i robi ją porządnie: cynamonki. Każdego ranka przygotowujemy ciasto od podstaw, ręcznie zwijamy każdą cynamonkę i pieczemy wszystko tego samego dnia."
+        "Słodko Mi to mała cukiernia na poznańskiej Wildzie, która robi jedną rzecz i robi ją porządnie: cynamonki. Każdego ranka przygotowujemy ciasto od podstaw, ręcznie zwijamy każdą cynamonkę i pieczemy wszystko tego samego dnia.",
+        "Cynamonki, bułeczki cynamonowe, cinnamon rolls — jak zwał, tak zwał. Mamy 7 smaków, a do nich kawę: na miejscu albo na wynos."
       ],
       "images": [
-        { "src": "photos/lopatka", "alt": "Złocista cynamonka podawana na łopatce" },
-        { "src": "photos/szczypce", "alt": "Cynamonka Oreo nakładana szczypcami do pudełka" }
+        { "src": "photos/lopatka", "alt": "Złocista cynamonka z lukrem podana na łopatce prosto z blachy" },
+        { "src": "photos/szczypce", "alt": "Cynamonka Oreo nakładana szczypcami do pudełka na wynos" }
       ],
       "cta": { "label": "Poznaj smaki", "href": "/#smaki", "variant": "primary" }
     },
@@ -57,7 +58,7 @@
         "tone": "caramel",
         "heading": "TO, CO NAJLEPSZE",
         "image": { "src": "cutouts/szarlotka", "alt": "Cynamonka szarlotka z kruszonką i karmelem" },
-        "caption": "Pełne nadzienia i robione tego samego dnia.",
+        "caption": "Szarlotka, nasz bestseller: pełna nadzienia i upieczona tego samego dnia na Wildzie.",
         "cta": { "label": "Zobacz smaki", "href": "/#smaki", "variant": "primary" }
       }
     },
@@ -65,7 +66,7 @@
       "id": "smaki",
       "type": "productGrid",
       "tone": "cream",
-      "heading": "Poznaj nasze smaki.",
+      "heading": "Poznaj nasze smaki cynamonek.",
       "sticker": "7 wariantów",
       "source": { "mode": "all" }
     },
@@ -75,7 +76,7 @@
       "tone": "cream",
       "heading": "Nie wierz nam na słowo.",
       "sticker": "Opinie z Google",
-      "backgroundImage": { "src": "photos/zespol", "alt": "Zespół Słodko Mi za witryną z cynamonkami, pod różowym neonem „Jeszcze jedna?”" },
+      "backgroundImage": { "src": "photos/zespol", "alt": "Zespół Słodko Mi w cukierni na Wildzie, za witryną pełną cynamonek, pod różowym neonem „Jeszcze jedna?”" },
       "maxItems": 5,
       "minRating": 4,
       "readAllLabel": "Wszystkie opinie w Google",
@@ -89,11 +90,11 @@
       "heading": "Prosto z naszej blachy.",
       "sticker": "@slodkomi.poznan",
       "images": [
-        { "src": "photos/krem", "alt": "Cynamonki z kleksami kremu na blasze" },
+        { "src": "photos/krem", "alt": "Świeżo upieczone cynamonki na blasze z kleksami kremu" },
         { "src": "photos/sernik-blacha", "alt": "Cynamonki malina z kokosem oraz szarlotka z kruszonką i karmelem na blasze" },
-        { "src": "photos/biscoff-blacha", "alt": "Cynamonki Biscoff polane karmelem" },
-        { "src": "photos/przekroj", "alt": "Kawałek cynamonki malina z kokosem z kremem, wiórkami kokosowymi i maliną" },
-        { "src": "photos/blachy", "alt": "Kilka blach z różnymi smakami cynamonek" }
+        { "src": "photos/biscoff-blacha", "alt": "Cynamonki Biscoff na blasze: krem, karmelowa polewa i pokruszone ciasteczka" },
+        { "src": "photos/przekroj", "alt": "Przekrój cynamonki malina z kokosem: puszyste ciasto, krem, wiórki kokosowe i malina" },
+        { "src": "photos/blachy", "alt": "Blachy świeżych cynamonek w kilku smakach, m.in. Oreo" }
       ],
       "cta": { "label": "Obserwuj na Instagramie", "href": "@instagram", "variant": "primary" }
     },
@@ -101,10 +102,10 @@
       "id": "dojazd",
       "type": "visit",
       "tone": "blush",
-      "heading": "Wpadnij na Wildę.",
+      "heading": "Wpadnij na Wildę – dojazd i godziny.",
       "sticker": "Wejście od Hetmańskiej",
-      "intro": "Jesteśmy przy 28 Czerwca 1956 r. 177/13. Wejście jest od strony ul. Hetmańskiej — przystanek tuż obok, więc najwygodniej dojechać komunikacją.",
-      "image": { "src": "photos/pudelka", "alt": "Cynamonki zapakowane na wynos w pudełkach" },
+      "intro": "Jesteśmy na Wildzie w Poznaniu, przy ul. 28 Czerwca 1956 r. 177/13 — wejście od ul. Hetmańskiej. Przystanek tuż obok, więc najwygodniej dojechać komunikacją. Zapraszamy od wtorku do niedzieli, w poniedziałek odpoczywamy.",
+      "image": { "src": "photos/pudelka", "alt": "Cynamonki zapakowane na wynos w białych pudełkach" },
       "showMap": true,
       "ctas": [
         { "label": "Wyznacz trasę", "href": "@directions", "variant": "primary" },
@@ -119,12 +120,12 @@
       "heading": "Pytania i odpowiedzi.",
       "items": [
         {
-          "question": "Gdzie dokładnie jesteście?",
-          "answer": "Poznań, Wilda, ul. 28 Czerwca 1956 r. 177/13. Wejście jest od strony ul. Hetmańskiej — od 28 Czerwca nie wejdziesz."
+          "question": "Gdzie jesteście i gdzie jest wejście?",
+          "answer": "Na poznańskiej Wildzie, przy ul. 28 Czerwca 1956 r. 177/13. Wejście jest od strony ul. Hetmańskiej — od 28 Czerwca nie wejdziesz."
         },
-        { "question": "Czy macie dostawę?", "answer": "Tak — dostawę zamówisz przez Wolt. Możesz też zjeść na miejscu albo wziąć cynamonki na wynos." },
+        { "question": "Czy macie dostawę?", "answer": "Tak — cynamonki z dostawą zamówisz przez Wolt. Albo wpadnij po nie do nas na Wildę." },
         {
-          "question": "Ile macie smaków?",
+          "question": "Ile macie smaków cynamonek?",
           "answer": "Siedem: klasyczna z lukrem, klasyczna z serkiem, Biscoff, Oreo, szarlotka z kruszonką i karmelem, sernik z truskawką i kruszonką oraz malina z kokosem."
         },
         {
@@ -135,7 +136,12 @@
         {
           "question": "Czy mogę zamówić więcej cynamonek?",
           "answer": "Jasne. Napisz do nas na Instagramie albo zadzwoń i daj znać, ile sztuk i na którą godzinę — przygotujemy."
-        }
+        },
+        {
+          "question": "Czy jesteście otwarci w niedzielę? A w poniedziałek?",
+          "answer": "W niedzielę tak! Zapraszamy od wtorku do niedzieli w godz. 10:00–19:00, a w poniedziałek cukiernia jest nieczynna. W święta godziny mogą się różnić — zmiany podajemy przy godzinach otwarcia i w Google."
+        },
+        { "question": "Czy mogę zjeść na miejscu?", "answer": "Jasne — cynamonkę i kawę zjesz u nas na miejscu albo weźmiesz na wynos." }
       ]
     },
     {
@@ -143,7 +149,7 @@
       "type": "cta",
       "tone": "brand",
       "heading": "Cynamonka już czeka.",
-      "text": "Zamów z dostawą przez Wolt albo wpadnij do nas na Wildę.",
+      "text": "Zamów cynamonki z dostawą przez Wolt albo wpadnij po nie na Wildę.",
       "primaryCta": { "label": "Zamów na Wolt", "href": "@order", "variant": "light" },
       "secondaryCta": { "label": "Zadzwoń", "href": "@phone", "variant": "secondary" },
       "marquee": "TEJ, czas na cynamonkę"

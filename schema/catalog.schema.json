@@ -157,6 +157,25 @@
           "description": "Small label on the card, e.g. \"Bestseller\", \"Nowość\"",
           "type": "string",
           "maxLength": 20
+        },
+        "seo": {
+          "description": "Search snippet of the product page; omit a field to fall back to name / shortDescription",
+          "type": "object",
+          "properties": {
+            "title": {
+              "description": "<title> of /produkt/<slug> WITHOUT the \" | Słodko Mi\" suffix that site.seo.titleTemplate adds (12 chars) — keep it ≤ 48 chars so the full title stays ≤ 60. Name the search phrase, e.g. \"Cynamonka Oreo z kremem i czekoladą – Poznań\". Defaults to `name`.",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 70
+            },
+            "description": {
+              "description": "Meta description of /produkt/<slug> (≤ 155 chars recommended): only facts from this product + where to get it. Defaults to `shortDescription`.",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 170
+            }
+          },
+          "additionalProperties": false
         }
       },
       "required": [
@@ -194,7 +213,7 @@
         "alt"
       ],
       "additionalProperties": false,
-      "description": "Responsive image (WebP, 480/720/960/1600 px variants generated automatically)"
+      "description": "Responsive image (WebP, 480/600/720/960/1600 px variants generated automatically)"
     }
   }
 }

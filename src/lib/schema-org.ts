@@ -1,8 +1,9 @@
 // JSON-LD builders (schema.org) + absolute URL helpers shared with <Seo>.
 // Builders take the language version of the page (useContent()): names, descriptions and URLs are
-// in that language; inLanguage is set where schema.org defines it (CreativeWork: WebSite, FAQPage).
+// in that language; inLanguage is set where schema.org defines it (CreativeWork: WebSite, FAQPage, Menu).
 // No aggregateRating/review markup: Google treats it as self-serving for LocalBusiness
 // and does not allow re-publishing third-party (Google) reviews as structured data.
+import { catalogLink } from '@/components/product/helpers'
 import { contentFor, defaultLocale, images, type Localized } from '@/content'
 import type { ProductT } from '@/content/schema'
 
@@ -55,7 +56,58 @@ export function socialImage(key: string): { url: string; width: number; height: 
 }
 
 const homeUrl = (c: Localized) => pageUrl(c.localize('/'))
-const bakeryId = (c: Localized) => `${homeUrl(c)}#bakery`
+
+/**
+ * One shop, one identifier: every language version describes the same Bakery node (@id on the default-language
+ * home page), only its texts and `url` follow the page language. Per-language ids would declare four bakeries at
+ * one address; a shared id lets search engines merge the descriptions into one entity (and its Google profile).
+ */
+const bakeryId = () => `${pageUrl('/')}#bakery`
+
+const productUrl = (product: ProductT, c: Localized) => pageUrl(c.localize(`/produkt/${product.slug}`))
+
+/** Offer of a flavour, only where the site shows its price (site.catalog.showPrices) */
+function offerOf(product: ProductT, c: Localized): object | undefined {
+  if (!c.site.catalog.showPrices || product.price == null) return undefined
+  return {
+    '@type': 'Offer',
+    price: product.price.toFixed(2),
+    priceCurrency: product.currency,
+    availability: product.available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+    url: productUrl(product, c),
+  }
+}
+
+/** The flavours as a menu: one MenuSection per category, a MenuItem per flavour linking to its page. */
+function menuJsonLd(c: Localized): object {
+  const catalog = catalogLink(c)
+  return {
+    '@type': 'Menu',
+    '@id': `${homeUrl(c)}#menu`,
+    name: catalog.label,
+    url: pageUrl(c.localize(catalog.href)),
+    inLanguage: c.lang,
+    hasMenuSection: c.catalog.categories
+      .map((category) => ({
+        '@type': 'MenuSection',
+        name: category.name,
+        hasMenuItem: c.products
+          .filter((p) => p.category === category.slug)
+          .map((p) => {
+            const offers = offerOf(p, c)
+            return {
+              '@type': 'MenuItem',
+              name: p.name,
+              description: p.shortDescription,
+              image: imageUrl(p.images[0].src),
+              url: productUrl(p, c),
+              ...(offers && { offers }),
+            }
+          }),
+      }))
+      .filter((section) => section.hasMenuItem.length > 0),
+  }
+}
 
 export function bakeryJsonLd(c: Localized): object {
   const { site } = c
@@ -63,7 +115,7 @@ export function bakeryJsonLd(c: Localized): object {
   return {
     '@context': CONTEXT,
     '@type': 'Bakery',
-    '@id': bakeryId(c),
+    '@id': bakeryId(),
     name: site.name,
     legalName: site.legalName,
     description: site.description,
@@ -80,6 +132,7 @@ export function bakeryJsonLd(c: Localized): object {
       addressCountry: address.country,
     },
     geo: { '@type': 'GeoCoordinates', latitude: address.geo.lat, longitude: address.geo.lng },
+    areaServed: { '@type': 'City', name: address.city },
     // Closed days are simply omitted (schema.org: no specification = closed). Special hours apply to one date
     // (validFrom = validThrough); a closed date is 00:00–00:00, as Google documents for all-day closures.
     openingHoursSpecification: [
@@ -96,6 +149,18 @@ export function bakeryJsonLd(c: Localized): object {
     ],
     ...(site.priceRange && { priceRange: site.priceRange }),
     ...(site.servesCuisine.length > 0 && { servesCuisine: site.servesCuisine }),
+    // Eat in, take away or Wolt delivery — the site offers no table booking (bigger orders: phone/Instagram, see FAQ).
+    // Change to true or a booking URL if the shop starts taking reservations.
+    acceptsReservations: false,
+    hasMenu: menuJsonLd(c),
+    potentialAction: {
+      '@type': 'OrderAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: links.order,
+        actionPlatform: ['https://schema.org/DesktopWebPlatform', 'https://schema.org/MobileWebPlatform'],
+      },
+    },
     sameAs: [links.instagram, links.facebook, links.googleMaps].filter(Boolean),
     hasMap: links.googleMaps,
   }
@@ -112,7 +177,7 @@ export function websiteJsonLd(c: Localized): object {
     alternateName: site.legalName,
     description: site.description,
     inLanguage: c.lang,
-    publisher: { '@id': bakeryId(c) },
+    publisher: { '@id': bakeryId() },
   }
 }
 
@@ -123,7 +188,7 @@ export function websiteJsonLd(c: Localized): object {
  */
 export function productJsonLd(product: ProductT, c: Localized): object {
   const { site, catalog } = c
-  const url = pageUrl(c.localize(`/produkt/${product.slug}`))
+  const url = productUrl(product, c)
   const item = {
     '@id': `${url}#product`,
     name: product.name,
@@ -131,7 +196,8 @@ export function productJsonLd(product: ProductT, c: Localized): object {
     description: product.description,
     url,
   }
-  if (!site.catalog.showPrices || product.price == null) return { '@context': CONTEXT, '@type': 'MenuItem', ...item }
+  const offer = offerOf(product, c)
+  if (!offer) return { '@context': CONTEXT, '@type': 'MenuItem', ...item }
   return {
     '@context': CONTEXT,
     '@type': 'Product',
@@ -139,14 +205,8 @@ export function productJsonLd(product: ProductT, c: Localized): object {
     sku: product.slug,
     brand: { '@type': 'Brand', name: site.name },
     category: catalog.categories.find((c) => c.slug === product.category)?.name ?? product.category,
-    offers: {
-      '@type': 'Offer',
-      price: product.price.toFixed(2),
-      priceCurrency: product.currency,
-      availability: product.available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      url,
-      seller: { '@type': 'Bakery', name: site.legalName, url: homeUrl(c) },
-    },
+    // Organization (Bakery's parent type) with the Bakery's @id: a full Bakery node would need address, hours… here too
+    offers: { ...offer, seller: { '@type': 'Organization', '@id': bakeryId(), name: site.legalName, url: homeUrl(c) } },
   }
 }
 
