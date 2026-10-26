@@ -93,7 +93,7 @@ Every event is also pushed to the dataLayer as `{ event, ...params, event_id }` 
 | `trackAction(click_directions)` (`@directions`) | `click_directions` `{ location }` | `track FindLocation` | — |
 | `trackAction(click_social)` (`@instagram`, `@facebook`) | `click_social` `{ network, location }` | `trackCustom SocialClick` `{ network, location }` | — |
 | `trackAction(click_reviews)` (`@reviews`, `@writeReview`) | `click_reviews` `{ kind: 'read' \| 'write', location }` | `trackCustom ReviewsClick` `{ kind, location }` | — |
-| `trackEngagement('open_map' \| 'open_faq' \| 'review_navigate' \| 'open_menu', detail?)` | same name `{ detail? }` | — | — |
+| `trackEngagement('open_map' \| 'open_faq' \| 'review_navigate' \| 'open_menu' \| 'spotlight_navigate', detail?)` | same name `{ detail? }` | — | — |
 
 Notes:
 

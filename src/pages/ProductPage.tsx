@@ -85,13 +85,9 @@ function ProductView({ product }: { product: ProductT }) {
                 <Magnet padding={60} magnetStrength={4} maxOffset={10}>
                   <CtaButton cta={site.catalog.productCta} location={location} product={product} size="lg" />
                 </Magnet>
-                <CtaButton
-                  cta={{ label: 'Wyznacz trasę', href: '@directions', variant: 'secondary' }}
-                  location={location}
-                  product={product}
-                  size="lg"
-                  withCircle={false}
-                />
+                {site.catalog.secondaryCta && (
+                  <CtaButton cta={site.catalog.secondaryCta} location={location} product={product} size="lg" withCircle={false} />
+                )}
               </div>
 
               <div className="mt-10 grid gap-6 rounded-2xl bg-blush p-5 sm:p-6">

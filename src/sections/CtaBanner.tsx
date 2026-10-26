@@ -71,7 +71,7 @@ export default function CtaBanner({ section }: SectionProps<'cta'>) {
             </Reveal>
           )}
         </Container>
-        <CurvedBand text={site.tagline} tone={tone} />
+        {(section.marquee ?? site.tagline) && <CurvedBand text={section.marquee ?? site.tagline} tone={tone} />}
       </div>
     </Section>
   )

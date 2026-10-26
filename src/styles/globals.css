@@ -1,7 +1,38 @@
 @import 'tailwindcss';
-@import '@fontsource/anton/latin-400.css';
-@import '@fontsource/anton/latin-ext-400.css';
-@import '@fontsource-variable/manrope/wght.css';
+
+/* Self-hosted fonts (scripts/subset-fonts.sh): latin + only the Polish letters from latin-ext */
+@font-face {
+  font-family: 'Anton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/anton-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Anton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/anton-pl.woff2') format('woff2');
+  unicode-range: U+0104-0107, U+0118-0119, U+0141-0144, U+015A-015B, U+0179-017C;
+}
+@font-face {
+  font-family: 'Manrope Variable';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('../assets/fonts/manrope-latin.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Manrope Variable';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('../assets/fonts/manrope-pl.woff2') format('woff2-variations');
+  unicode-range: U+0104-0107, U+0118-0119, U+0141-0144, U+015A-015B, U+0179-017C;
+}
 
 /* Theme colours come from src/data/site.json → theme.colors (injected as --c-* on :root by <ThemeStyle>).
    The values below are only fallbacks. */
@@ -9,7 +40,7 @@
   --c-cream: #fff4ea;
   --c-ink: #2b1714;
   --c-brand: #e8386f;
-  --c-brand-deep: #b8174a;
+  --c-brand-deep: #ad1446;
   --c-blush: #f7cdd0;
   --c-caramel: #f6c453;
 }
@@ -42,14 +73,24 @@
   }
   body {
     @apply bg-cream font-sans text-ink antialiased;
+    overflow-x: clip;
     text-rendering: optimizeLegibility;
+  }
+  /* Off-screen sections skip rendering until they approach the viewport: faster first paint, and their
+     lazy images do not compete with the hero image for bandwidth */
+  main > section ~ section,
+  main ~ footer {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
   }
   ::selection {
     @apply bg-brand text-cream;
   }
+  /* Two-tone focus ring: the ink outline shows on light tones, the cream gap on dark ones */
   :focus-visible {
-    outline: 3px solid var(--c-caramel);
+    outline: 3px solid var(--c-ink);
     outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--c-cream);
   }
   @media (prefers-reduced-motion: reduce) {
     html {

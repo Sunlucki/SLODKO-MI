@@ -3,7 +3,7 @@ import { ArrowUpRight, ChevronLeft, ChevronRight } from '@/components/ui/icons'
 import { Picture } from '@/components/ui/Picture'
 import { SmartLink } from '@/components/ui/SmartLink'
 import type { ProductT } from '@/content/schema'
-import { trackSelectItem } from '@/lib/analytics'
+import { trackEngagement, trackSelectItem } from '@/lib/analytics'
 
 const navButton =
   'inline-grid size-11 cursor-pointer place-items-center rounded-full bg-brand-deep text-cream transition-colors duration-200 hover:bg-ink focus-visible:ring-4 focus-visible:ring-caramel focus-visible:outline-none'
@@ -13,7 +13,10 @@ export function Spotlight({ label, products }: { label: string; products: Produc
   const [index, setIndex] = useState(0)
   const product = products[index]
   const many = products.length > 1
-  const go = (step: number) => setIndex((i) => (i + step + products.length) % products.length)
+  const go = (step: number) => {
+    setIndex((i) => (i + step + products.length) % products.length)
+    trackEngagement('spotlight_navigate', step > 0 ? 'next' : 'prev')
+  }
 
   return (
     <div className="w-full">

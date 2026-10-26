@@ -329,6 +329,10 @@
         "productCta": {
           "description": "Main button on product pages",
           "$ref": "#/$defs/Cta"
+        },
+        "secondaryCta": {
+          "description": "Second button on product pages (e.g. route to the shop)",
+          "$ref": "#/$defs/Cta"
         }
       },
       "required": [
@@ -464,6 +468,12 @@
         },
         "policyHref": {
           "$ref": "#/$defs/Href"
+        },
+        "reopenLabel": {
+          "default": "Ustawienia cookies",
+          "description": "Footer button that reopens the cookie settings",
+          "type": "string",
+          "minLength": 1
         }
       },
       "required": [
@@ -569,7 +579,7 @@
         "src",
         "alt"
       ],
-      "description": "Responsive image (WebP, 600/1200 px variants generated automatically)"
+      "description": "Responsive image (WebP, 480/720/960/1600 px variants generated automatically)"
     }
   }
 }

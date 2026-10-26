@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { site } from '@/content'
-import type { CtaT } from '@/content/schema'
 import { CtaButton } from '@/components/ui/Button'
 import { MapPin, Phone } from '@/components/ui/icons'
 import { Reveal } from '@/components/ui/Reveal'
@@ -10,12 +9,6 @@ import { cn } from '@/lib/utils'
 import type { SectionProps } from './types'
 import { MapPanel } from './visit/MapPanel'
 import { OpeningHours } from './visit/OpeningHours'
-
-const ctas: CtaT[] = [
-  { label: 'Wyznacz trasę', href: '@directions', variant: 'primary' },
-  { label: 'Zadzwoń', href: '@phone', variant: 'secondary' },
-  { label: 'Zamów na Wolt', href: '@order', variant: 'secondary' },
-]
 
 function Label({ children }: { children: ReactNode }) {
   return <h3 className="text-[11px] font-extrabold tracking-[0.2em] text-brand-deep uppercase">{children}</h3>
@@ -64,7 +57,7 @@ export default function Visit({ section }: SectionProps<'visit'>) {
                 {contact.phoneDisplay}
               </SmartLink>
               <div className="mt-6 flex flex-wrap gap-3">
-                {ctas.map((cta, i) => (
+                {section.ctas.map((cta, i) => (
                   <CtaButton key={cta.href} cta={cta} location="visit" withCircle={i === 0} />
                 ))}
               </div>

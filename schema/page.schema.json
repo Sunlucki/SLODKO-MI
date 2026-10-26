@@ -225,7 +225,7 @@
         "src",
         "alt"
       ],
-      "description": "Responsive image (WebP, 600/1200 px variants generated automatically)"
+      "description": "Responsive image (WebP, 480/720/960/1600 px variants generated automatically)"
     },
     "Cta": {
       "type": "object",
@@ -659,6 +659,31 @@
           "default": true,
           "description": "Google Map loads only after a click (privacy + speed)",
           "type": "boolean"
+        },
+        "ctas": {
+          "default": [
+            {
+              "label": "Wyznacz trasę",
+              "href": "@directions",
+              "variant": "primary"
+            },
+            {
+              "label": "Zadzwoń",
+              "href": "@phone",
+              "variant": "secondary"
+            },
+            {
+              "label": "Zamów na Wolt",
+              "href": "@order",
+              "variant": "secondary"
+            }
+          ],
+          "description": "Buttons under the address/hours card",
+          "maxItems": 4,
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Cta"
+          }
         }
       },
       "required": [
@@ -819,6 +844,10 @@
         },
         "image": {
           "$ref": "#/$defs/Image"
+        },
+        "marquee": {
+          "description": "Text of the decorative curved band; omit to use site.tagline, \"\" hides the band",
+          "type": "string"
         }
       },
       "required": [

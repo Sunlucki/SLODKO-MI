@@ -100,7 +100,12 @@
       "sticker": "Wejście od Hetmańskiej",
       "intro": "Jesteśmy przy 28 Czerwca 1956 r. 177/13. Wejście jest od strony ul. Hetmańskiej — przystanek tuż obok, więc najwygodniej dojechać komunikacją.",
       "image": { "src": "photos/pudelka", "alt": "Cynamonki zapakowane na wynos w pudełkach" },
-      "showMap": true
+      "showMap": true,
+      "ctas": [
+        { "label": "Wyznacz trasę", "href": "@directions", "variant": "primary" },
+        { "label": "Zadzwoń", "href": "@phone", "variant": "secondary" },
+        { "label": "Zamów na Wolt", "href": "@order", "variant": "secondary" }
+      ]
     },
     {
       "id": "faq",
@@ -112,10 +117,7 @@
           "question": "Gdzie dokładnie jesteście?",
           "answer": "Poznań, Wilda, ul. 28 Czerwca 1956 r. 177/13. Wejście jest od strony ul. Hetmańskiej — od 28 Czerwca nie wejdziesz."
         },
-        {
-          "question": "Czy macie dostawę?",
-          "answer": "Tak — zamówisz nas przez Wolt. Możesz też zjeść na miejscu albo wziąć cynamonki na wynos."
-        },
+        { "question": "Czy macie dostawę?", "answer": "Tak — zamówisz nas przez Wolt. Możesz też zjeść na miejscu albo wziąć cynamonki na wynos." },
         {
           "question": "Ile macie smaków?",
           "answer": "Siedem: klasyczna z lukrem, klasyczna z serkiem, Biscoff, Oreo, szarlotka z kruszonką i karmelem, sernik z truskawką i kruszonką oraz malina z kokosem."
@@ -124,10 +126,7 @@
           "question": "Czy cynamonki są świeże?",
           "answer": "Codziennie rano przygotowujemy ciasto od podstaw, ręcznie zwijamy każdą cynamonkę i pieczemy wszystko tego samego dnia."
         },
-        {
-          "question": "Czy jest kawa?",
-          "answer": "Tak, do cynamonek serwujemy kawę — na miejscu i na wynos."
-        },
+        { "question": "Czy jest kawa?", "answer": "Tak, do cynamonek serwujemy kawę — na miejscu i na wynos." },
         {
           "question": "Czy mogę zamówić większą ilość?",
           "answer": "Jasne. Napisz do nas na Instagramie albo zadzwoń — napisz, ile sztuk i na którą godzinę, a przygotujemy."
@@ -141,7 +140,8 @@
       "heading": "Cynamonka już czeka.",
       "text": "Zamów z dostawą przez Wolt albo wpadnij do nas na Wildę.",
       "primaryCta": { "label": "Zamów na Wolt", "href": "@order", "variant": "light" },
-      "secondaryCta": { "label": "Zadzwoń", "href": "@phone", "variant": "secondary" }
+      "secondaryCta": { "label": "Zadzwoń", "href": "@phone", "variant": "secondary" },
+      "marquee": "TEJ, czas na cynamonkę"
     }
   ]
 }

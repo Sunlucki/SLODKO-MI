@@ -19,6 +19,11 @@ export default defineConfig({
     // OUT_DIR allows parallel builds into separate folders (e.g. OUT_DIR=.tmp/check)
     outDir: process.env.OUT_DIR || 'dist',
     assetsInlineLimit: 0,
+    // SOURCEMAP=1 for bundle analysis (npx source-map-explorer <dir>/assets/*.js)
+    sourcemap: Boolean(process.env.SOURCEMAP),
+    // One client bundle: rolldown does not re-hash a chunk when only the name of a chunk it imports
+    // changes, which would break the year-long immutable cache of /assets/ after a deploy.
+    rolldownOptions: { output: { codeSplitting: false } },
   },
   ssgOptions: {
     script: 'async',

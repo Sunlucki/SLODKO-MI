@@ -10,3 +10,4 @@ coverage
 .ai-edit-backup
 .tmp
 .vite-react-ssg-temp
+.claude/launch.json

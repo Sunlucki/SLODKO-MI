@@ -3,8 +3,8 @@
  *
  * Env: GOOGLE_PLACES_API_KEY (required), GOOGLE_PLACE_ID (optional — without it the place is searched
  * by site.json legalName + address and the found id is printed so you can save it).
- * Fetched reviews are merged with the existing ones (deduped, newest first, max 20), validated with the
- * Reviews schema and only then written. With a place id, site.json → links.writeReview is pointed at
+ * Fetched reviews replace the stored ones (Places content may be cached for 30 days at most), newest
+ * first; they are validated with the Reviews schema and only then written. With a place id, site.json → links.writeReview is pointed at
  * Google's "write a review" form (only that field is touched).
  *
  * --dry-run: fetch and print the result without writing any file.
@@ -36,7 +36,6 @@ interface SearchResult {
 }
 
 const API = 'https://places.googleapis.com/v1'
-const MAX_ITEMS = 20
 const REVIEWS_FILE = path.resolve('src/data/reviews.json')
 const SITE_FILE = path.resolve('src/data/site.json')
 const dryRun = process.argv.includes('--dry-run')
@@ -111,21 +110,15 @@ const placeId = process.env.GOOGLE_PLACE_ID || (await findPlaceId(site))
 const details = await places<PlaceDetails>(`${API}/places/${encodeURIComponent(placeId)}?languageCode=pl`, 'rating,userRatingCount,reviews,googleMapsUri')
 
 const fetched = (details.reviews ?? []).map(toReview).filter((r): r is Review => r !== null)
-const seen = new Set<string>()
-// Fetched first so a fresh copy (current relative time, full text, profile link) wins over the stored one
-const items = [...fetched, ...current.items]
-  .filter((r) => {
-    const key = dedupeKey(r)
-    if (seen.has(key)) return false
-    seen.add(key)
-    return true
-  })
-  // Newest first (ISO dates compare as strings); reviews without a date (added by hand) keep their order after the dated ones
+// Google Maps Platform terms allow caching Places content for at most 30 days, so every run replaces
+// the stored reviews with the current API response (kept as-is when the API returns none).
+const items = (fetched.length ? fetched : current.items)
+  .slice()
+  // Newest first (ISO dates compare as strings); undated reviews keep their order after the dated ones
   .sort((a, b) => {
     const [x, y] = [a.publishTime ?? '', b.publishTime ?? '']
     return x < y ? 1 : x > y ? -1 : 0
   })
-  .slice(0, MAX_ITEMS)
 
 const result = Reviews.safeParse({
   ...current,

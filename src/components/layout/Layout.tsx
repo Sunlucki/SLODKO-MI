@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Head } from 'vite-react-ssg'
-import antonLatinExt from '@fontsource/anton/files/anton-latin-ext-400-normal.woff2?url'
-import antonLatin from '@fontsource/anton/files/anton-latin-400-normal.woff2?url'
+import antonLatin from '@/assets/fonts/anton-latin.woff2?url'
+import antonPl from '@/assets/fonts/anton-pl.woff2?url'
 import CookieBanner from '@/components/consent/CookieBanner'
 import { site } from '@/content'
 import { trackPageView } from '@/lib/analytics'
@@ -18,9 +18,9 @@ function ThemeStyle() {
       <html lang="pl" />
       <style>{css}</style>
       <meta name="theme-color" content={c.brandDeep} />
-      {/* Display font of the LCP headline (Polish glyphs need both subsets) */}
+      {/* Display font of the LCP headline (Polish letters live in the second file) */}
       <link rel="preload" as="font" type="font/woff2" href={antonLatin} crossOrigin="" />
-      <link rel="preload" as="font" type="font/woff2" href={antonLatinExt} crossOrigin="" />
+      <link rel="preload" as="font" type="font/woff2" href={antonPl} crossOrigin="" />
     </Head>
   )
 }
@@ -28,15 +28,27 @@ function ThemeStyle() {
 /** Scroll to #hash targets after navigation, otherwise to top; report page views. */
 function ScrollManager() {
   const { pathname, hash } = useLocation()
+  const hydrated = useRef(false)
   useEffect(() => {
-    if (hash) {
-      const el = document.getElementById(decodeURIComponent(hash.slice(1)))
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        return
-      }
+    // On the first (hydration) run keep the browser's own position: the visitor may already have scrolled
+    if (!hydrated.current) {
+      hydrated.current = true
+      return
     }
-    window.scrollTo({ top: 0 })
+    const el = hash && document.getElementById(decodeURIComponent(hash.slice(1)))
+    if (!el) {
+      window.scrollTo({ top: 0, behavior: 'instant' })
+      return
+    }
+    // Off-screen sections only have a placeholder height (content-visibility: auto); render them first so the
+    // target position is exact, then re-aim once in case images or fonts changed the layout meanwhile
+    document.querySelectorAll<HTMLElement>('main > section, main ~ footer').forEach((section) => (section.style.contentVisibility = 'visible'))
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const id = setTimeout(() => {
+      const margin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0
+      if (Math.abs(el.getBoundingClientRect().top - margin) > 8) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 800)
+    return () => clearTimeout(id)
   }, [pathname, hash])
   useEffect(() => {
     // Wait a frame so <Head> has updated document.title

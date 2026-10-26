@@ -119,6 +119,6 @@ export function trackSelectItem(product: ProductT, listName: string, index: numb
 }
 
 /** Map embed opened / FAQ item opened / review carousel used, etc. */
-export function trackEngagement(name: 'open_map' | 'open_faq' | 'review_navigate' | 'open_menu', detail?: string): void {
+export function trackEngagement(name: 'open_map' | 'open_faq' | 'review_navigate' | 'open_menu' | 'spotlight_navigate', detail?: string): void {
   dispatch({ name, params: { detail } })
 }

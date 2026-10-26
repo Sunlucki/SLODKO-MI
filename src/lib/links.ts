@@ -35,5 +35,8 @@ export function resolveHref(href: string): ResolvedLink {
     if (href.includes('wolt.com')) return ext(href, { name: 'click_order', provider: 'wolt' })
     return ext(href)
   }
-  return { href, external: false, newTab: false }
+  // Pages are pre-rendered as <path>/index.html and the host redirects "/x" → "/x/", so link to the final URL
+  const [path, hash] = href.split('#')
+  const slashed = path && path !== '/' && !path.endsWith('/') ? `${path}/` : path
+  return { href: slashed + (hash === undefined ? '' : `#${hash}`), external: false, newTab: false }
 }

@@ -1,3 +1,4 @@
+import { site } from '@/content'
 import { openConsentSettings } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 
@@ -10,7 +11,7 @@ export default function ConsentSettingsButton({ className }: { className?: strin
       onClick={() => openConsentSettings()}
       className={cn('inline-flex min-h-11 items-center underline-offset-4 hover:underline', className)}
     >
-      Ustawienia cookies
+      {site.consent.reopenLabel}
     </button>
   )
 }

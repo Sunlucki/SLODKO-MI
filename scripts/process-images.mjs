@@ -4,14 +4,14 @@
 // Images under assets/images/og/ additionally get a 1200×630 JPG for social previews.
 //
 //   npm run images
-import { mkdir, readdir, stat, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import sharp from 'sharp'
 
 const SRC = 'assets/images'
 const OUT = 'public/images'
 const MANIFEST = 'src/generated/images.json'
-const WIDTHS = [480, 960, 1600]
+const WIDTHS = [480, 600, 720, 960, 1600]
 
 async function walk(dir) {
   const out = []
@@ -38,8 +38,17 @@ for (const file of (await walk(SRC)).sort()) {
   const width = meta.autoOrient?.width ?? meta.width
   const height = meta.autoOrient?.height ?? meta.height
   const alpha = Boolean(meta.hasAlpha)
-  const widths = WIDTHS.filter((w) => w < width).concat(width < WIDTHS.at(-1) ? [width] : [WIDTHS.at(-1)])
+  // Skip a step that is within 5% of the original width (it would be a near-duplicate file)
+  const widths = WIDTHS.filter((w) => w < width * 0.95).concat(width < WIDTHS.at(-1) ? [width] : [WIDTHS.at(-1)])
   const unique = [...new Set(widths)].sort((a, b) => a - b)
+
+  // Remove variants of this image that are no longer generated (e.g. after the width list changed)
+  const dir = path.dirname(path.join(OUT, key))
+  const prefix = `${path.basename(key)}-`
+  for (const f of await readdir(dir).catch(() => [])) {
+    const w = f.startsWith(prefix) && f.endsWith('.webp') ? Number(f.slice(prefix.length, -5)) : NaN
+    if (Number.isInteger(w) && !unique.includes(w)) await rm(path.join(dir, f))
+  }
 
   await mkdir(path.dirname(path.join(OUT, key)), { recursive: true })
   for (const w of unique) {
@@ -48,7 +57,7 @@ for (const file of (await walk(SRC)).sort()) {
     await sharp(file)
       .rotate()
       .resize({ width: w, withoutEnlargement: true })
-      .webp({ quality: alpha ? 82 : 76, alphaQuality: 90, effort: 5 })
+      .webp({ quality: alpha ? 72 : 70, alphaQuality: 80, effort: 6, smartSubsample: true })
       .toFile(dest)
   }
   if (key.startsWith('og/')) {

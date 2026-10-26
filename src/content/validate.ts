@@ -135,6 +135,31 @@ export function loadContent(root = process.cwd()): { content?: Content; errors: 
     }
   }
 
+  // Theme colours: keep WCAG AA contrast for the pairs the components actually use
+  const lum = (hex: string) => {
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+  }
+  const contrast = (a: string, b: string) => {
+    const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m)
+    return (x + 0.05) / (y + 0.05)
+  }
+  const c = site.theme.colors
+  const pairs: [keyof typeof c, keyof typeof c, number][] = [
+    ['brandDeep', 'cream', 4.5], // buttons, small coloured text, frames
+    ['brandDeep', 'blush', 4.5],
+    ['ink', 'cream', 4.5],
+    ['ink', 'blush', 4.5],
+    ['ink', 'caramel', 4.5],
+    ['cream', 'ink', 4.5],
+    ['brand', 'cream', 3], // large display text only
+    ['caramel', 'brandDeep', 3], // hero accent line, large
+  ]
+  for (const [fg, bg, min] of pairs) {
+    const ratio = contrast(c[fg], c[bg])
+    if (ratio < min) errors.push(`${CONTENT_FILES.site} → theme.colors: ${fg} on ${bg} has contrast ${ratio.toFixed(2)}:1, needs ≥ ${min}:1 (WCAG AA)`)
+  }
+
   scan(CONTENT_FILES.site, site, '/')
   checkHref(`${CONTENT_FILES.site} → consent.policyHref`, site.consent.policyHref, '/')
   if (!images[site.seo.ogImage]) errors.push(`${CONTENT_FILES.site} → seo.ogImage: "${site.seo.ogImage}" not found in images`)
@@ -142,6 +167,13 @@ export function loadContent(root = process.cwd()): { content?: Content; errors: 
   for (const { file, page } of pages) {
     scan(file, page, page.path.replace(/\/$/, '') || '/')
     if (page.seo.ogImage && !images[page.seo.ogImage]) errors.push(`${file} → seo.ogImage: "${page.seo.ogImage}" not found in images`)
+    // Exactly one <h1> per page: it comes from a hero, or from a text section with a heading placed first
+    const enabled = page.sections.filter((s) => s.enabled)
+    if (page.sections.filter((s) => s.type === 'hero').length > 1) errors.push(`${file} → sections: at most one "hero" section per page`)
+    const first = enabled[0]
+    if (first && !(first.type === 'hero' || (first.type === 'text' && first.heading)))
+      errors.push(`${file} → sections: the first enabled section must be "hero" or a "text" section with a heading (it renders the page <h1>)`)
+    else if (enabled.some((s, i) => i > 0 && s.type === 'hero')) errors.push(`${file} → sections: the "hero" section must be the first enabled section`)
     page.sections.forEach((s, i) => {
       const where = `${file} → sections.${i} (${s.type} "${s.id}")`
       if (s.type === 'hero' && s.spotlight)

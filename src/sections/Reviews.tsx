@@ -140,7 +140,7 @@ function ReviewCarousel({ id, items }: { id: string; items: Review[] }) {
             const open = active && expanded
             const textId = `${id}-text-${i}`
             return (
-              <figure
+              <div
                 key={i}
                 role="group"
                 aria-roledescription="opinia"
@@ -173,7 +173,7 @@ function ReviewCarousel({ id, items }: { id: string; items: Review[] }) {
                   {open ? 'Zwiń' : 'Czytaj całość'}
                   <ChevronDown width={14} height={14} className={cn('transition-transform', open && 'rotate-180')} />
                 </button>
-                <figcaption className="mt-auto flex items-center gap-3 border-t border-ink/10 pt-4">
+                <div className="mt-auto flex items-center gap-3 border-t border-ink/10 pt-4">
                   <span aria-hidden className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-deep font-display text-lg text-cream">
                     {review.author.trim().charAt(0).toUpperCase()}
                   </span>
@@ -189,8 +189,8 @@ function ReviewCarousel({ id, items }: { id: string; items: Review[] }) {
                     </span>
                     {review.relativeTime && <span className={cn('mt-0.5 block text-ink/70', label)}>{review.relativeTime}</span>}
                   </span>
-                </figcaption>
-              </figure>
+                </div>
+              </div>
             )
           })}
         </div>

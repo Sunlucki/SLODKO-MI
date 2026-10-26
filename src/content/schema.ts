@@ -50,7 +50,7 @@ export const Image = z
     ),
     alt: text.describe('Polish alt text describing the image (accessibility + SEO)'),
   })
-  .describe('Responsive image (WebP, 600/1200 px variants generated automatically)')
+  .describe('Responsive image (WebP, 480/720/960/1600 px variants generated automatically)')
 
 export const Video = z
   .object({
@@ -185,6 +185,15 @@ export const VisitSection = z
     intro: z.string().optional(),
     image: Image.optional().describe('Photo of the place / team'),
     showMap: z.boolean().default(true).describe('Google Map loads only after a click (privacy + speed)'),
+    ctas: z
+      .array(Cta)
+      .max(4)
+      .default([
+        { label: 'Wyznacz trasę', href: '@directions', variant: 'primary' },
+        { label: 'Zadzwoń', href: '@phone', variant: 'secondary' },
+        { label: 'Zamów na Wolt', href: '@order', variant: 'secondary' },
+      ])
+      .describe('Buttons under the address/hours card'),
   })
   .describe('Address, entrance hint, opening hours, phone, map and route button (data from site.json)')
 
@@ -222,6 +231,7 @@ export const CtaSection = z
     primaryCta: Cta,
     secondaryCta: Cta.optional(),
     image: Image.optional(),
+    marquee: z.string().optional().describe('Text of the decorative curved band; omit to use site.tagline, "" hides the band'),
   })
   .describe('Bold banner with heading and buttons')
 
@@ -423,6 +433,7 @@ export const Site = z.object({
   catalog: z.object({
     showPrices: z.boolean().describe('false hides prices everywhere (cards, product pages, structured data)'),
     productCta: Cta.describe('Main button on product pages'),
+    secondaryCta: Cta.optional().describe('Second button on product pages (e.g. route to the shop)'),
   }),
   theme: z
     .object({
@@ -454,7 +465,16 @@ export const Site = z.object({
     marketingText: text,
     policyLabel: text,
     policyHref: Href,
+    reopenLabel: text.default('Ustawienia cookies').describe('Footer button that reopens the cookie settings'),
   }),
+}).superRefine((site, ctx) => {
+  const seen = new Set<string>()
+  site.hours.forEach((h, i) =>
+    h.days.forEach((d) => {
+      if (seen.has(d)) ctx.addIssue({ code: 'custom', path: ['hours', i, 'days'], message: `Day "${d}" appears in more than one hours entry` })
+      seen.add(d)
+    }),
+  )
 })
 
 export type CtaT = z.infer<typeof Cta>

@@ -126,6 +126,7 @@ Address, entrance hint, opening hours, phone, map and route button (data from si
 | `intro` | string |  |  |
 | `image` | Image |  | Photo of the place / team |
 | `showMap` | boolean |  | Google Map loads only after a click (privacy + speed) (default: `true`) |
+| `ctas` | Cta[] |  | Buttons under the address/hours card (default: `[{"label":"Wyznacz trasę","href":"@directions","variant":"primary"},{"label":"Zadzwoń","href":"@phone","variant":"secondary"},{"label":"Zamów na Wolt","href":"@order","variant":"secondary"}]`) |
 
 ### `gallery`
 
@@ -172,6 +173,7 @@ Bold banner with heading and buttons
 | `primaryCta` | Cta | yes |  |
 | `secondaryCta` | Cta |  |  |
 | `image` | Image |  |  |
+| `marquee` | string |  | Text of the decorative curved band; omit to use site.tagline, "" hides the band |
 
 ### `text`
 

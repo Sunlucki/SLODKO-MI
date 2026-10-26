@@ -71,7 +71,7 @@ export function SectionHeading({ id, tone = 'cream', sticker, as: Tag = 'h2', cl
       <Tag id={id} className={cn('font-display text-[clamp(2.4rem,6vw,4.5rem)] leading-[0.95] tracking-tight uppercase', headingToneClass[tone], className)}>
         {children}
       </Tag>
-      {sticker && <Sticker className="absolute -top-5 right-0 translate-x-1/4 sm:-top-6">{sticker}</Sticker>}
+      {sticker && <Sticker className="absolute -top-5 right-0 sm:-top-6 sm:translate-x-1/4">{sticker}</Sticker>}
     </div>
   )
 }

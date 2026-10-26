@@ -6,10 +6,7 @@
   "description": "Słodko Mi to cukiernia na poznańskiej Wildzie specjalizująca się w codziennie świeżo wypiekanych cynamonkach. Każdego ranka przygotowujemy ciasto od podstaw, ręcznie zwijamy każdą cynamonkę i wypiekamy wszystko na świeżo tego samego dnia. Do cynamonek serwujemy kawę — na miejscu albo na wynos.",
   "url": "https://sunlucki.github.io/SLODKO-MI",
   "logo": { "wordmark": "SŁODKO MI", "sub": "Smakuje Ci?" },
-  "contact": {
-    "phone": "+48511228221",
-    "phoneDisplay": "511 228 221"
-  },
+  "contact": { "phone": "+48511228221", "phoneDisplay": "511 228 221" },
   "address": {
     "street": "ul. 28 Czerwca 1956 r. 177/13",
     "postalCode": "61-525",
@@ -78,14 +75,15 @@
   },
   "catalog": {
     "showPrices": false,
-    "productCta": { "label": "Zamów na Wolt", "href": "@order", "variant": "primary" }
+    "productCta": { "label": "Zamów na Wolt", "href": "@order", "variant": "primary" },
+    "secondaryCta": { "label": "Wyznacz trasę", "href": "@directions", "variant": "secondary" }
   },
   "theme": {
     "colors": {
       "cream": "#FFF4EA",
       "ink": "#2B1714",
       "brand": "#E8386F",
-      "brandDeep": "#B8174A",
+      "brandDeep": "#AD1446",
       "blush": "#F7CDD0",
       "caramel": "#F6C453"
     }
@@ -107,6 +105,7 @@
     "marketingLabel": "Marketingowe",
     "marketingText": "Pomiar skuteczności reklam na Instagramie i Facebooku (Meta Pixel).",
     "policyLabel": "Polityka prywatności",
-    "policyHref": "/polityka-prywatnosci"
+    "policyHref": "/polityka-prywatnosci",
+    "reopenLabel": "Ustawienia cookies"
   }
 }

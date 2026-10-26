@@ -185,7 +185,7 @@
         "src",
         "alt"
       ],
-      "description": "Responsive image (WebP, 600/1200 px variants generated automatically)"
+      "description": "Responsive image (WebP, 480/720/960/1600 px variants generated automatically)"
     }
   }
 }
