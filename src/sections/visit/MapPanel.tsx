@@ -44,14 +44,14 @@ export function MapPanel({ id, image, showMap }: { id: string; image?: ImageT; s
                 className="group inline-flex items-center gap-1 font-sans text-xs font-extrabold tracking-[0.08em] uppercase focus-visible:outline-none"
               >
                 <span className="inline-flex h-12 items-center rounded-full bg-cream px-6 text-brand-deep transition-colors group-hover:bg-white group-focus-visible:ring-4 group-focus-visible:ring-caramel">
-                  Pokaż mapę
+                  {site.ui.visit.showMap}
                 </span>
                 <span aria-hidden className="inline-grid size-12 place-items-center rounded-full bg-caramel text-ink transition-transform duration-300 group-hover:-rotate-12">
                   <MapPin width={18} height={18} />
                 </span>
               </button>
               <p id={noteId} className="text-[11px] font-semibold tracking-[0.08em]">
-                Mapa ładuje się z Google po kliknięciu.
+                {site.ui.visit.mapNote}
               </p>
             </div>
           )}

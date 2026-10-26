@@ -1,5 +1,6 @@
 import type { RouteRecord } from 'vite-react-ssg'
 import Layout from '@/components/layout/Layout'
+import RouteError from '@/components/layout/RouteError'
 import { pages, products } from '@/content'
 import NotFound from '@/pages/NotFound'
 import PageRenderer from '@/pages/PageRenderer'
@@ -11,6 +12,8 @@ export const routes: RouteRecord[] = [
   {
     path: '/',
     element: <Layout />,
+    // Recovers tabs whose client-side navigation fails after a redeploy
+    errorElement: <RouteError />,
     entry: 'src/components/layout/Layout.tsx',
     children: [
       ...pages.map((page) =>

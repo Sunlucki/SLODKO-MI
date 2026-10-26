@@ -3,7 +3,7 @@
   "path": "/polityka-prywatnosci",
   "seo": {
     "title": "Polityka prywatności i cookies",
-    "description": "Jak Słodko Mi przetwarza dane osobowe i korzysta z plików cookie (Google Analytics, Meta Pixel)."
+    "description": "Jakie dane przetwarza Słodko Mi: logi serwera, Google Analytics, Meta Pixel, mapa i opinie Google. Twoje prawa i jak wycofać zgodę na cookies."
   },
   "sections": [
     {
@@ -12,39 +12,74 @@
       "tone": "cream",
       "heading": "Polityka prywatności i cookies",
       "blocks": [
+        {
+          "kind": "paragraph",
+          "text": "Ostatnia aktualizacja: 26 października 2026 r. Wyjaśniamy tu, jakie dane przetwarzamy, gdy odwiedzasz tę stronę, w jakim celu i na jakiej podstawie, komu je przekazujemy oraz jakie masz prawa."
+        },
         { "kind": "subheading", "text": "Administrator danych" },
         {
           "kind": "paragraph",
-          "text": "Administratorem danych osobowych jest Słodko Mi Smakuje Ci?, ul. 28 Czerwca 1956 r. 177/13, 61-525 Poznań. W sprawach prywatności skontaktujesz się z nami telefonicznie (511 228 221) albo przez Instagram @slodkomi.poznan."
+          "text": "Administratorem danych osobowych jest cukiernia Słodko Mi Smakuje Ci?, ul. 28 Czerwca 1956 r. 177/13, 61-525 Poznań (wejście od ul. Hetmańskiej). W sprawach prywatności skontaktujesz się z nami telefonicznie (511 228 221), przez Instagram (@slodkomi.poznan) albo osobiście w cukierni."
         },
-        { "kind": "subheading", "text": "Jakie dane zbieramy" },
+        { "kind": "subheading", "text": "Jakie dane przetwarzamy i po co" },
         {
           "kind": "paragraph",
-          "text": "Strona nie ma formularzy ani kont użytkowników. Dane zbieramy wyłącznie przez pliki cookie i podobne technologie — i tylko te, na które się zgodzisz."
+          "text": "Strona nie ma formularzy, kont użytkowników ani sklepu internetowego. Dane przetwarzamy w opisanych niżej sytuacjach."
         },
         {
           "kind": "list",
           "items": [
-            "Niezbędne: zapamiętanie Twojego wyboru w banerze cookies (pamięć przeglądarki). Działają zawsze.",
-            "Analityczne (za zgodą): Google Analytics 4 — anonimowe statystyki odwiedzin, np. które strony oglądasz i skąd przychodzisz. Dostawca: Google Ireland Ltd.",
-            "Marketingowe (za zgodą): Meta Pixel — pomiar skuteczności naszych reklam na Instagramie i Facebooku. Dostawca: Meta Platforms Ireland Ltd.",
-            "Mapa Google ładuje się dopiero po kliknięciu „Pokaż mapę”. Wtedy Google może zapisać własne pliki cookie."
+            "Odwiedziny strony (logi serwera): serwer, na którym działa strona, automatycznie zapisuje adres IP, datę i godzinę wizyty, adres otwartej podstrony, adres strony, z której przychodzisz, oraz informacje o przeglądarce i systemie. Potrzebujemy ich, żeby wyświetlić stronę, chronić ją przed nadużyciami i usuwać błędy — to nasz prawnie uzasadniony interes (art. 6 ust. 1 lit. f RODO). Dane te przetwarza w naszym imieniu firma hostingowa, a w przypadku wersji podglądowej strony — serwis GitHub Pages (GitHub, Inc., USA).",
+            "Zapis Twojego wyboru w banerze cookies: przechowujemy go wyłącznie w pamięci Twojej przeglądarki i nie trafia on do nas. Jest niezbędny, żeby strona pamiętała Twoją decyzję, dlatego nie wymaga zgody (art. 399 Prawa komunikacji elektronicznej).",
+            "Statystyki — Google Analytics 4 (tylko za zgodą „Analityczne”): Google zapisuje w plikach cookie (np. _ga) pseudonimowy identyfikator przeglądarki i otrzymuje m.in. adres IP, informacje o urządzeniu i przeglądarce, przybliżoną lokalizację, odwiedzone podstrony, źródło wejścia oraz kliknięcia w przyciski (np. „Zamów na Wolt”, „Zadzwoń”). Nie są to dane anonimowe. Dzięki nim wiemy, jak korzystasz ze strony, i możemy ją ulepszać. Dostawca: Google Ireland Limited (Irlandia). Korzystamy z trybu zgody Google (Consent Mode): bez Twojej zgody skrypt Google Analytics w ogóle się nie wczytuje.",
+            "Reklamy — Meta Pixel (tylko za zgodą „Marketingowe”): mierzymy skuteczność naszych reklam na Facebooku i Instagramie oraz dopasowujemy je do odbiorców, w tym pokazujemy reklamy osobom, które odwiedziły stronę (remarketing). Meta zapisuje pliki cookie (np. _fbp) i otrzymuje m.in. adres IP, informacje o przeglądarce, odwiedzone podstrony i wykonane działania (np. obejrzenie smaku, kliknięcie „Zamów na Wolt”). Meta może połączyć te dane z Twoim kontem na Facebooku lub Instagramie. Dostawca: Meta Platforms Ireland Limited (Irlandia). Ta sama zgoda pozwala też Google wykorzystywać dane z Google Analytics do celów reklamowych (sygnały reklamowe trybu zgody Google).",
+            "Narzędzia dodatkowe — Google Tag Manager i TikTok Pixel: używamy ich tylko wtedy, gdy są wymienione w banerze cookies. Google Tag Manager (Google Ireland Limited) wczytuje skrypty pomiarowe po wyrażeniu którejkolwiek zgody i otrzymuje przy tym adres IP. TikTok Pixel (TikTok Technology Limited, Irlandia) działa tylko za zgodą „Marketingowe” i służy do pomiaru i dopasowania naszych reklam w serwisie TikTok, tak jak Meta Pixel na Facebooku i Instagramie.",
+            "Mapa Google: mapa w sekcji „Dojazd” ładuje się dopiero po kliknięciu „Pokaż mapę”. Wtedy Twoja przeglądarka łączy się z Google (Google Ireland Limited), który otrzymuje adres IP i może zapisać własne pliki cookie. Wczytujemy mapę na Twoje żądanie, w naszym uzasadnionym interesie pokazania dojazdu (art. 6 ust. 1 lit. f RODO).",
+            "Opinie z Google: w sekcji opinii pokazujemy wybrane, publicznie dostępne opinie z naszego profilu w Mapach Google — imię i nazwisko lub pseudonim autora (tak jak w Google), ocenę, treść i przybliżoną datę. Źródłem tych danych jest Google. Pokazujemy je w naszym uzasadnionym interesie przedstawienia opinii klientów (art. 6 ust. 1 lit. f RODO). Jeśli opinia jest Twoja i nie chcesz jej u nas widzieć, daj nam znać — usuniemy ją ze strony.",
+            "Kontakt z nami: gdy dzwonisz albo piszesz do nas (np. na Instagramie lub Facebooku), przetwarzamy Twój numer telefonu lub nazwę profilu i treść wiadomości, żeby odpowiedzieć i przygotować zamówienie (art. 6 ust. 1 lit. b i f RODO). Wiadomości w serwisach społecznościowych przetwarza też ich operator (Meta) na własnych zasadach.",
+            "Linki zewnętrzne: przyciski „Zamów na Wolt”, Instagram, Facebook, „Wyznacz trasę” i opinie w Google prowadzą do serwisów Wolt, Meta i Google. Po przejściu do nich dane przetwarzają te serwisy jako odrębni administratorzy, według własnych zasad prywatności. Samo kliknięcie odnotowujemy w statystykach tylko za Twoją zgodą."
           ]
         },
-        { "kind": "subheading", "text": "Podstawa prawna i czas przechowywania" },
+        { "kind": "subheading", "text": "Zgoda i jej wycofanie" },
         {
           "kind": "paragraph",
-          "text": "Pliki analityczne i marketingowe stosujemy wyłącznie na podstawie Twojej zgody (art. 6 ust. 1 lit. a RODO). Zgodę możesz w każdej chwili wycofać, klikając „Ustawienia cookies” w stopce strony. Dane analityczne przechowujemy nie dłużej niż 14 miesięcy."
+          "text": "Narzędzia analityczne i marketingowe działają wyłącznie na podstawie Twojej zgody (art. 6 ust. 1 lit. a RODO w związku z art. 399 Prawa komunikacji elektronicznej). Zgoda jest dobrowolna — bez niej strona działa normalnie. Możesz ją w każdej chwili zmienić lub wycofać: kliknij „Ustawienia cookies” w stopce strony, wyłącz wybrane przełączniki i kliknij „Zapisz wybór” albo wybierz „Tylko niezbędne”. Wycofanie zgody nie wpływa na zgodność z prawem przetwarzania, którego dokonano przed jej wycofaniem. Zapisane już pliki cookie usuniesz w ustawieniach przeglądarki."
+        },
+        { "kind": "subheading", "text": "Współadministrowanie z Meta" },
+        {
+          "kind": "paragraph",
+          "text": "Za zbieranie danych przez Meta Pixel na naszej stronie i ich przekazanie do Meta odpowiadamy wspólnie z Meta Platforms Ireland Limited (art. 26 RODO). Zasady tej współpracy określa dodatek Meta dla administratorów (Controller Addendum): my odpowiadamy za poinformowanie Cię o przetwarzaniu i za uzyskanie zgody, a Meta — za bezpieczeństwo danych w swoich systemach i za realizację Twoich praw do danych, które przechowuje. Swoje prawa możesz wykonać wobec nas albo bezpośrednio wobec Meta. Dalej, np. przy wyświetlaniu reklam, Meta przetwarza dane jako samodzielny administrator, zgodnie ze swoją polityką prywatności (facebook.com/privacy/policy)."
+        },
+        { "kind": "subheading", "text": "Odbiorcy i przekazywanie danych poza EOG" },
+        {
+          "kind": "paragraph",
+          "text": "Dane mogą otrzymać: firma hostingowa (działa w naszym imieniu), Google, Meta, GitHub oraz — jeśli są używane — TikTok, a także organy publiczne, gdy wymaga tego prawo. Google, Meta i GitHub mogą przekazywać dane do USA (m.in. do Google LLC i Meta Platforms, Inc.). Firmy te uczestniczą w programie EU-US Data Privacy Framework, dla którego Komisja Europejska stwierdziła odpowiedni stopień ochrony danych (art. 45 RODO). TikTok może przekazywać dane poza EOG na podstawie standardowych klauzul umownych zatwierdzonych przez Komisję Europejską."
+        },
+        { "kind": "subheading", "text": "Jak długo przechowujemy dane" },
+        {
+          "kind": "list",
+          "items": [
+            "Logi serwera — przez czas potrzebny do zapewnienia bezpieczeństwa i działania strony, zgodnie z ustawieniami firmy hostingowej.",
+            "Google Analytics — dane o odwiedzinach do 14 miesięcy; pliki cookie _ga wygasają najpóźniej po 2 latach.",
+            "Meta Pixel — plik cookie _fbp wygasa po 90 dniach; dane przekazane Meta są przechowywane zgodnie z polityką prywatności Meta.",
+            "Zapis wyboru w banerze cookies — 12 miesięcy, potem zapytamy Cię ponownie.",
+            "Opinie z Google — do czasu usunięcia opinii w Google, Twojego sprzeciwu albo zastąpienia jej nowszymi opiniami.",
+            "Wiadomości i rozmowy — przez czas potrzebny do załatwienia sprawy lub realizacji zamówienia."
+          ]
         },
         { "kind": "subheading", "text": "Twoje prawa" },
         {
           "kind": "paragraph",
-          "text": "Masz prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przenoszenia oraz sprzeciwu, a także prawo wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych."
+          "text": "Masz prawo dostępu do swoich danych, ich sprostowania, usunięcia lub ograniczenia przetwarzania, przenoszenia danych (gdy przetwarzamy je na podstawie zgody lub umowy), a także prawo sprzeciwu wobec przetwarzania opartego na naszym uzasadnionym interesie. Zgodę możesz wycofać w każdej chwili. Masz też prawo wnieść skargę do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa). Dane z narzędzi Google i Meta są pseudonimowe, więc bez identyfikatora z Twojej przeglądarki możemy nie być w stanie ich odnaleźć."
         },
-        { "kind": "subheading", "text": "Linki zewnętrzne" },
         {
           "kind": "paragraph",
-          "text": "Przyciski „Zamów na Wolt”, Instagram, Facebook i Google Maps prowadzą do serwisów zewnętrznych, które mają własne zasady prywatności."
+          "text": "Za zgodą marketingową Meta (oraz Google i TikTok, jeśli są używane) może tworzyć profile na potrzeby dopasowania reklam. Nie podejmujemy wobec Ciebie decyzji opartych wyłącznie na zautomatyzowanym przetwarzaniu, które wywoływałyby skutki prawne (art. 22 RODO)."
+        },
+        { "kind": "subheading", "text": "Zmiany polityki" },
+        {
+          "kind": "paragraph",
+          "text": "Gdy zmienimy używane narzędzia albo zasady przetwarzania danych, zaktualizujemy tę stronę i teksty banera cookies."
         }
       ]
     }

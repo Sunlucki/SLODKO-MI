@@ -23,11 +23,13 @@ export function contentPlugin(): Plugin {
       if (!content) this.error(`Content validation failed:\n  • ${errors.join('\n  • ')}`)
       return `export default ${JSON.stringify(content)}`
     },
-    handleHotUpdate({ file, server }) {
+    // hotUpdate (unlike handleHotUpdate) also runs when a file is created or deleted, so a new
+    // src/data/pages/*.json becomes a route without restarting the dev server. Runs once per environment.
+    hotUpdate({ file }) {
       if (file.includes('/src/data/') || file.endsWith('/src/generated/images.json')) {
-        const mod = server.moduleGraph.getModuleById(RESOLVED)
-        if (mod) server.moduleGraph.invalidateModule(mod)
-        server.ws.send({ type: 'full-reload' })
+        const mod = this.environment.moduleGraph.getModuleById(RESOLVED)
+        if (mod) this.environment.moduleGraph.invalidateModule(mod)
+        if (this.environment.name === 'client') this.environment.hot.send({ type: 'full-reload' })
         return []
       }
     },

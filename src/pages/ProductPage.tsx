@@ -18,6 +18,7 @@ import { breadcrumbJsonLd, productJsonLd, type Crumb } from '@/lib/schema-org'
 import NotFound from './NotFound'
 
 const label = 'text-[11px] font-extrabold tracking-[0.18em] uppercase'
+const ui = site.ui.product
 
 export default function ProductPage() {
   const { slug = '' } = useParams()
@@ -32,7 +33,7 @@ function ProductView({ product }: { product: ProductT }) {
   const location = `product:${product.slug}`
   const list = catalogLink()
   const crumbs: Crumb[] = [
-    { name: 'Strona główna', path: '/' },
+    { name: ui.breadcrumbHome, path: '/' },
     { name: list.label, path: list.href },
     { name: product.name, path },
   ]
@@ -65,7 +66,7 @@ function ProductView({ product }: { product: ProductT }) {
               <div className="flex flex-wrap items-center gap-3">
                 {category && <p className={`${label} text-brand-deep`}>{category}</p>}
                 {product.badge && <Sticker>{product.badge}</Sticker>}
-                {!product.available && <span className={cn(label, 'rounded-full bg-ink px-3 py-1.5 text-[10px] text-cream')}>Chwilowo niedostępna</span>}
+                {!product.available && <span className={cn(label, 'rounded-full bg-ink px-3 py-1.5 text-[10px] text-cream')}>{ui.unavailable}</span>}
               </div>
 
               <h1 id="product-name" className="mt-4 font-display text-[clamp(3rem,9vw,5.5rem)] leading-[0.92] tracking-tight text-brand-deep uppercase">
@@ -92,7 +93,7 @@ function ProductView({ product }: { product: ProductT }) {
 
               <div className="mt-10 grid gap-6 rounded-2xl bg-blush p-5 sm:p-6">
                 <div>
-                  <h2 className={`${label} text-brand-deep`}>Alergeny</h2>
+                  <h2 className={`${label} text-brand-deep`}>{ui.allergensHeading}</h2>
                   {product.allergens.length > 0 && (
                     <ul role="list" className="mt-3 flex flex-wrap gap-2">
                       {product.allergens.map((a) => (
@@ -102,11 +103,12 @@ function ProductView({ product }: { product: ProductT }) {
                       ))}
                     </ul>
                   )}
-                  <p className="mt-3 text-sm">Masz alergię? Zapytaj obsługę o pełny skład.</p>
+                  {/* The note is always shown: an empty or partial allergen list must never read as "no allergens" */}
+                  <p className="mt-3 text-sm">{ui.allergyNote}</p>
                 </div>
                 {product.ingredients.length > 0 && (
                   <div>
-                    <h2 className={`${label} text-brand-deep`}>Skład</h2>
+                    <h2 className={`${label} text-brand-deep`}>{ui.ingredientsHeading}</h2>
                     <ul className="mt-3 grid gap-1.5 text-sm">
                       {product.ingredients.map((item) => (
                         <li key={item} className="flex items-baseline gap-2">
@@ -123,11 +125,11 @@ function ProductView({ product }: { product: ProductT }) {
         </Container>
       </article>
 
-      {others.length > 0 && (
+      {others.length > 0 && ui.otherProductsHeading && (
         <Section id="inne-smaki" labelledBy="inne-smaki-heading" className="pt-4 md:pt-8">
           <Container>
             <Reveal>
-              <SectionHeading id="inne-smaki-heading">Inne smaki</SectionHeading>
+              <SectionHeading id="inne-smaki-heading">{ui.otherProductsHeading}</SectionHeading>
             </Reveal>
             <Reveal delay={120} className="mt-10 md:mt-14">
               <ProductList products={others} listName="inne-smaki" />

@@ -10,7 +10,7 @@ import { Logo } from './Logo'
 import { Notch } from './Notch'
 
 const roundButton =
-  'inline-grid size-11 shrink-0 cursor-pointer place-items-center rounded-full bg-brand-deep text-cream transition-colors duration-200 hover:bg-ink focus-visible:ring-4 focus-visible:ring-caramel focus-visible:outline-none'
+  'inline-grid size-11 shrink-0 cursor-pointer place-items-center rounded-full bg-brand-deep text-cream transition-colors duration-200 hover:bg-ink'
 
 /** Menu button (below lg) + full-screen dialog drawn as the hero frame: focus trap, Escape, scroll lock. */
 export function MobileMenu({ className }: { className?: string }) {
@@ -18,6 +18,8 @@ export function MobileMenu({ className }: { className?: string }) {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
+  // Set when a menu link closes the dialog: focus then goes to the link target (ScrollManager), not back to the button
+  const followedLink = useRef(false)
   const { pathname, hash } = useLocation()
   const id = useId()
 
@@ -53,11 +55,16 @@ export function MobileMenu({ className }: { className?: string }) {
       document.removeEventListener('keydown', onKey)
       desktop.removeEventListener('change', onDesktop)
       root.style.overflow = overflow
-      buttonRef.current?.focus({ preventScroll: true })
+      if (!followedLink.current) buttonRef.current?.focus({ preventScroll: true })
+      followedLink.current = false
     }
   }, [open])
 
   const close = () => setOpen(false)
+  const follow = () => {
+    followedLink.current = true
+    close()
+  }
 
   return (
     <>
@@ -87,7 +94,7 @@ export function MobileMenu({ className }: { className?: string }) {
         >
           <div className="relative flex min-h-full flex-col rounded-frame bg-brand-deep px-6 pt-28 pb-8 text-cream transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] starting:translate-y-6">
             <Notch corner="tl" className="absolute top-0 left-0 pr-3 pb-3">
-              <Logo location="menu" onClick={close} />
+              <Logo location="menu" onClick={follow} />
             </Notch>
             <Notch corner="tr" className="absolute top-0 right-0 pb-3 pl-3">
               <div className="flex h-12 items-center">
@@ -104,7 +111,7 @@ export function MobileMenu({ className }: { className?: string }) {
                     <SmartLink
                       href={link.href}
                       location="menu"
-                      onClick={close}
+                      onClick={follow}
                       className="group flex items-baseline gap-3 py-1 font-display text-[clamp(2.75rem,13vw,4.5rem)] leading-[1.05] uppercase transition-colors hover:text-caramel"
                     >
                       <span aria-hidden className="font-sans text-xs font-extrabold tracking-[0.2em] text-caramel">

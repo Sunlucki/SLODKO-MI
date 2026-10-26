@@ -4,7 +4,8 @@ Brief for any coding agent or LLM (Claude Code, Codex, Cursor, Copilot, Gemini C
 
 **What it is:** a static landing site + product catalogue for **Słodko Mi Smakuje Ci?** — a cinnamon-roll bakery in Poznań
 (Wilda). The whole site — every text, link, image, product, opening hour, SEO tag and the order of page sections — is
-**data in `src/data/*.json`**, validated by Zod at build time. Most requests ("change the hours", "add a flavour",
+**data in `src/data/*.json`**, validated by Zod at build time (interface labels of product pages, the 404 page, reviews and
+the visit section included: `site.json → ui`). Most requests ("change the hours", "add a flavour",
 "move the FAQ above the reviews", "add an *O nas* page") are JSON edits, not code changes.
 
 ## Stack
@@ -20,7 +21,7 @@ Brief for any coding agent or LLM (Claude Code, Codex, Cursor, Copilot, Gemini C
 src/data/                  ← ALL content (edit these)
   site.json                  global: name, contact, address, links, hours, nav, header, footer, theme, SEO defaults, cookie banner
   products.json              categories + products (flavours) → product cards and /produkt/<slug> pages
-  reviews.json               Google reviews (refreshed automatically — do not hand-edit)
+  reviews.json               Google reviews (refreshed automatically — read-only, never hand-edit)
   pages/<slug>.json          one file = one pre-rendered page: path, seo, ordered sections[]
 src/content/
   schema.ts                  Zod contract of all content (single source of truth, descriptions written for LLMs)
@@ -48,15 +49,18 @@ docs/                      LLM-EDITING.md (owner guide, Russian), TRACKING.md
 | Phone, e-mail | `site.json` → `contact` (`phone` in E.164 + `phoneDisplay`) |
 | Address, entrance hint, map pin | `site.json` → `address` |
 | Wolt, Google Maps, reviews, Instagram, Facebook, map embed | `site.json` → `links` (targets of the `@tokens`) |
-| Opening hours | `site.json` → `hours`, `hoursNote` |
+| Opening hours | `site.json` → `hours` (weekly), `specialHours` (holidays, one-off closures/changes by date), `hoursNote` |
 | Menu, header button, footer columns/photo | `site.json` → `nav`, `header.cta`, `footer` |
 | Show/hide prices, product page button | `site.json` → `catalog` |
 | Brand colours | `site.json` → `theme.colors` |
 | Default SEO, social image, cookie banner texts | `site.json` → `seo`, `consent` |
+| Interface labels: product page (breadcrumbs, „Chwilowo niedostępna”, „Alergeny”, allergy note, „Skład”, „Inne smaki”), 404 page, reviews („Opinie z”, „Czytaj całość”/„Zwiń”, count words), visit („Adres”, „Godziny otwarcia”, „Telefon”, „Otwarte teraz”/„Zamknięte”, „Zmiany w godzinach”, „Pokaż mapę”, map note) | `site.json` → `ui` (optional — Polish defaults live in `schema.ts`) |
 | Flavours (name, descriptions, price, allergens, photos, badge) | `products.json` → `products[]`, `categories[]` |
 | Page texts and section order | `pages/<slug>.json` → `sections[]` (home = `pages/home.json`, path `/`) |
 | Page `<title>` / meta description | `pages/<slug>.json` → `seo` |
-| Google rating, review count, review texts | `reviews.json` (automatic) |
+| Google rating, review count, review texts | `reviews.json` (automatic, read-only) |
+| Where reviews come from / that they are not verified | reviews section → `notice` (has a default; keep it) |
+| AI-generated picture disclosure | any image → `"aiGenerated": true` (visible „Ilustracja” label) |
 
 ## Content editing rules
 
@@ -65,7 +69,8 @@ docs/                      LLM-EDITING.md (owner guide, Russian), TRACKING.md
 1. **Content is JSON.** Change texts, links, images, products, hours, prices, SEO, navigation, footer, theme colours and the
    order/presence of sections only in `src/data/**/*.json` — never hardcode them in components.
 2. **Validate after every edit:** `npm run content:check` (also runs before every build). The contract is `src/content/schema.ts`,
-   readable as JSON Schema in `schema/*.json` and as a section catalogue in `schema/README.md`.
+   readable as JSON Schema in `schema/*.json` and as a section catalogue in `schema/README.md`. Only fields from the schema are
+   allowed — an unknown or misspelled key (`"visible"`, `"hidden"`) is an error, not ignored.
 3. **Language:** all website copy is natural, concise Polish (the owner may write instructions in Russian — translate). Keep the
    brand voice: warm, playful, local ("TEJ, czas na cynamonkę"). Plain text only — no HTML or Markdown inside strings.
 4. **Never invent facts.** Prices, ingredients, allergens, opening hours, phone, address, URLs, reviews and ratings come from the
@@ -74,13 +79,16 @@ docs/                      LLM-EDITING.md (owner guide, Russian), TRACKING.md
    texts that repeat it (FAQ answers, intros, SEO descriptions) and update them too.
 6. **Links:** prefer tokens — `@order` (Wolt), `@phone`, `@directions`, `@instagram`, `@facebook`, `@reviews`, `@writeReview`.
    They resolve from `site.json` and are tracked automatically. Internal links: `/`, `/<page-path>`, `/#<section-id>`,
-   `/produkt/<slug>` — the target page, section id or product must exist.
+   `/produkt/<slug>` — the target page, section id or product must exist, and the section must be enabled. `site.json` and
+   `products.json` are shown on every page, so they always use `/#id`, never a bare `#id`.
 7. **Images:** `src` is an image key from `src/generated/images.json` (e.g. `products/oreo`, `photos/zespol`, `cutouts/szarlotka`),
    never a file path or URL; `alt` is a Polish description of the picture. Only use keys that exist. New photo → put the file in
    `assets/images/<group>/<name>.(jpg|png|webp)` and run `npm run images` (MCP: `add_image`). Cut-out PNG/WebP with transparency
-   works best for products and hero.
+   works best for products and hero. AI-generated pictures get `"aiGenerated": true` (shown with a visible „Ilustracja” label)
+   — never present them as real photos.
 8. **Page structure:** a page is `src/data/pages/<slug>.json` with `path`, `seo` and an ordered `sections[]`. Reorder sections by
-   moving array items; hide one with `"enabled": false` (prefer this to deleting); add one by inserting an object of an existing
+   moving array items; hide one with `"enabled": false` (prefer this to deleting — and change or remove every link to it, e.g.
+   `nav`/footer items, in the same edit: links to hidden sections fail validation); add one by inserting an object of an existing
    `type` (fields: `schema/README.md`). Section `id`s are unique per page, lowercase with dashes, and double as `#anchors` — update
    `nav`/footer links when renaming. A new file in `src/data/pages/` becomes a new route automatically; link it from `nav` or the
    footer if visitors should find it. Paths starting with `/produkt` are reserved for products.
@@ -89,18 +97,28 @@ docs/                      LLM-EDITING.md (owner guide, Russian), TRACKING.md
 10. **Products:** `slug` is the URL (`/produkt/<slug>`); renaming it breaks links — update every reference. `category` must exist in
     `categories`. `price` is PLN or `null` (all prices are hidden while `site.catalog.showPrices` is false). `allergens` use the EU
     list in Polish. `featured: true` feeds `productGrid` sections with `source.mode = "featured"`. Array order = display order.
-11. **Reviews:** `reviews.json` is refreshed from Google by `npm run reviews:fetch` (weekly GitHub Action). Never write, edit or
-    invent review texts, ratings or counts.
+11. **Reviews:** `reviews.json` is refreshed from Google by `npm run reviews:fetch` (weekly GitHub Action) and is read-only for the
+    LLM tools. Never write, edit or invent review texts, ratings or counts. Keep the reviews section's `notice` (source of the
+    reviews and that they are not verified — required by EU consumer law).
 12. **SEO:** `seo.title` ≤ 60 characters, `seo.description` ≤ 155 characters, Polish, unique per page.
 13. **Theme:** `theme.colors.brandDeep` must keep ≥ 4.5:1 contrast with `cream`; `brand` is for large display text only.
 14. **Minimal diffs:** change only what the request needs; keep `$schema` and the existing formatting (2 spaces).
+15. **Hours:** `hours` holds the regular week. A holiday, closure or changed hours on a date goes to `specialHours`
+    (`{"date": "YYYY-MM-DD", "closed": true}` or `{"date": …, "opens": "HH:MM", "closes": "HH:MM"}`, optional `note`), not only
+    into `hoursNote`; the site shows dates of the next 14 days and uses them for „Otwarte teraz”. `closes` must be later than
+    `opens`; midnight is `"00:00"`. Remove past dates when editing hours.
+16. **Interface labels** (buttons, headings and notes that are not section content) live in `site.json` → `ui`. Every key has a
+    Polish default; add only the keys that should change. `ui.product.otherProductsHeading: ""` hides „Inne smaki”. The word
+    „Google” in the review attribution („Opinie z Google”, „… opinii w Google”) and the Google logo are fixed in code (Google's
+    attribution requirement).
 
 ## Adding a new section type (code change, end to end)
 
 Only when no existing type can express the request:
 
-1. **Schema** — in `src/content/schema.ts` add `export const XSection = z.object({ ...sectionBase, type: z.literal('x'), … }).describe('…')`
-   (describe every field — the descriptions are the docs LLMs read) and add it to the `Section` discriminated union.
+1. **Schema** — in `src/content/schema.ts` add `export const XSection = z.strictObject({ ...sectionBase, type: z.literal('x'), … }).describe('…')`
+   (strict like every content object; describe every field — the descriptions are the docs LLMs read) and add it to the `Section`
+   discriminated union. Fixed labels the component needs go to `Ui` in `schema.ts` (with a Polish default), not into the component.
 2. **Validation** — `validate.ts` already checks every `{ src, alt }` image and every `href`; add explicit checks for other references
    (product slugs, categories) in `loadContent()`.
 3. **Component** — `src/sections/X.tsx`: `export default function X({ section, page, index }: SectionProps<'x'>)`. Build it from
@@ -130,11 +148,14 @@ Parallel builds: `OUT_DIR=.tmp/<name> npx vite-react-ssg build`.
 
 - **MCP server `slodkomi-content`** (`scripts/content-mcp.ts`, registered in `.mcp.json`): `list_content`, `get_schema`, `read_content`,
   `write_content`, `patch_content` (RFC 6902), `delete_page`, `validate_content`, `list_images`, `add_image`, `build_site`. Writes are
-  limited to `src/data/site.json`, `products.json`, `reviews.json` and `src/data/pages/<slug>.json`, validated with `loadContent()` and
-  rolled back automatically when they introduce errors.
+  limited to `src/data/site.json`, `products.json` and `src/data/pages/<slug>.json` (`reviews.json` is read-only; symlinks are refused),
+  validated with `loadContent()` and rolled back automatically when they introduce errors. While another content file is invalid,
+  writes are refused until it is fixed (references into it cannot be checked).
 - **CLI `npm run ai`** (`scripts/ai-edit.ts`): Anthropic or any OpenAI-compatible API; the model returns JSON Patches that are applied,
-  validated and repaired (up to 3 rounds); backups in `.ai-edit-backup/`.
-- **GitHub Action "AI edit"** (`.github/workflows/ai-edit.yml`): run from the browser/phone → pull request → merge → deploy.
+  validated and repaired (up to 3 rounds); backups in `.ai-edit-backup/`. The editable files are sent as data (never `reviews.json`);
+  answering „n” or pressing Ctrl+C at the confirmation restores the original files.
+- **GitHub Action "AI edit"** (`.github/workflows/ai-edit.yml`): run from the browser/phone → pull request → merge → deploy. Runs do
+  not cancel each other: each instruction gets its own branch and pull request.
 - Owner guide (Russian): `docs/LLM-EDITING.md`.
 
 ## Constraints and conventions (code changes)
@@ -151,7 +172,8 @@ Parallel builds: `OUT_DIR=.tmp/<name> npx vite-react-ssg build`.
   `src/lib/analytics.ts` (never `gtag`/`fbq`; see `docs/TRACKING.md`); `cn()`/`asset()` from `src/lib/utils.ts`.
 - **Theme tokens:** `bg-cream`, `text-ink`, `brand` (large text/decoration only), `brand-deep` (buttons, small coloured text), `blush`,
   `caramel`, `font-display` (Anton, uppercase), `font-sans` (Manrope), `rounded-frame`. Never raw hex in components.
-- **Copy:** UI is Polish (`<html lang="pl">`). Generic micro-copy (aria-labels) may live in components; business facts never.
+- **Copy:** UI is Polish (`<html lang="pl">`). Visible interface texts belong in `site.json → ui` (default in `schema.ts`), not in
+  components; aria-labels and screen-reader-only texts may stay in components; business facts never.
 - **React Bits:** `LogoLoop`, `CurvedLoop`, `BounceCards`, `Magnet`, `StickerPeel`, `ShinyText` in `src/components/` come from the free
   `@react-bits` shadcn registry (`components.json`). `@reactbits-starter` / `@reactbits-pro` need `REACTBITS_LICENSE_KEY` in `.env.local`.
 - **Style:** 2-space indent, single quotes, no semicolons, small focused components, comments only where they add context.

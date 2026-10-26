@@ -44,10 +44,10 @@ export default function Header() {
 
       <Notch corner="tr" cut={framed} className="pb-3 pl-3 lg:pb-4 lg:pl-4">
         <div className="flex h-12 items-center gap-2 lg:h-14">
-          <IconLink href="@instagram" label="Instagram" location="header" variant="secondary" className="hidden text-brand-deep hover:bg-brand-deep hover:text-cream hover:ring-brand-deep sm:inline-grid">
+          <IconLink href="@instagram" label="Instagram" location="header" variant="secondary" className="hidden text-brand-deep hover:bg-brand-deep hover:text-cream hover:border-brand-deep sm:inline-grid">
             <Instagram />
           </IconLink>
-          <IconLink href="@phone" label={`Zadzwoń: ${site.contact.phoneDisplay}`} location="header" variant="secondary" className="text-brand-deep hover:bg-brand-deep hover:text-cream hover:ring-brand-deep">
+          <IconLink href="@phone" label={`Zadzwoń: ${site.contact.phoneDisplay}`} location="header" variant="secondary" className="text-brand-deep hover:bg-brand-deep hover:text-cream hover:border-brand-deep">
             <Phone />
           </IconLink>
           <CtaButton cta={site.header.cta} location="header" className="hidden sm:inline-flex" />

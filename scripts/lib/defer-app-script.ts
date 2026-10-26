@@ -1,15 +1,20 @@
 // The pre-rendered HTML is complete and its links work without JS, so the React bundle is fetched
 // only after the page has loaded and painted (or on the first interaction): it then never competes
 // with the hero image and fonts for bandwidth on a slow phone connection.
+// Until the bundle has run, clicks on tracked links (SmartLink's data-track) and buttons are queued in
+// window.__early (capture phase); replayEarlyClicks() in src/lib/analytics.ts reports or re-clicks them after
+// hydration. Queueing stops once the bundle has run: React then listens and handles every new click itself.
 export function deferAppScript(html: string): string {
   const tag = html.match(/<script type="module"[^>]*\ssrc="([^"]+)"[^>]*><\/script>/)
   if (!tag) return html
   // Waits for the "load" event AND the first contentful paint (3 s fallback, e.g. for background tabs)
   const loader =
-    `<script>(function(){var done=0,wait=2,ev=['pointerdown','keydown','touchstart','scroll'];function load(){if(done++)return;` +
+    `<script>(function(){var done=0,wait=2,ev=['pointerdown','keydown','touchstart','scroll'],q=window.__early=[];` +
+    `function rec(e){var t=e.target.closest&&e.target.closest('a[data-track],button');if(t)q.push(t)}function load(){if(done++)return;` +
     `ev.forEach(function(e){removeEventListener(e,load,true)});var s=document.createElement('script');s.type='module';` +
-    `s.crossOrigin='';s.src=${JSON.stringify(tag[1])};document.head.appendChild(s)}` +
-    `function ready(){if(!--wait)setTimeout(load,0)}` +
+    `s.crossOrigin='';s.onload=s.onerror=function(){removeEventListener('click',rec,true)};` +
+    `s.src=${JSON.stringify(tag[1])};document.head.appendChild(s)}` +
+    `function ready(){if(!--wait)setTimeout(load,0)}addEventListener('click',rec,true);` +
     `ev.forEach(function(e){addEventListener(e,load,{capture:true,passive:true,once:true})});setTimeout(load,3000);` +
     `if(document.readyState==='complete')ready();else addEventListener('load',ready,{once:true});` +
     `try{new PerformanceObserver(function(l,o){if(l.getEntriesByName('first-contentful-paint').length){o.disconnect();ready()}})` +

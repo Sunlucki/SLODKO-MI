@@ -2,13 +2,15 @@
 #
 # FTP setup (Settings → Secrets and variables → Actions):
 #   secrets:   FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, optional FTP_SERVER_DIR (default ./public_html/)
-#   variables: SITE_URL (production URL, e.g. https://slodkomi.pl — canonical, sitemap, og:url),
+#   variables: SITE_URL (production URL, e.g. https://slodkomi.pl — canonical, sitemap, og:url; required,
+#              the FTP job fails without it),
 #              optional VITE_BASE (sub-path, e.g. /slodkomi/ — see public/.htaccess),
 #              optional FTP_PROTOCOL (default ftps; use "ftp" only if the host has no TLS),
 #              optional VITE_GA_ID, VITE_META_PIXEL_ID, VITE_GTM_ID, VITE_TIKTOK_PIXEL_ID (also read from secrets)
 #   Without the FTP_SERVER secret the FTP job is skipped.
 #
-# GitHub Pages: Settings → Pages → Source: "GitHub Actions" (one-time). The preview runs without pixels.
+# GitHub Pages: Settings → Pages → Source: "GitHub Actions" (one-time). The preview runs without pixels and is
+# noindex with no sitemap (NOINDEX=1); once SITE_URL is set, its canonical URLs point at the production site.
 name: Deploy
 
 on:
@@ -48,6 +50,16 @@ jobs:
     if: needs.check.outputs.ftp == 'true'
     runs-on: ubuntu-latest
     steps:
+      # Without it every canonical URL, og:url and the sitemap would name site.json url (the preview)
+      - name: Check SITE_URL
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$SITE_URL" ]; then
+            echo "::error::Set the repository variable SITE_URL to the production address (e.g. https://slodkomi.pl)."
+            exit 1
+          fi
+
       - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v5
@@ -105,7 +117,8 @@ jobs:
         run: npm run build
         env:
           VITE_BASE: /SLODKO-MI/
-          SITE_URL: https://sunlucki.github.io/SLODKO-MI
+          SITE_URL: ${{ vars.SITE_URL || 'https://sunlucki.github.io/SLODKO-MI' }}
+          NOINDEX: '1'
 
       - uses: actions/upload-pages-artifact@v4
         with:

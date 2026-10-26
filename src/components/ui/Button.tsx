@@ -13,7 +13,8 @@ const pill = {
 const circle = {
   primary: 'bg-brand-deep text-cream group-hover:bg-ink',
   light: 'bg-cream text-brand-deep group-hover:bg-white',
-  secondary: 'text-current ring-2 ring-inset ring-current',
+  // A border, not an inset ring: the focus style's box-shadow (globals.css) must not replace it
+  secondary: 'border-2 border-current text-current',
 } as const
 
 interface CtaProps {
@@ -38,11 +39,11 @@ export function CtaButton({ cta, location, product, size = 'md', withCircle = tr
       href={cta.href}
       location={location}
       product={product}
-      className={cn('group inline-flex items-center gap-1 font-sans font-extrabold tracking-[0.08em] uppercase focus-visible:outline-none', className)}
+      className={cn('group inline-flex items-center gap-1 rounded-full font-sans font-extrabold tracking-[0.08em] uppercase', className)}
     >
       <span
         className={cn(
-          'inline-flex items-center rounded-full transition-colors duration-200 group-focus-visible:ring-4 group-focus-visible:ring-caramel',
+          'inline-flex items-center rounded-full transition-colors duration-200',
           sizes.pill,
           pill[cta.variant],
         )}
@@ -83,7 +84,7 @@ export function IconLink({ href, label, location, children, variant = 'light', c
       aria-label={label}
       title={label}
       className={cn(
-        'group inline-grid size-11 place-items-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-caramel',
+        'group inline-grid size-11 place-items-center rounded-full transition-colors duration-200',
         circle[variant],
         className,
       )}

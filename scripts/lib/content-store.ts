@@ -5,7 +5,7 @@
  * Node-only. Paths resolve from the repo root, so the tools work from any working directory.
  */
 import { spawn } from 'node:child_process'
-import { existsSync, lstatSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, lstatSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import jsonpatch, { type Operation } from 'fast-json-patch'
@@ -19,7 +19,9 @@ export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 
 // ── Editable files ─────────────────────────────────────────────────────────────
 
-const EDITABLE = /^src\/data\/(?:(?:site|products|reviews)\.json|pages\/[a-z0-9-]+\.json)$/
+const CONTENT = /^src\/data\/(?:(?:site|products|reviews)\.json|pages\/[a-z0-9-]+\.json)$/
+/** Readable but never written by the LLM tools: only scripts/fetch-google-reviews.ts updates it. */
+export const READ_ONLY = new Set<string>([CONTENT_FILES.reviews])
 export const PROTECTED_PAGE = 'src/data/pages/home.json'
 
 /** $schema value written into each kind of file (relative to the file, for editor autocompletion). */
@@ -31,30 +33,36 @@ function schemaRef(rel: string): string {
 
 /**
  * Normalises a content path ("src/data/site.json", "site.json", "pages/o-nas.json" or an absolute path
- * inside the repo) and rejects anything outside the whitelist — no traversal, no symlinks.
+ * inside the repo) and rejects anything outside the whitelist — no traversal, no symlinks (also dangling ones
+ * and symlinked folders). mode "write" also rejects the read-only reviews.json.
  */
-export function contentPath(file: string): { rel: string; abs: string } {
+export function contentPath(file: string, mode: 'read' | 'write' = 'read'): { rel: string; abs: string } {
   let rel = file.trim().replace(/\\/g, '/')
   if (path.isAbsolute(rel)) rel = path.relative(ROOT, rel).replace(/\\/g, '/')
   rel = path.posix.normalize(rel).replace(/^\.\//, '')
   if (!rel.startsWith('src/')) rel = `src/data/${rel}`
-  if (!EDITABLE.test(rel))
+  if (!CONTENT.test(rel))
     throw new Error(
-      `"${file}" is not an editable content file. Allowed: src/data/site.json, src/data/products.json, ` +
-        'src/data/reviews.json, src/data/pages/<slug>.json (slug: a-z, 0-9, "-").',
+      `"${file}" is not a content file. Allowed: src/data/site.json, src/data/products.json, ` +
+        'src/data/pages/<slug>.json (slug: a-z, 0-9, "-"); src/data/reviews.json is read-only.',
     )
+  if (mode === 'write' && READ_ONLY.has(rel))
+    throw new Error(`${rel} is read-only: reviews are refreshed from Google by \`npm run reviews:fetch\` — never write, edit or invent reviews`)
   const abs = path.join(ROOT, rel)
-  if (existsSync(abs) && lstatSync(abs).isSymbolicLink()) throw new Error(`"${rel}" is a symlink — refusing to touch it`)
+  if (lstatSync(abs, { throwIfNoEntry: false })?.isSymbolicLink()) throw new Error(`"${rel}" is a symlink — refusing to touch it`)
+  const dir = path.dirname(abs)
+  if (!existsSync(dir) || realpathSync(dir) !== path.join(realpathSync(ROOT), path.dirname(rel)))
+    throw new Error(`"${path.dirname(rel)}" is not a plain folder inside the project — refusing to touch it`)
   return { rel, abs }
 }
 
-/** All editable files that exist now (pages sorted by name). */
+/** All files the LLM tools may edit that exist now (pages sorted by name); reviews.json is not one of them. */
 export function listContentFiles(): string[] {
   const pages = readdirSync(path.join(ROOT, CONTENT_FILES.pagesDir))
     .filter((f) => /^[a-z0-9-]+\.json$/.test(f))
     .sort()
     .map((f) => `${CONTENT_FILES.pagesDir}/${f}`)
-  return [CONTENT_FILES.site, CONTENT_FILES.catalog, CONTENT_FILES.reviews, ...pages]
+  return [CONTENT_FILES.site, CONTENT_FILES.catalog, ...pages]
 }
 
 export function readText(rel: string): string | null {
@@ -156,13 +164,27 @@ export interface CommitResult {
 
 /**
  * Writes all changes, validates the whole content with loadContent() and restores the original files
- * when the change introduces any new error. Pre-existing errors do not block a change.
+ * when the change introduces any new error. Pre-existing errors do not block a change, except an invalid
+ * file the change does not touch: references into it cannot be checked, so it has to be fixed first.
  */
 export function commit(changes: Change[]): CommitResult {
-  const before = new Set(loadContent(ROOT).errors)
+  for (const c of changes) contentPath(c.rel, 'write')
+  const pre = loadContent(ROOT)
+  const blocking = pre.invalid.filter((f) => !READ_ONLY.has(f) && !changes.some((c) => c.rel === f))
+  if (blocking.length)
+    return {
+      ok: false,
+      errors: blocking.map((f) =>
+        f === CONTENT_FILES.images
+          ? `${f} is broken — run \`npm run images\` before editing content`
+          : `${f} does not pass validation (see validate_content / npm run content:check) — fix that file first or in the same change; until then links and references into it cannot be checked`,
+      ),
+      originals: new Map(),
+    }
+  const before = new Set(pre.errors)
   const originals = new Map(changes.map((c) => [c.rel, readText(c.rel)]))
   const write = (rel: string, text: string | null) => {
-    const abs = contentPath(rel).abs
+    const abs = contentPath(rel, 'write').abs
     if (text === null) rmSync(abs, { force: true })
     else writeFileSync(abs, text)
   }
@@ -214,6 +236,7 @@ export function overview() {
     valid: errors.length === 0,
     errors,
     files: listContentFiles(),
+    readOnly: [...READ_ONLY],
     pages: listContentFiles()
       .filter((f) => f.startsWith(`${CONTENT_FILES.pagesDir}/`))
       .map((file) => {
@@ -342,8 +365,9 @@ export function schemaFiles(): Record<string, string> {
     '> `npm run content:check` fails when these files are out of date.',
     '',
     'JSON Schema (draft 2020-12) of every editable content file. The data files point at them via `$schema`,',
-    'so editors (VS Code, Cursor…) autocomplete and validate while you type. Cross-file rules (image keys exist,',
-    'product slugs and internal links resolve, section ids are unique) are checked by `npm run content:check`.',
+    'so editors (VS Code, Cursor…) autocomplete and validate while you type. Unknown or misspelled keys are errors',
+    '(`additionalProperties: false`), never silently ignored. Cross-file rules (image keys exist, product slugs and',
+    'internal links resolve, section ids are unique) are checked by `npm run content:check`.',
     '',
     '| Schema | Files |',
     '| --- | --- |',
@@ -353,6 +377,8 @@ export function schemaFiles(): Record<string, string> {
     '',
     'Every `href` accepts an internal path (`/`, `/o-nas`, `/#smaki`, `/produkt/<slug>`), an absolute URL, `tel:`/`mailto:`',
     `or a token resolved from \`site.json\`: ${S.LINK_TOKENS.map((t) => `\`${t}\``).join(', ')}.`,
+    'A bare `#id` works only inside one page file — `site.json` and `products.json` must use `/#id`. The target section',
+    'must exist and be shown: links to a section with `"enabled": false` (or a product grid without products) fail.',
     '',
     '## Section types',
     '',

@@ -30,9 +30,8 @@ permissions:
   contents: write
   pull-requests: write
 
-concurrency:
-  group: ai-edit
-  cancel-in-progress: false
+# No shared concurrency group: GitHub keeps only one pending run per group, so a third quick edit would cancel
+# the queued second one. Each run works on its own checkout and branch (ai-edit/<run id>) → its own pull request.
 
 jobs:
   edit:

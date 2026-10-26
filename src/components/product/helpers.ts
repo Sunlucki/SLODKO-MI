@@ -10,5 +10,5 @@ export function isCutout(image: ImageT): boolean {
 export function catalogLink(): { href: string; label: string } {
   const grid = pages.find((p) => p.path === '/')?.sections.find((s) => s.enabled && s.type === 'productGrid')
   const href = grid ? `/#${grid.id}` : '/'
-  return { href, label: site.nav.find((l) => l.href === href)?.label ?? 'Smaki' }
+  return { href, label: site.nav.find((l) => l.href === href)?.label ?? site.ui.product.catalogLabel }
 }

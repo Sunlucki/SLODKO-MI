@@ -7,7 +7,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import type { ZodType } from 'zod'
-import { Catalog, LINK_TOKENS, Page, Reviews, Site, type CatalogT, type PageT, type ReviewsT, type SiteT } from './schema.ts'
+import { Catalog, LINK_TOKENS, Page, Reviews, Site, type CatalogT, type PageT, type ReviewsT, type SectionOf, type SiteT } from './schema.ts'
 
 export type ImageManifest = Record<string, { width: number; height: number; widths: number[]; alpha: boolean }>
 
@@ -68,65 +68,112 @@ function* objects(value: unknown, p: string[] = []): Generator<[string[], Record
   }
 }
 
-export function loadContent(root = process.cwd()): { content?: Content; errors: string[] } {
+export interface LoadResult {
+  content?: Content
+  errors: string[]
+  /** Files (repo-relative) that are not valid JSON or do not match their schema; checks that need them are skipped */
+  invalid: string[]
+}
+
+const normPath = (p: string) => p.replace(/\/$/, '') || '/'
+
+export function loadContent(root = process.cwd()): LoadResult {
   const errors: string[] = []
-  const rel = (f: string) => path.relative(root, f)
-
-  const imagesFile = path.join(root, CONTENT_FILES.images)
-  const images = (existsSync(imagesFile) ? readJson(imagesFile, errors) : {}) as ImageManifest
-
-  const siteFile = path.join(root, CONTENT_FILES.site)
-  const catalogFile = path.join(root, CONTENT_FILES.catalog)
-  const reviewsFile = path.join(root, CONTENT_FILES.reviews)
-  const site = parse(Site, readJson(siteFile, errors), rel(siteFile), errors)
-  const catalog = parse(Catalog, readJson(catalogFile, errors), rel(catalogFile), errors)
-  const reviews = parse(Reviews, readJson(reviewsFile, errors), rel(reviewsFile), errors)
-
-  const pageFiles = contentFiles(root).filter((f) => f.includes(`${path.sep}pages${path.sep}`))
-  const pages: { file: string; page: PageT }[] = []
-  for (const file of pageFiles) {
-    const page = parse(Page, readJson(file, errors), rel(file), errors)
-    if (page) pages.push({ file: rel(file), page })
+  const invalid: string[] = []
+  const rel = (f: string) => path.relative(root, f).split(path.sep).join('/')
+  const load = <T>(schema: ZodType<T>, file: string, raw = readJson(file, errors)): T | undefined => {
+    const data = parse(schema, raw, rel(file), errors)
+    if (data === undefined) invalid.push(rel(file))
+    return data
   }
 
-  if (!site || !catalog || !reviews || pages.length !== pageFiles.length) return { errors }
+  const imagesFile = path.join(root, CONTENT_FILES.images)
+  const images = (existsSync(imagesFile) ? readJson(imagesFile, errors) : {}) as ImageManifest | undefined
+  if (!images) invalid.push(CONTENT_FILES.images)
+
+  const site = load(Site, path.join(root, CONTENT_FILES.site))
+  const catalog = load(Catalog, path.join(root, CONTENT_FILES.catalog))
+  const reviews = load(Reviews, path.join(root, CONTENT_FILES.reviews))
+
+  const pagesDir = path.join(root, CONTENT_FILES.pagesDir)
+  const pageFiles = contentFiles(root).filter((f) => path.dirname(f) === pagesDir)
+  const pages: { file: string; page: PageT }[] = []
+  // Paths of page files that failed validation: links to them cannot be checked, so they are skipped
+  const unknownPaths = new Set<string>()
+  for (const file of pageFiles) {
+    const raw = readJson(file, errors)
+    const page = load(Page, file, raw)
+    if (page) pages.push({ file: rel(file), page })
+    else if (typeof (raw as { path?: unknown } | undefined)?.path === 'string') unknownPaths.add(normPath((raw as { path: string }).path))
+  }
 
   // ── Cross-reference checks ──────────────────────────────────────────────────
-  const productSlugs = new Set(catalog.products.map((p) => p.slug))
-  const categorySlugs = new Set(catalog.categories.map((c) => c.slug))
+  // They run on every file that parsed, so one broken file never hides problems in the others.
+  const productSlugs = catalog && new Set(catalog.products.map((p) => p.slug))
+  const categorySlugs = catalog && new Set(catalog.categories.map((c) => c.slug))
   const pagePaths = new Map<string, string>()
   for (const { file, page } of pages) {
-    const norm = page.path.replace(/\/$/, '') || '/'
+    const norm = normPath(page.path)
     if (pagePaths.has(norm)) errors.push(`${file} → path: "${page.path}" is already used by ${pagePaths.get(norm)}`)
     if (norm.startsWith('/produkt')) errors.push(`${file} → path: "/produkt…" is reserved for product pages`)
     pagePaths.set(norm, file)
   }
-  if (!pagePaths.has('/')) errors.push('src/data/pages: no page with path "/" (home page)')
+  if (!pagePaths.has('/') && !unknownPaths.has('/')) errors.push('src/data/pages: no page with path "/" (home page)')
 
-  const anchorsByPath = new Map<string, Set<string>>()
-  for (const { page } of pages) anchorsByPath.set(page.path.replace(/\/$/, '') || '/', new Set(page.sections.map((s) => s.id)))
+  // A section is a link target only when it renders: enabled, and a product grid needs at least one product
+  const gridCount = (s: SectionOf<'productGrid'>) => {
+    if (!catalog) return 1
+    const src = s.source
+    if (src.mode === 'all') return catalog.products.length
+    if (src.mode === 'featured') return catalog.products.filter((p) => p.featured).length
+    if (src.mode === 'category') return catalog.products.filter((p) => p.category === src.category).length
+    return src.slugs.filter((slug) => productSlugs?.has(slug)).length
+  }
+  // section id → null when it can be linked, otherwise why not
+  const sectionsByPath = new Map<string, Map<string, string | null>>()
+  for (const { page } of pages)
+    sectionsByPath.set(
+      normPath(page.path),
+      new Map(
+        page.sections.map((s) => [
+          s.id,
+          !s.enabled ? 'is disabled ("enabled": false)' : s.type === 'productGrid' && !gridCount(s) ? 'shows no products' : null,
+        ]),
+      ),
+    )
 
   const checkImage = (where: string, src: string) => {
-    if (!images[src]) errors.push(`${where}: image "${src}" not found in ${CONTENT_FILES.images} (add the file to assets/images and run \`npm run images\`)`)
+    if (images && !images[src])
+      errors.push(`${where}: image "${src}" not found in ${CONTENT_FILES.images} (add the file to assets/images and run \`npm run images\`)`)
   }
-  const checkHref = (where: string, href: string, currentPath: string) => {
+  /** currentPath = path of the page the link is on; null for site-wide content (site.json, products.json). */
+  const checkHref = (where: string, href: string, currentPath: string | null) => {
     if ((LINK_TOKENS as readonly string[]).includes(href)) {
-      if (href === '@facebook' && !site.links.facebook) errors.push(`${where}: "@facebook" used but site.links.facebook is empty`)
-      if (href === '@writeReview' && !site.links.writeReview) errors.push(`${where}: "@writeReview" used but site.links.writeReview is empty`)
+      if (href === '@facebook' && site && !site.links.facebook) errors.push(`${where}: "@facebook" used but site.links.facebook is empty`)
+      if (href === '@writeReview' && site && !site.links.writeReview) errors.push(`${where}: "@writeReview" used but site.links.writeReview is empty`)
       return
     }
     if (/^(https?:|mailto:|tel:)/.test(href)) return
-    const [rawPath, anchor] = href.split('#')
-    const target = rawPath === '' ? currentPath : rawPath.replace(/\/$/, '') || '/'
-    const product = target.match(/^\/produkt\/([^/]+)$/)
-    if (product) {
-      if (!productSlugs.has(product[1])) errors.push(`${where}: link "${href}" → unknown product "${product[1]}"`)
+    if (href.startsWith('#') && currentPath === null) {
+      errors.push(`${where}: link "${href}" is shown on every page — use "/${href}" (a bare "#…" only works within one page file)`)
       return
     }
+    const [rawPath, anchor] = href.split('#')
+    const target = rawPath === '' ? currentPath! : normPath(rawPath)
+    const product = target.match(/^\/produkt\/([^/]+)$/)
+    if (product) {
+      if (productSlugs && !productSlugs.has(product[1])) errors.push(`${where}: link "${href}" → unknown product "${product[1]}"`)
+      return
+    }
+    if (unknownPaths.has(target)) return
     if (!pagePaths.has(target)) errors.push(`${where}: link "${href}" → no page with path "${target}"`)
-    else if (anchor && !anchorsByPath.get(target)?.has(anchor)) errors.push(`${where}: link "${href}" → no section with id "${anchor}" on "${target}"`)
+    else if (anchor) {
+      const reason = sectionsByPath.get(target)?.get(anchor)
+      if (reason === undefined) errors.push(`${where}: link "${href}" → no section with id "${anchor}" on "${target}"`)
+      else if (reason) errors.push(`${where}: link "${href}" → section "${anchor}" on "${target}" ${reason} — change or remove this link`)
+    }
   }
-  const scan = (file: string, data: unknown, currentPath: string) => {
+  const scan = (file: string, data: unknown, currentPath: string | null) => {
     for (const [p, obj] of objects(data)) {
       const where = `${file} → ${p.join('.')}`
       if (typeof obj.src === 'string' && typeof obj.alt === 'string') checkImage(where, obj.src)
@@ -136,38 +183,40 @@ export function loadContent(root = process.cwd()): { content?: Content; errors: 
     }
   }
 
-  // Theme colours: keep WCAG AA contrast for the pairs the components actually use
-  const lum = (hex: string) => {
-    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b
-  }
-  const contrast = (a: string, b: string) => {
-    const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m)
-    return (x + 0.05) / (y + 0.05)
-  }
-  const c = site.theme.colors
-  const pairs: [keyof typeof c, keyof typeof c, number][] = [
-    ['brandDeep', 'cream', 4.5], // buttons, small coloured text, frames
-    ['brandDeep', 'blush', 4.5],
-    ['ink', 'cream', 4.5],
-    ['ink', 'blush', 4.5],
-    ['ink', 'caramel', 4.5],
-    ['cream', 'ink', 4.5],
-    ['brand', 'cream', 3], // large display text only
-    ['caramel', 'brandDeep', 3], // hero accent line, large
-  ]
-  for (const [fg, bg, min] of pairs) {
-    const ratio = contrast(c[fg], c[bg])
-    if (ratio < min) errors.push(`${CONTENT_FILES.site} → theme.colors: ${fg} on ${bg} has contrast ${ratio.toFixed(2)}:1, needs ≥ ${min}:1 (WCAG AA)`)
-  }
+  if (site) {
+    // Theme colours: keep WCAG AA contrast for the pairs the components actually use
+    const lum = (hex: string) => {
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    }
+    const contrast = (a: string, b: string) => {
+      const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m)
+      return (x + 0.05) / (y + 0.05)
+    }
+    const c = site.theme.colors
+    const pairs: [keyof typeof c, keyof typeof c, number][] = [
+      ['brandDeep', 'cream', 4.5], // buttons, small coloured text, frames
+      ['brandDeep', 'blush', 4.5],
+      ['ink', 'cream', 4.5],
+      ['ink', 'blush', 4.5],
+      ['ink', 'caramel', 4.5],
+      ['cream', 'ink', 4.5],
+      ['brand', 'cream', 3], // large display text only
+      ['caramel', 'brandDeep', 3], // hero accent line, large
+    ]
+    for (const [fg, bg, min] of pairs) {
+      const ratio = contrast(c[fg], c[bg])
+      if (ratio < min) errors.push(`${CONTENT_FILES.site} → theme.colors: ${fg} on ${bg} has contrast ${ratio.toFixed(2)}:1, needs ≥ ${min}:1 (WCAG AA)`)
+    }
 
-  scan(CONTENT_FILES.site, site, '/')
-  checkHref(`${CONTENT_FILES.site} → consent.policyHref`, site.consent.policyHref, '/')
-  if (!images[site.seo.ogImage]) errors.push(`${CONTENT_FILES.site} → seo.ogImage: "${site.seo.ogImage}" not found in images`)
-  scan(CONTENT_FILES.catalog, catalog, '/')
+    scan(CONTENT_FILES.site, site, null)
+    checkHref(`${CONTENT_FILES.site} → consent.policyHref`, site.consent.policyHref, null)
+    if (images && !images[site.seo.ogImage]) errors.push(`${CONTENT_FILES.site} → seo.ogImage: "${site.seo.ogImage}" not found in images`)
+  }
+  if (catalog) scan(CONTENT_FILES.catalog, catalog, null)
   for (const { file, page } of pages) {
-    scan(file, page, page.path.replace(/\/$/, '') || '/')
-    if (page.seo.ogImage && !images[page.seo.ogImage]) errors.push(`${file} → seo.ogImage: "${page.seo.ogImage}" not found in images`)
+    scan(file, page, normPath(page.path))
+    if (images && page.seo.ogImage && !images[page.seo.ogImage]) errors.push(`${file} → seo.ogImage: "${page.seo.ogImage}" not found in images`)
     // Exactly one <h1> per page: it comes from a hero, or from a text section with a heading placed first
     const enabled = page.sections.filter((s) => s.enabled)
     if (page.sections.filter((s) => s.type === 'hero').length > 1) errors.push(`${file} → sections: at most one "hero" section per page`)
@@ -175,6 +224,7 @@ export function loadContent(root = process.cwd()): { content?: Content; errors: 
     if (first && !(first.type === 'hero' || (first.type === 'text' && first.heading)))
       errors.push(`${file} → sections: the first enabled section must be "hero" or a "text" section with a heading (it renders the page <h1>)`)
     else if (enabled.some((s, i) => i > 0 && s.type === 'hero')) errors.push(`${file} → sections: the "hero" section must be the first enabled section`)
+    if (!productSlugs || !categorySlugs) continue
     page.sections.forEach((s, i) => {
       const where = `${file} → sections.${i} (${s.type} "${s.id}")`
       if (s.type === 'hero' && s.spotlight)
@@ -186,6 +236,6 @@ export function loadContent(root = process.cwd()): { content?: Content; errors: 
     })
   }
 
-  if (errors.length) return { errors }
-  return { content: { site, catalog, reviews, pages: pages.map((p) => p.page), images }, errors }
+  if (errors.length || !site || !catalog || !reviews || !images) return { errors, invalid }
+  return { content: { site, catalog, reviews, pages: pages.map((p) => p.page), images }, errors, invalid }
 }

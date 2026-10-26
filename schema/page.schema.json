@@ -60,6 +60,7 @@
     "seo",
     "sections"
   ],
+  "additionalProperties": false,
   "$defs": {
     "Seo": {
       "type": "object",
@@ -88,7 +89,8 @@
       "required": [
         "title",
         "description"
-      ]
+      ],
+      "additionalProperties": false
     },
     "HeroSection": {
       "type": "object",
@@ -126,7 +128,8 @@
             },
             "required": [
               "text"
-            ]
+            ],
+            "additionalProperties": false
           },
           "description": "Huge display headline, one entry per line"
         },
@@ -153,7 +156,8 @@
           },
           "required": [
             "title"
-          ]
+          ],
+          "additionalProperties": false
         },
         "aside": {
           "description": "Short paragraph on the right side of the hero",
@@ -186,7 +190,8 @@
           "required": [
             "label",
             "productSlugs"
-          ]
+          ],
+          "additionalProperties": false
         },
         "ticker": {
           "default": [],
@@ -205,6 +210,7 @@
         "image",
         "primaryCta"
       ],
+      "additionalProperties": false,
       "description": "Top hero block in a rounded frame"
     },
     "Image": {
@@ -230,6 +236,7 @@
         "src",
         "alt"
       ],
+      "additionalProperties": false,
       "description": "Responsive image (WebP, 480/720/960/1600 px variants generated automatically)"
     },
     "Cta": {
@@ -258,12 +265,13 @@
         "label",
         "href"
       ],
+      "additionalProperties": false,
       "description": "Call-to-action button"
     },
     "Href": {
       "type": "string",
       "minLength": 1,
-      "description": "Link target. Internal path (\"/produkt/oreo\", \"/#smaki\"), absolute URL, or a token resolved from site.json: @order (Wolt), @phone, @directions (Google Maps route), @instagram, @facebook, @reviews (Google reviews), @writeReview. Prefer tokens — they are tracked automatically (Meta Pixel + GA4)."
+      "description": "Link target. Internal path (\"/produkt/oreo\", \"/#smaki\"), absolute URL, or a token resolved from site.json: @order (Wolt), @phone, @directions (Google Maps route), @instagram, @facebook, @reviews (Google reviews), @writeReview. Prefer tokens — they are tracked automatically (Meta Pixel + GA4). A bare \"#id\" only links within the same page file; site.json and products.json render on many pages, so they must use \"/#id\". The target section must exist and be enabled."
     },
     "AboutSection": {
       "type": "object",
@@ -324,6 +332,7 @@
         "heading",
         "body"
       ],
+      "additionalProperties": false,
       "description": "Centered statement: big heading, paragraph(s), CTA, floating photos"
     },
     "Tone": {
@@ -378,7 +387,8 @@
           "required": [
             "title",
             "image"
-          ]
+          ],
+          "additionalProperties": false
         },
         "right": {
           "type": "object",
@@ -407,7 +417,8 @@
             "heading",
             "image",
             "caption"
-          ]
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -416,6 +427,7 @@
         "left",
         "right"
       ],
+      "additionalProperties": false,
       "description": "Two-column block: full-bleed photo/video with big words + coloured panel with product"
     },
     "Video": {
@@ -434,6 +446,7 @@
         "src",
         "poster"
       ],
+      "additionalProperties": false,
       "description": "Short muted background video with an image poster"
     },
     "ProductGridSection": {
@@ -486,7 +499,8 @@
               },
               "required": [
                 "mode"
-              ]
+              ],
+              "additionalProperties": false
             },
             {
               "type": "object",
@@ -498,7 +512,8 @@
               },
               "required": [
                 "mode"
-              ]
+              ],
+              "additionalProperties": false
             },
             {
               "type": "object",
@@ -515,7 +530,8 @@
               "required": [
                 "mode",
                 "category"
-              ]
+              ],
+              "additionalProperties": false
             },
             {
               "type": "object",
@@ -536,7 +552,8 @@
               "required": [
                 "mode",
                 "slugs"
-              ]
+              ],
+              "additionalProperties": false
             }
           ]
         },
@@ -554,6 +571,7 @@
         "type",
         "heading"
       ],
+      "additionalProperties": false,
       "description": "Grid of product cards from products.json"
     },
     "ReviewsSection": {
@@ -627,6 +645,7 @@
         "heading",
         "backgroundImage"
       ],
+      "additionalProperties": false,
       "description": "Google reviews carousel (data from reviews.json, refreshed by npm run reviews:fetch)"
     },
     "VisitSection": {
@@ -703,6 +722,7 @@
         "type",
         "heading"
       ],
+      "additionalProperties": false,
       "description": "Address, entrance hint, opening hours, phone, map and route button (data from site.json)"
     },
     "GallerySection": {
@@ -757,6 +777,7 @@
         "heading",
         "images"
       ],
+      "additionalProperties": false,
       "description": "Photo collage / Instagram teaser"
     },
     "FaqSection": {
@@ -808,7 +829,8 @@
             "required": [
               "question",
               "answer"
-            ]
+            ],
+            "additionalProperties": false
           }
         }
       },
@@ -818,6 +840,7 @@
         "heading",
         "items"
       ],
+      "additionalProperties": false,
       "description": "Questions & answers (also emitted as FAQPage structured data)"
     },
     "CtaSection": {
@@ -868,6 +891,7 @@
         "heading",
         "primaryCta"
       ],
+      "additionalProperties": false,
       "description": "Bold banner with heading and buttons"
     },
     "TextSection": {
@@ -914,7 +938,8 @@
                 "required": [
                   "kind",
                   "text"
-                ]
+                ],
+                "additionalProperties": false
               },
               {
                 "type": "object",
@@ -931,7 +956,8 @@
                 "required": [
                   "kind",
                   "text"
-                ]
+                ],
+                "additionalProperties": false
               },
               {
                 "type": "object",
@@ -952,7 +978,8 @@
                 "required": [
                   "kind",
                   "items"
-                ]
+                ],
+                "additionalProperties": false
               }
             ]
           }
@@ -963,6 +990,7 @@
         "type",
         "blocks"
       ],
+      "additionalProperties": false,
       "description": "Plain text page content (privacy policy, about, etc.)"
     }
   }

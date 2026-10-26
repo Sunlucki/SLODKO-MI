@@ -28,12 +28,28 @@ export function pageUrl(path: string): string {
   return siteUrl() + slashed + (hash ? `#${hash}` : '')
 }
 
+/** Largest generated WebP width ≤ 1200 px */
+function webpWidth(key: string): number {
+  const widths = images[key]?.widths ?? []
+  return widths.filter((w) => w <= 1200).at(-1) ?? widths[0]
+}
+
 /** Absolute URL of an image from the manifest: og/* keys → 1200×630 JPG, others → largest WebP ≤ 1200 px. */
 export function imageUrl(key: string): string {
   if (key.startsWith('og/')) return `${siteUrl()}/images/${key}.jpg`
-  const widths = images[key]?.widths ?? []
-  const width = widths.filter((w) => w <= 1200).at(-1) ?? widths[0]
-  return `${siteUrl()}/images/${key}-${width}.webp`
+  return `${siteUrl()}/images/${key}-${webpWidth(key)}.webp`
+}
+
+/**
+ * og:image with its size. og/* keys and transparent cut-outs → 1200×630 JPG (`npm run images` flattens
+ * cut-outs onto the cream background as <key>-og.jpg), other photos → largest WebP ≤ 1200 px.
+ */
+export function socialImage(key: string): { url: string; width: number; height: number } {
+  const img = images[key]
+  if (key.startsWith('og/')) return { url: imageUrl(key), width: 1200, height: 630 }
+  if (img?.alpha) return { url: `${siteUrl()}/images/${key}-og.jpg`, width: 1200, height: 630 }
+  const width = webpWidth(key)
+  return { url: imageUrl(key), width, height: Math.round((img.height * width) / img.width) }
 }
 
 const bakeryId = () => `${pageUrl('/')}#bakery`
@@ -60,10 +76,20 @@ export function bakeryJsonLd(): object {
       addressCountry: address.country,
     },
     geo: { '@type': 'GeoCoordinates', latitude: address.geo.lat, longitude: address.geo.lng },
-    // Closed days are simply omitted (schema.org: no specification = closed)
-    openingHoursSpecification: site.hours.flatMap((h) =>
-      'closed' in h ? [] : [{ '@type': 'OpeningHoursSpecification', dayOfWeek: h.days.map((d) => DAYS[d]), opens: h.opens, closes: h.closes }],
-    ),
+    // Closed days are simply omitted (schema.org: no specification = closed). Special hours apply to one date
+    // (validFrom = validThrough); a closed date is 00:00–00:00, as Google documents for all-day closures.
+    openingHoursSpecification: [
+      ...site.hours.flatMap((h) =>
+        'closed' in h ? [] : [{ '@type': 'OpeningHoursSpecification', dayOfWeek: h.days.map((d) => DAYS[d]), opens: h.opens, closes: h.closes }],
+      ),
+      ...site.specialHours.map((s) => ({
+        '@type': 'OpeningHoursSpecification',
+        opens: 'closed' in s ? '00:00' : s.opens,
+        closes: 'closed' in s ? '00:00' : s.closes,
+        validFrom: s.date,
+        validThrough: s.date,
+      })),
+    ],
     ...(site.priceRange && { priceRange: site.priceRange }),
     ...(site.servesCuisine.length > 0 && { servesCuisine: site.servesCuisine }),
     sameAs: [links.instagram, links.facebook, links.googleMaps].filter(Boolean),
@@ -85,31 +111,36 @@ export function websiteJsonLd(): object {
   }
 }
 
+/**
+ * A flavour. Google requires offers, review or aggregateRating on a Product, so a Product (with its Offer)
+ * is emitted only where the site publishes the price (site.catalog.showPrices); otherwise a schema.org
+ * MenuItem, which Google does not validate as a rich result.
+ */
 export function productJsonLd(product: ProductT): object {
   const url = pageUrl(`/produkt/${product.slug}`)
-  return {
-    '@context': CONTEXT,
-    '@type': 'Product',
+  const item = {
     '@id': `${url}#product`,
     name: product.name,
     image: product.images.map((img) => imageUrl(img.src)),
     description: product.description,
+    url,
+  }
+  if (!site.catalog.showPrices || product.price == null) return { '@context': CONTEXT, '@type': 'MenuItem', ...item }
+  return {
+    '@context': CONTEXT,
+    '@type': 'Product',
+    ...item,
     sku: product.slug,
     brand: { '@type': 'Brand', name: site.name },
     category: catalog.categories.find((c) => c.slug === product.category)?.name ?? product.category,
-    url,
-    // Offer only where the site publishes prices (site.catalog.showPrices)
-    ...(site.catalog.showPrices &&
-      product.price != null && {
-        offers: {
-          '@type': 'Offer',
-          price: product.price.toFixed(2),
-          priceCurrency: product.currency,
-          availability: product.available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-          url,
-          seller: { '@type': 'Bakery', name: site.legalName, url: pageUrl('/') },
-        },
-      }),
+    offers: {
+      '@type': 'Offer',
+      price: product.price.toFixed(2),
+      priceCurrency: product.currency,
+      availability: product.available ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      url,
+      seller: { '@type': 'Bakery', name: site.legalName, url: pageUrl('/') },
+    },
   }
 }
 

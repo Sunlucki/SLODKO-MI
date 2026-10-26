@@ -1,9 +1,13 @@
 import { cn } from '@/lib/utils'
 
+const toggle =
+  'size-11 cursor-pointer place-items-center rounded-full bg-brand-deep text-cream transition-colors duration-200 hover:bg-ink peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink'
+
 /**
  * Caramel marquee strip. Pure CSS (animate-marquee moves the track by -50%), so each half
  * repeats the phrases until it is wider than a large screen. Only the first run is exposed
- * to assistive tech; it pauses on hover and stays still with prefers-reduced-motion.
+ * to assistive tech; it pauses on hover and with its pause switch (a checkbox, so it works
+ * before the app has loaded), and stays still with prefers-reduced-motion.
  */
 export function Ticker({ items, className }: { items: string[]; className?: string }) {
   const chars = items.join('').length
@@ -12,7 +16,7 @@ export function Ticker({ items, className }: { items: string[]; className?: stri
   return (
     <div className={cn('group overflow-hidden bg-caramel text-ink', className)}>
       <div
-        className="flex w-max animate-marquee group-hover:[animation-play-state:paused] motion-reduce:animate-none"
+        className="flex w-max animate-marquee group-hover:[animation-play-state:paused] group-has-[input:checked]:[animation-play-state:paused] motion-reduce:animate-none"
         style={{ animationDuration: `${Math.round(chars * reps * 0.3)}s` }}
       >
         {runs.map((run) => (
@@ -26,6 +30,21 @@ export function Ticker({ items, className }: { items: string[]; className?: stri
           </ul>
         ))}
       </div>
+      {/* WCAG 2.2.2: moving text needs a visible way to stop it */}
+      <label className="absolute inset-y-0 left-0 flex items-center bg-caramel px-3 motion-reduce:hidden lg:pl-4">
+        <input type="checkbox" role="switch" aria-label="Zatrzymaj przewijany pasek" className="peer sr-only" />
+        <span aria-hidden className={cn(toggle, 'grid peer-checked:hidden')}>
+          <svg viewBox="0 0 24 24" width={16} height={16} fill="currentColor">
+            <rect x="6" y="5" width="4" height="14" rx="1" />
+            <rect x="14" y="5" width="4" height="14" rx="1" />
+          </svg>
+        </span>
+        <span aria-hidden className={cn(toggle, 'hidden peer-checked:grid')}>
+          <svg viewBox="0 0 24 24" width={16} height={16} fill="currentColor">
+            <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
+          </svg>
+        </span>
+      </label>
     </div>
   )
 }

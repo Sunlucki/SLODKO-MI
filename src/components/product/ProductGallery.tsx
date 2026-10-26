@@ -21,12 +21,13 @@ export function ProductGallery({ images, muted }: { images: ImageT[]; muted?: bo
                 type="button"
                 aria-pressed={i === active}
                 onClick={() => setActive(i)}
+                // Focus = the global ink outline, pushed outside the selection ring so both stay visible
                 className={cn(
-                  'block size-20 overflow-hidden rounded-2xl ring-2 ring-offset-2 ring-offset-cream transition-opacity focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-caramel',
+                  'block size-20 overflow-hidden rounded-2xl ring-2 ring-offset-2 ring-offset-cream transition-opacity focus-visible:outline-offset-6',
                   i === active ? 'ring-brand-deep' : 'ring-transparent opacity-70 hover:opacity-100',
                 )}
               >
-                <ProductImage image={image} sizes="80px" className="size-full" />
+                <ProductImage image={image} sizes="80px" className="size-full" aiBadge={false} />
               </button>
             </li>
           ))}

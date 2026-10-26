@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { ChevronDown } from '@/components/ui/icons'
 import { SmartLink } from '@/components/ui/SmartLink'
 import { site } from '@/content'
-import { CONSENT_OPEN_EVENT, getConsent, initTracking, trackingConfigured, updateConsent, type Consent } from '@/lib/analytics'
+import { CONSENT_OPEN_EVENT, getConsent, initTracking, replayEarlyClicks, trackingConfigured, updateConsent, type Consent } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 
 const NONE: Consent = { analytics: false, marketing: false }
@@ -16,6 +16,7 @@ const choiceButton =
  * Consent banner (Consent Mode v2 + Meta/TikTok consent). Rendered only after mount, so the
  * pre-rendered HTML never contains it (no hydration mismatch); fixed position, so no layout shift.
  * Shown unprompted only when a pixel ID is configured; reopened by ConsentSettingsButton through a window event.
+ * Works at any place in the DOM; early in the document puts it first in the keyboard and screen-reader order.
  */
 export default function CookieBanner() {
   const t = site.consent
@@ -30,6 +31,8 @@ export default function CookieBanner() {
 
   useEffect(() => {
     initTracking()
+    // Mounted on every page, so this mount effect marks the end of hydration
+    replayEarlyClicks()
     // Nothing to consent to while no pixel ID is configured; the footer button still opens it
     if (trackingConfigured && !getConsent()) setOpen(true)
     const reopen = () => {
@@ -46,6 +49,26 @@ export default function CookieBanner() {
   useEffect(() => {
     if (focusRequest) dialog.current?.focus()
   }, [focusRequest])
+
+  // While open, nothing focused may hide behind the banner (WCAG 2.4.11): scroll-padding makes the browser scroll
+  // focused elements above it, and the same body padding lets the end of the page scroll clear of it
+  useEffect(() => {
+    const el = dialog.current
+    if (!open || !el) return
+    const root = document.documentElement
+    const observer = new ResizeObserver(() => {
+      // Height plus the gap to the viewport edge, twice (offsetHeight ignores the entry transform)
+      const space = `${el.offsetHeight + 2 * parseFloat(getComputedStyle(el).bottom)}px`
+      root.style.scrollPaddingBottom = space
+      document.body.style.paddingBottom = space
+    })
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      root.style.scrollPaddingBottom = ''
+      document.body.style.paddingBottom = ''
+    }
+  }, [open])
 
   const close = () => {
     setOpen(false)

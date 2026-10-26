@@ -1,5 +1,9 @@
 // Consent state: what the visitor allowed in the cookie banner, persisted in localStorage.
 // Necessary storage (this very record) needs no consent; analytics and marketing are opt-in.
+import { ga4Enabled } from './ga4'
+import { gtmEnabled } from './gtm'
+import { metaEnabled } from './metaPixel'
+import { tiktokEnabled } from './tiktok'
 
 export interface Consent {
   /** GA4 (Consent Mode: analytics_storage) */
@@ -9,8 +13,11 @@ export interface Consent {
 }
 
 const KEY = 'slodkomi-consent'
-/** Bump when the purposes or vendors change materially: everybody is asked again. */
-const VERSION = 1
+/**
+ * Bump the number when the purposes change materially: everybody is asked again. The vendors this build
+ * sends data to are part of it, so enabling or removing a pixel (VITE_* IDs) also asks again.
+ */
+const VERSION = `1:${[ga4Enabled && 'ga', metaEnabled && 'meta', tiktokEnabled && 'tiktok', gtmEnabled && 'gtm'].filter(Boolean).join()}`
 /** Re-ask after 12 months. */
 const MAX_AGE = 365 * 24 * 60 * 60 * 1000
 

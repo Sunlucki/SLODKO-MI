@@ -8,7 +8,8 @@
 #   1. Build with the sub-path:  VITE_BASE=/slodkomi/ SITE_URL=https://example.pl/slodkomi npm run build
 #      (in GitHub Actions: repository variables VITE_BASE and SITE_URL, secret FTP_SERVER_DIR=./public_html/slodkomi/)
 #   2. Upload dist/ into public_html/slodkomi/.
-#   3. In THIS file change:  ErrorDocument 404 /slodkomi/404.html   and   RewriteBase /slodkomi/
+#   3. In THIS file change:  ErrorDocument 404 /slodkomi/404.html,  ErrorDocument 403 /slodkomi/404.html
+#      and   RewriteBase /slodkomi/
 #   WordPress' .htaccess in public_html/ does not interfere: its rules skip existing files/folders,
 #   and the rewrite rules of this (deeper) .htaccess replace the parent's ones for /slodkomi/.
 
@@ -20,6 +21,8 @@ DirectoryIndex index.html
 DirectorySlash On
 AddDefaultCharset UTF-8
 ErrorDocument 404 /404.html
+# Folders without an index page (/produkt/, /images/ — Options -Indexes) answer 403: show the site's page, not Apache's
+ErrorDocument 403 /404.html
 
 # ── HTTPS + non-www + trailing slash (one 301 hop) ──────────────────────────────────
 <IfModule mod_rewrite.c>
@@ -63,11 +66,14 @@ ErrorDocument 404 /404.html
 </IfModule>
 
 # ── Compression (Brotli first; mod_deflate skips responses that are already encoded) ─
-<IfModule mod_brotli.c>
-  AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/plain text/javascript application/javascript application/json application/xml application/manifest+json image/svg+xml
-</IfModule>
-<IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css text/plain text/javascript application/javascript application/json application/xml application/manifest+json image/svg+xml
+# AddOutputFilterByType comes from mod_filter — without that guard a host lacking it answers 500 everywhere
+<IfModule mod_filter.c>
+  <IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/plain text/javascript application/javascript application/json application/xml application/manifest+json image/svg+xml
+  </IfModule>
+  <IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/plain text/javascript application/javascript application/json application/xml application/manifest+json image/svg+xml
+  </IfModule>
 </IfModule>
 
 <IfModule mod_headers.c>

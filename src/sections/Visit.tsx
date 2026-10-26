@@ -31,7 +31,7 @@ export default function Visit({ section }: SectionProps<'visit'>) {
         <Reveal className={cn('mt-12 grid gap-4 md:mt-16 lg:gap-6', hasPanel ? 'lg:grid-cols-2' : 'mx-auto max-w-2xl')}>
           <div className="divide-y divide-dashed divide-brand-deep/25 rounded-frame bg-cream p-6 text-ink ring-1 ring-brand-deep/15 ring-inset sm:p-10 [&>*]:py-7 [&>*:first-child]:pt-0 [&>*:last-child]:pb-0">
             <div>
-              <Label>Adres</Label>
+              <Label>{site.ui.visit.address}</Label>
               <address className="mt-3 not-italic">
                 <p className="font-display text-[clamp(1.75rem,4vw,2.5rem)] leading-none tracking-tight text-brand-deep uppercase">{address.street}</p>
                 <p className="mt-2 font-bold">
@@ -47,7 +47,7 @@ export default function Visit({ section }: SectionProps<'visit'>) {
             <OpeningHours />
 
             <div>
-              <Label>Telefon</Label>
+              <Label>{site.ui.visit.phone}</Label>
               <SmartLink
                 href="@phone"
                 location="visit"

@@ -1,5 +1,6 @@
 import Magnet from '@/components/Magnet'
 import { Notch } from '@/components/layout/header/Notch'
+import { AiBadge } from '@/components/ui/AiBadge'
 import { CtaButton, IconLink } from '@/components/ui/Button'
 import { MapPin, SquiggleArrow } from '@/components/ui/icons'
 import { Picture } from '@/components/ui/Picture'
@@ -32,9 +33,9 @@ export default function Hero({ section }: SectionProps<'hero'>) {
           className="pointer-events-none absolute top-[62%] left-1/2 -z-10 aspect-square w-[150%] -translate-1/2 rounded-full bg-[radial-gradient(closest-side,var(--color-brand),transparent)] opacity-45 md:top-1/2 md:left-3/4 md:w-[70%] lg:left-[58%] lg:w-[60%]"
         />
 
-        <div className="grid flex-1 items-center gap-y-10 px-5 pt-24 pb-10 md:grid-cols-2 md:gap-x-8 md:px-10 md:pt-32 md:pb-12 lg:grid-cols-12 lg:gap-x-6 lg:px-14 lg:pt-36 lg:pb-28">
-          <div className="relative z-10 md:row-span-2 lg:col-span-5 lg:row-span-1">
-            <h1 id={titleId} className="font-display text-[clamp(3.25rem,15.5vw,4.75rem)] leading-[0.92] tracking-[-0.005em] uppercase md:text-[clamp(3.25rem,7.8vw,5.5rem)] lg:text-[clamp(4rem,6.4vw,7.5rem)]">
+        <div className="grid flex-1 grid-cols-1 items-center gap-y-10 px-5 pt-24 pb-10 md:grid-cols-2 md:gap-x-8 md:px-10 md:pt-32 md:pb-12 lg:grid-cols-12 lg:gap-x-6 lg:px-14 lg:pt-36 lg:pb-28">
+          <div className="relative z-10 min-w-0 md:row-span-2 lg:col-span-5 lg:row-span-1">
+            <h1 id={titleId} className="font-display text-[clamp(3.25rem,15.5vw,4.75rem)] leading-[0.92] tracking-[-0.005em] wrap-anywhere uppercase md:text-[clamp(3.25rem,7.8vw,5.5rem)] lg:text-[clamp(4rem,6.4vw,7.5rem)]">
               {section.headline.map((line, i) => (
                 <span key={i} className={cn('block', line.accent && 'text-caramel')}>
                   {line.text}{' '}
@@ -84,6 +85,7 @@ export default function Hero({ section }: SectionProps<'hero'>) {
                   cutout ? 'h-auto object-contain drop-shadow-2xl drop-shadow-ink/50' : 'aspect-square rounded-full object-cover shadow-[0_40px_80px_-30px] shadow-ink/70',
                 )}
               />
+              {section.image.aiGenerated && <AiBadge className="absolute top-2 left-2" />}
             </div>
           </div>
         </div>

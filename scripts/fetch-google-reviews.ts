@@ -45,14 +45,16 @@ function fail(message: string): never {
   process.exit(1)
 }
 
-try {
-  process.loadEnvFile()
-} catch {
-  // No .env file — use the environment as is (CI secrets)
+for (const file of ['.env.local', '.env']) {
+  try {
+    process.loadEnvFile(file) // never overrides variables that are already set
+  } catch {
+    // File missing — use the environment as is (CI secrets)
+  }
 }
 const apiKey =
   process.env.GOOGLE_PLACES_API_KEY ||
-  fail('GOOGLE_PLACES_API_KEY is not set. Add it to .env (local) or to the repository secrets (GitHub Actions). See .env.example.')
+  fail('GOOGLE_PLACES_API_KEY is not set. Add it to .env.local (local) or to the repository secrets (GitHub Actions). See .env.example.')
 
 async function places<T>(url: string, fieldMask: string, body?: object): Promise<T> {
   const res = await fetch(url, {
@@ -84,7 +86,8 @@ async function findPlaceId(site: SiteT): Promise<string> {
 
 function toReview(r: PlaceReview): Review | null {
   const author = r.authorAttribution?.displayName?.trim()
-  const text = (r.text?.text ?? r.originalText?.text)?.trim()
+  // originalText = the author's own words; text is Google's translation into languageCode (pl)
+  const text = (r.originalText?.text ?? r.text?.text)?.trim()
   if (!author || !text || !r.rating) return null
   const photo = r.authorAttribution?.photoUri
   return {
@@ -137,9 +140,12 @@ console.log(
 )
 
 // links.writeReview: replace only that value so the rest of site.json keeps its hand formatting
+// (the field is optional — when it is missing, add it on a new line after links.reviews)
 const writeReview = `https://search.google.com/local/writereview?placeid=${placeId}`
 const siteRaw = readFileSync(SITE_FILE, 'utf8')
-const siteNext = siteRaw.replace(/("writeReview"\s*:\s*)"(?:[^"\\]|\\.)*"/, (_, prefix: string) => prefix + JSON.stringify(writeReview))
+const siteNext = /"writeReview"\s*:/.test(siteRaw)
+  ? siteRaw.replace(/("writeReview"\s*:\s*)"(?:[^"\\]|\\.)*"/, (_, prefix: string) => prefix + JSON.stringify(writeReview))
+  : siteRaw.replace(/\n([ \t]*)"reviews"\s*:\s*"(?:[^"\\]|\\.)*"/, (entry: string, indent: string) => `${entry},\n${indent}"writeReview": ${JSON.stringify(writeReview)}`)
 if ((JSON.parse(siteNext) as SiteT).links.writeReview !== writeReview) fail(`Could not update links.writeReview in ${SITE_FILE}`)
 
 if (dryRun) {

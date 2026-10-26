@@ -11,7 +11,7 @@ Vite 8 · React 19 · vite-react-ssg (предрендер каждой стра
 
 ## Быстрый старт
 
-Нужен Node.js 20+ (лучше 22).
+Нужен Node.js 20.19+ или 22.12+ (лучше 22).
 
 ```bash
 npm ci              # установить зависимости
@@ -48,14 +48,16 @@ ChatGPT): **[docs/LLM-EDITING.md](docs/LLM-EDITING.md)**. Правила для 
 
 Исходники — в `assets/images/<папка>/<имя>.(jpg|png|webp)`: `products/` (вкусы), `cutouts/` и `hero/` (вырезанные PNG с
 прозрачностью), `photos/` (атмосфера), `og/` (картинка для соцсетей, 1200×630). Команда `npm run images` создаёт WebP
-480/960/1600 px в `public/images/` и манифест `src/generated/images.json`; в JSON фото указывается ключом, например
-`"src": "products/oreo"`. Коммитьте и исходник, и результат.
+480–1600 px в `public/images/` и манифест `src/generated/images.json`; в JSON фото указывается ключом, например
+`"src": "products/oreo"`. Для `og/` и для фото с прозрачностью она же делает JPG 1200×630 (вырезка на кремовом фоне,
+`<имя>-og.jpg`) — это превью страниц вкусов в соцсетях. Коммитьте и исходник, и результат.
 
 ## Отзывы Google
 
 `npm run reviews:fetch` берёт рейтинг, количество и свежие отзывы через Google Places API (New) и обновляет
-`src/data/reviews.json`. Нужен `GOOGLE_PLACES_API_KEY` (в `.env.local`), `GOOGLE_PLACE_ID` — по желанию. В GitHub это
-делает workflow **Refresh Google reviews** каждый понедельник (secret `GOOGLE_PLACES_API_KEY`, variable `GOOGLE_PLACE_ID`).
+`src/data/reviews.json` (тексты — в оригинале автора, без машинного перевода). Нужен `GOOGLE_PLACES_API_KEY`
+(в `.env.local` или `.env`), `GOOGLE_PLACE_ID` — по желанию. В GitHub это делает workflow **Refresh Google reviews**
+каждый понедельник (secret `GOOGLE_PLACES_API_KEY`, variable `GOOGLE_PLACE_ID`); без secret'а запуск пропускается.
 
 ## Аналитика и пиксели
 
@@ -76,12 +78,16 @@ ChatGPT): **[docs/LLM-EDITING.md](docs/LLM-EDITING.md)**. Правила для 
 Push в `main` → workflow **Deploy** (`.github/workflows/deploy.yml`):
 
 - **FTP на хостинг** — secrets `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD` (и при необходимости `FTP_SERVER_DIR`, по умолчанию
-  `./public_html/`), variable `SITE_URL` — боевой адрес (canonical, sitemap). Без `FTP_SERVER` этот шаг пропускается.
-  Настройки Apache и выкладка в подпапку — в `public/.htaccess`.
-- **Превью на GitHub Pages** — https://sunlucki.github.io/SLODKO-MI/ (Settings → Pages → Source: GitHub Actions).
+  `./public_html/`), variable `SITE_URL` — боевой адрес, например `https://slodkomi.pl` (canonical, sitemap, og:url).
+  Без `SITE_URL` шаг падает с ошибкой, без `FTP_SERVER` — пропускается. Настройки Apache и выкладка в подпапку
+  (variable `VITE_BASE`) — в `public/.htaccess`.
+- **Превью на GitHub Pages** — https://sunlucki.github.io/SLODKO-MI/ (Settings → Pages → Source: GitHub Actions). Превью
+  закрыто от индексации (`noindex`, без sitemap), а когда задан `SITE_URL`, его canonical указывают на боевой сайт.
 
-Pull request'ы проверяет workflow **CI** (контент, типы, сборка). Вручную: `npm run build` и загрузить содержимое `dist/`
-в `public_html/`.
+Pull request'ы проверяет workflow **CI** (контент, типы, сборка). Вручную: впишите `SITE_URL` (и `VITE_BASE` для подпапки)
+в `.env.local`, выполните `npm run build` и загрузите содержимое `dist/` в `public_html/`. Без `SITE_URL` canonical и sitemap
+указывают на адрес из `site.json` (превью) — сборка предупредит об этом; если путь `SITE_URL` не совпадает с `VITE_BASE`,
+сборка остановится с ошибкой.
 
 ## React Bits
 

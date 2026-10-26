@@ -26,6 +26,7 @@
     "categories",
     "products"
   ],
+  "additionalProperties": false,
   "$defs": {
     "Category": {
       "type": "object",
@@ -42,7 +43,8 @@
       "required": [
         "slug",
         "name"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Product": {
       "type": "object",
@@ -165,7 +167,8 @@
         "shortDescription",
         "description",
         "images"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Image": {
       "type": "object",
@@ -190,6 +193,7 @@
         "src",
         "alt"
       ],
+      "additionalProperties": false,
       "description": "Responsive image (WebP, 480/720/960/1600 px variants generated automatically)"
     }
   }

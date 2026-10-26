@@ -44,7 +44,8 @@
       },
       "required": [
         "wordmark"
-      ]
+      ],
+      "additionalProperties": false
     },
     "contact": {
       "type": "object",
@@ -66,7 +67,8 @@
       "required": [
         "phone",
         "phoneDisplay"
-      ]
+      ],
+      "additionalProperties": false
     },
     "address": {
       "type": "object",
@@ -111,7 +113,8 @@
           "required": [
             "lat",
             "lng"
-          ]
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -121,7 +124,8 @@
         "district",
         "entranceNote",
         "geo"
-      ]
+      ],
+      "additionalProperties": false
     },
     "links": {
       "type": "object",
@@ -172,7 +176,8 @@
         "reviews",
         "instagram",
         "mapEmbed"
-      ]
+      ],
+      "additionalProperties": false
     },
     "hours": {
       "minItems": 1,
@@ -200,18 +205,21 @@
               },
               "opens": {
                 "type": "string",
-                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                "description": "24-hour \"HH:MM\". \"closes\" must be later than \"opens\"; closing at midnight is \"00:00\"."
               },
               "closes": {
                 "type": "string",
-                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                "description": "24-hour \"HH:MM\". \"closes\" must be later than \"opens\"; closing at midnight is \"00:00\"."
               }
             },
             "required": [
               "days",
               "opens",
               "closes"
-            ]
+            ],
+            "additionalProperties": false
           },
           {
             "type": "object",
@@ -240,7 +248,8 @@
             "required": [
               "days",
               "closed"
-            ]
+            ],
+            "additionalProperties": false
           }
         ]
       },
@@ -271,7 +280,8 @@
             "required": [
               "date",
               "closed"
-            ]
+            ],
+            "additionalProperties": false
           },
           {
             "type": "object",
@@ -283,11 +293,13 @@
               },
               "opens": {
                 "type": "string",
-                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                "description": "24-hour \"HH:MM\". \"closes\" must be later than \"opens\"; closing at midnight is \"00:00\"."
               },
               "closes": {
                 "type": "string",
-                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                "description": "24-hour \"HH:MM\". \"closes\" must be later than \"opens\"; closing at midnight is \"00:00\"."
               },
               "note": {
                 "type": "string"
@@ -297,7 +309,8 @@
               "date",
               "opens",
               "closes"
-            ]
+            ],
+            "additionalProperties": false
           }
         ]
       }
@@ -333,7 +346,8 @@
       },
       "required": [
         "cta"
-      ]
+      ],
+      "additionalProperties": false
     },
     "footer": {
       "type": "object",
@@ -359,7 +373,8 @@
             "required": [
               "title",
               "links"
-            ]
+            ],
+            "additionalProperties": false
           }
         },
         "image": {
@@ -372,7 +387,8 @@
       "required": [
         "columns",
         "image"
-      ]
+      ],
+      "additionalProperties": false
     },
     "catalog": {
       "type": "object",
@@ -393,7 +409,8 @@
       "required": [
         "showPrices",
         "productCta"
-      ]
+      ],
+      "additionalProperties": false
     },
     "theme": {
       "type": "object",
@@ -439,12 +456,14 @@
             "brandDeep",
             "blush",
             "caramel"
-          ]
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
         "colors"
       ],
+      "additionalProperties": false,
       "description": "Design tokens injected as CSS variables"
     },
     "seo": {
@@ -472,7 +491,8 @@
       "required": [
         "titleTemplate",
         "ogImage"
-      ]
+      ],
+      "additionalProperties": false
     },
     "consent": {
       "type": "object",
@@ -544,7 +564,206 @@
         "marketingText",
         "policyLabel",
         "policyHref"
-      ]
+      ],
+      "additionalProperties": false
+    },
+    "ui": {
+      "description": "Interface texts (labels, buttons, notices) of product pages, the 404 page, reviews and the visit section. All optional with Polish defaults.",
+      "default": {},
+      "type": "object",
+      "properties": {
+        "product": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "breadcrumbHome": {
+              "default": "Strona główna",
+              "description": "First breadcrumb on product pages (link to the home page)",
+              "type": "string",
+              "minLength": 1
+            },
+            "catalogLabel": {
+              "default": "Smaki",
+              "description": "Breadcrumb to the product grid, used when no nav link points at it",
+              "type": "string",
+              "minLength": 1
+            },
+            "unavailable": {
+              "default": "Chwilowo niedostępna",
+              "description": "Label on product cards and pages when available is false",
+              "type": "string",
+              "minLength": 1
+            },
+            "allergensHeading": {
+              "default": "Alergeny",
+              "type": "string",
+              "minLength": 1
+            },
+            "allergyNote": {
+              "default": "Masz alergię? Zapytaj obsługę o pełny skład.",
+              "description": "Always shown under the allergens",
+              "type": "string",
+              "minLength": 1
+            },
+            "ingredientsHeading": {
+              "default": "Skład",
+              "type": "string",
+              "minLength": 1
+            },
+            "otherProductsHeading": {
+              "default": "Inne smaki",
+              "description": "Heading of the other flavours under each product; \"\" hides that list",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "notFound": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "title": {
+              "default": "Nie znaleziono strony",
+              "description": "<title> of the 404 page",
+              "type": "string",
+              "minLength": 1
+            },
+            "description": {
+              "default": "Ta strona nie istnieje albo została przeniesiona.",
+              "description": "Meta description of the 404 page",
+              "type": "string",
+              "minLength": 1
+            },
+            "heading": {
+              "default": "Tu nie ma cynamonek",
+              "description": "<h1> of the 404 page",
+              "type": "string",
+              "minLength": 1
+            },
+            "text": {
+              "default": "Ta strona nie istnieje albo została przeniesiona.",
+              "type": "string",
+              "minLength": 1
+            },
+            "cta": {
+              "default": {
+                "label": "Strona główna",
+                "href": "/",
+                "variant": "primary"
+              },
+              "$ref": "#/$defs/Cta"
+            }
+          },
+          "additionalProperties": false
+        },
+        "reviews": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "sourcePrefix": {
+              "default": "Opinie z",
+              "description": "Review card label; the word \"Google\" after it is fixed (attribution required by Google)",
+              "type": "string",
+              "minLength": 1
+            },
+            "countForms": {
+              "default": [
+                "opinia",
+                "opinie",
+                "opinii"
+              ],
+              "description": "Review count noun for 1 / 2–4 / 5+ (Polish plural); \"w Google\" after it is fixed",
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "string",
+                  "minLength": 1
+                }
+              ],
+              "items": false,
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "readMore": {
+              "default": "Czytaj całość",
+              "description": "Expands a long review",
+              "type": "string",
+              "minLength": 1
+            },
+            "readLess": {
+              "default": "Zwiń",
+              "description": "Collapses an expanded review",
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "visit": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "address": {
+              "default": "Adres",
+              "type": "string",
+              "minLength": 1
+            },
+            "hours": {
+              "default": "Godziny otwarcia",
+              "type": "string",
+              "minLength": 1
+            },
+            "phone": {
+              "default": "Telefon",
+              "type": "string",
+              "minLength": 1
+            },
+            "openNow": {
+              "default": "Otwarte teraz",
+              "type": "string",
+              "minLength": 1
+            },
+            "closedNow": {
+              "default": "Zamknięte",
+              "type": "string",
+              "minLength": 1
+            },
+            "closedDay": {
+              "default": "nieczynne",
+              "description": "Shown instead of hours on closed days",
+              "type": "string",
+              "minLength": 1
+            },
+            "specialHours": {
+              "default": "Zmiany w godzinach",
+              "description": "Heading above upcoming dates from specialHours (next 14 days)",
+              "type": "string",
+              "minLength": 1
+            },
+            "showMap": {
+              "default": "Pokaż mapę",
+              "type": "string",
+              "minLength": 1
+            },
+            "mapNote": {
+              "default": "Mapa ładuje się z Google po kliknięciu.",
+              "description": "Privacy note under the map button",
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   },
   "required": [
@@ -566,6 +785,7 @@
     "seo",
     "consent"
   ],
+  "additionalProperties": false,
   "$defs": {
     "NavLink": {
       "type": "object",
@@ -581,12 +801,13 @@
       "required": [
         "label",
         "href"
-      ]
+      ],
+      "additionalProperties": false
     },
     "Href": {
       "type": "string",
       "minLength": 1,
-      "description": "Link target. Internal path (\"/produkt/oreo\", \"/#smaki\"), absolute URL, or a token resolved from site.json: @order (Wolt), @phone, @directions (Google Maps route), @instagram, @facebook, @reviews (Google reviews), @writeReview. Prefer tokens — they are tracked automatically (Meta Pixel + GA4)."
+      "description": "Link target. Internal path (\"/produkt/oreo\", \"/#smaki\"), absolute URL, or a token resolved from site.json: @order (Wolt), @phone, @directions (Google Maps route), @instagram, @facebook, @reviews (Google reviews), @writeReview. Prefer tokens — they are tracked automatically (Meta Pixel + GA4). A bare \"#id\" only links within the same page file; site.json and products.json render on many pages, so they must use \"/#id\". The target section must exist and be enabled."
     },
     "Cta": {
       "type": "object",
@@ -614,6 +835,7 @@
         "label",
         "href"
       ],
+      "additionalProperties": false,
       "description": "Call-to-action button"
     },
     "Image": {
@@ -639,6 +861,7 @@
         "src",
         "alt"
       ],
+      "additionalProperties": false,
       "description": "Responsive image (WebP, 480/720/960/1600 px variants generated automatically)"
     }
   }

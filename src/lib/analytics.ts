@@ -5,9 +5,17 @@
  * Components must only call the functions below — never gtag/fbq directly.
  * Implementation details live in src/lib/tracking/*; the event mapping is documented in docs/TRACKING.md.
  */
-import { catalog, site } from '@/content'
+import { catalog, getProduct, site } from '@/content'
 import type { ProductT } from '@/content/schema'
+import { resolveHref } from './links'
 import { dispatch, dispatchPageView } from './tracking/events'
+
+declare global {
+  interface Window {
+    /** Clicks made before the bundle ran, queued by the inline loader (scripts/lib/defer-app-script.ts) */
+    __early?: Element[]
+  }
+}
 
 export { CONSENT_OPEN_EVENT, getConsent, openConsentSettings, type Consent } from './tracking/consent'
 export { initTracking, trackingConfigured, updateConsent } from './tracking/events'
@@ -121,4 +129,25 @@ export function trackSelectItem(product: ProductT, listName: string, index: numb
 /** Map embed opened / FAQ item opened / review carousel used, etc. */
 export function trackEngagement(name: 'open_map' | 'open_faq' | 'review_navigate' | 'open_menu' | 'spotlight_navigate', detail?: string): void {
   dispatch({ name, params: { detail } })
+}
+
+/**
+ * Called once after hydration (CookieBanner). Tracked links clicked before the bundle ran are reported now
+ * (the browser already opened them; consent rules apply as usual). The last button tapped is clicked again,
+ * so JS-only controls (menu, carousels, map, cookie settings) still answer that first tap.
+ */
+export function replayEarlyClicks(): void {
+  let button: HTMLButtonElement | undefined
+  for (const el of window.__early?.splice(0) ?? []) {
+    if (el instanceof HTMLButtonElement) button = el
+    else if (el instanceof HTMLAnchorElement) {
+      // data-track* attributes are rendered by SmartLink on every tracked link
+      const { track = '', trackLocation = '', trackProduct } = el.dataset
+      const action = resolveHref(track).action
+      if (action) trackAction(action, trackLocation, trackProduct ? getProduct(trackProduct) : undefined)
+    }
+  }
+  const last = button
+  // Next task: after every mount effect of the hydration commit (e.g. the menu's own "close on route change")
+  if (last) setTimeout(() => last.isConnected && !last.disabled && last.click())
 }

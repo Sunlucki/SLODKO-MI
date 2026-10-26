@@ -6,7 +6,7 @@ import type { ProductT } from '@/content/schema'
 import { trackEngagement, trackSelectItem } from '@/lib/analytics'
 
 const navButton =
-  'inline-grid size-11 cursor-pointer place-items-center rounded-full bg-brand-deep text-cream transition-colors duration-200 hover:bg-ink focus-visible:ring-4 focus-visible:ring-caramel focus-visible:outline-none'
+  'inline-grid size-11 cursor-pointer place-items-center rounded-full bg-brand-deep text-cream transition-colors duration-200 hover:bg-ink'
 
 /** Mini product card cycling through spotlight products (SSR renders the first one). */
 export function Spotlight({ label, products }: { label: string; products: ProductT[] }) {
@@ -50,7 +50,7 @@ export function Spotlight({ label, products }: { label: string; products: Produc
             href={`/produkt/${product.slug}`}
             location="hero"
             onClick={() => trackSelectItem(product, 'hero_spotlight', index)}
-            className="line-clamp-2 font-display text-xl leading-[1.05] text-brand-deep uppercase after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none focus-visible:after:ring-4 focus-visible:after:ring-caramel"
+            className="line-clamp-2 font-display text-xl leading-[1.05] text-brand-deep uppercase after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none focus-visible:after:outline-3 focus-visible:after:outline-offset-2 focus-visible:after:outline-ink"
           >
             {product.name}
           </SmartLink>

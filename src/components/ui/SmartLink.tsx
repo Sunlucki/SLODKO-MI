@@ -20,9 +20,11 @@ export function SmartLink({ href, location, product, onClick, children, ...rest 
     if (link.action) trackAction(link.action, location, product)
     onClick?.(e)
   }
+  // A click before the bundle runs is queued by the inline loader and reported after hydration (replayEarlyClicks)
+  const early = link.action ? { 'data-track': href, 'data-track-location': location, 'data-track-product': product?.slug } : {}
   if (link.external)
     return (
-      <a href={link.href} {...(link.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})} onClick={handleClick} {...rest}>
+      <a href={link.href} {...(link.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})} {...early} onClick={handleClick} {...rest}>
         {children}
       </a>
     )

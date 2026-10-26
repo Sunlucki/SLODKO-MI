@@ -1,5 +1,6 @@
 // Event dispatcher: one TrackEvent fans out to the dataLayer, GA4, Meta Pixel and TikTok Pixel,
-// each only when the matching consent is granted. Events without consent are dropped, never queued.
+// each only when the matching consent is granted. Events without consent are dropped, never queued;
+// only the current page's page_view and item views are re-sent once the visitor consents on that page.
 import { getConsent, onConsentChange, saveConsent, type Consent } from './consent'
 import { consentDefault, consentUpdate, dataLayerPush } from './dataLayer'
 import { ga4Enabled, ga4Event, grantGa4, revokeGa4 } from './ga4'
@@ -31,6 +32,22 @@ export const trackingConfigured = ga4Enabled || metaEnabled || tiktokEnabled || 
 let started = false
 let debug = false
 let lastPage: { path: string; title: string } | null = null
+/** Item views of the current page, re-sent with its page_view to destinations that gain consent on it. */
+const PAGE_SCOPED = ['view_item', 'view_item_list']
+let pageEvents: { path: string; ev: TrackEvent }[] = []
+/**
+ * Landing URL campaign parameters, in memory only (no storage before consent). The page_view re-sent after
+ * consent carries them, so GA4 keeps the campaign/gclid when the visitor browsed on before deciding.
+ */
+let campaign: [string, string][] = []
+
+const currentPageEvents = () => pageEvents.filter((e) => e.path === location.pathname)
+
+function withCampaign(href: string): string {
+  const url = new URL(href)
+  for (const [key, value] of campaign) if (!url.searchParams.has(key)) url.searchParams.set(key, value)
+  return url.href
+}
 
 function log(...args: unknown[]) {
   if (debug) console.info('[analytics]', ...args)
@@ -53,7 +70,7 @@ function apply(next: Consent, prev: Consent | null, fromUser: boolean) {
   if (next.analytics) grantGa4(debug)
   else revokeGa4()
   if (next.marketing) {
-    grantMeta()
+    grantMeta(campaign.find(([key]) => key === 'fbclid')?.[1])
     grantTiktok()
   } else {
     revokeMeta()
@@ -61,7 +78,7 @@ function apply(next: Consent, prev: Consent | null, fromUser: boolean) {
   }
   if (next.analytics || next.marketing) loadGtm()
   if (!fromUser) return
-  // The page_view of the current page was dropped while consent was missing: send it now,
+  // The page_view and item views of the current page were dropped while consent was missing: send them now,
   // but only to destinations that just got enabled (no double counting).
   const was = prev ?? { analytics: false, marketing: false }
   const gained: Targets = {
@@ -69,7 +86,9 @@ function apply(next: Consent, prev: Consent | null, fromUser: boolean) {
     analytics: next.analytics && !was.analytics,
     marketing: next.marketing && !was.marketing,
   }
-  if (gained.analytics || gained.marketing) send(pageViewEvent(lastPage ?? { path: location.pathname, title: document.title }), gained)
+  if (!gained.analytics && !gained.marketing) return
+  send(pageViewEvent(lastPage ?? { path: location.pathname, title: document.title }, withCampaign(location.href)), gained)
+  currentPageEvents().forEach(({ ev }) => send(ev, gained))
 }
 
 /** Idempotent browser-only setup: Consent Mode defaults first, then the stored decision (if any). */
@@ -77,7 +96,9 @@ export function initTracking() {
   if (started || typeof window === 'undefined') return
   started = true
   try {
-    debug = import.meta.env.DEV || new URLSearchParams(location.search).get('debug_analytics') === '1'
+    const query = new URLSearchParams(location.search)
+    debug = import.meta.env.DEV || query.get('debug_analytics') === '1'
+    campaign = [...query].filter(([key]) => /^(utm_\w+|gclid|fbclid|ttclid)$/.test(key))
   } catch {
     debug = import.meta.env.DEV
   }
@@ -102,8 +123,15 @@ function send(ev: TrackEvent, targets?: Targets) {
   const params = clean(ev.params)
   const sent: string[] = []
   if (t.dataLayer) {
-    // Raw params (undefined included) reset stale keys in GTM's data model
-    dataLayerPush({ event: ev.name, ...ev.params, event_id: eventId })
+    const { currency, value, item_list_name, items, ...rest } = ev.params ?? {}
+    if (items) {
+      // GA4 ecommerce in GTM: items nested under `ecommerce`, cleared first (GTM merges every push into one model)
+      dataLayerPush({ ecommerce: null })
+      dataLayerPush({ event: ev.name, ...rest, ecommerce: clean({ currency, value, item_list_name, items }), event_id: eventId })
+    } else {
+      // Raw params (undefined included) reset stale keys in GTM's data model
+      dataLayerPush({ event: ev.name, ...ev.params, event_id: eventId })
+    }
     sent.push('dataLayer')
   }
   if (t.analytics && ga4Enabled) {
@@ -125,13 +153,14 @@ function send(ev: TrackEvent, targets?: Targets) {
 export function dispatch(ev: TrackEvent) {
   if (typeof window === 'undefined') return
   initTracking()
+  if (PAGE_SCOPED.includes(ev.name)) pageEvents.push({ path: location.pathname, ev })
   send(ev)
 }
 
-function pageViewEvent({ path, title }: { path: string; title: string }): TrackEvent {
+function pageViewEvent({ path, title }: { path: string; title: string }, href = location.href): TrackEvent {
   return {
     name: 'page_view',
-    params: { page_location: location.href, page_path: path, page_title: title },
+    params: { page_location: href, page_path: path, page_title: title },
     meta: { name: 'PageView' },
     tiktok: { name: 'page' },
   }
@@ -140,5 +169,6 @@ function pageViewEvent({ path, title }: { path: string; title: string }): TrackE
 export function dispatchPageView(path: string, title: string) {
   if (typeof window === 'undefined') return
   lastPage = { path, title }
+  pageEvents = currentPageEvents()
   dispatch(pageViewEvent(lastPage))
 }

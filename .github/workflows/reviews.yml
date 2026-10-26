@@ -1,6 +1,7 @@
 # Weekly refresh of Google reviews (src/data/reviews.json) via Google Places API (New).
 # Setup: repository secret GOOGLE_PLACES_API_KEY; optional repository variable GOOGLE_PLACE_ID
 # (without it the script finds the place by name + address and prints the id in the log).
+# Without the secret the run is skipped with a notice (reviews are optional).
 name: Refresh Google reviews
 
 on:
@@ -19,27 +20,41 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
+      # Secrets cannot be used in `if`, so turn "is the key configured?" into an output
+      - id: key
+        env:
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+        run: |
+          if [ -n "$GOOGLE_PLACES_API_KEY" ]; then echo "configured=true" >> "$GITHUB_OUTPUT"
+          else echo "::notice::GOOGLE_PLACES_API_KEY secret is not set — skipping the reviews refresh."; fi
+
       - uses: actions/checkout@v5
+        if: steps.key.outputs.configured == 'true'
         with:
           ref: main
 
       - uses: actions/setup-node@v5
+        if: steps.key.outputs.configured == 'true'
         with:
           node-version: 22
           cache: npm
 
       - run: npm ci
+        if: steps.key.outputs.configured == 'true'
 
       - name: Fetch reviews
+        if: steps.key.outputs.configured == 'true'
         run: npm run reviews:fetch
         env:
           GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
           GOOGLE_PLACE_ID: ${{ vars.GOOGLE_PLACE_ID }}
 
       - name: Validate content
+        if: steps.key.outputs.configured == 'true'
         run: npm run content:check
 
       - name: Commit and push changes
+        if: steps.key.outputs.configured == 'true'
         run: |
           if git diff --quiet -- src/data; then
             echo "Reviews unchanged — nothing to commit."

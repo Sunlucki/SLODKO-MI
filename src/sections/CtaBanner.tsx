@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import CurvedLoop from '@/components/CurvedLoop'
 import { CtaButton } from '@/components/ui/Button'
 import { Reveal } from '@/components/ui/Reveal'
@@ -21,25 +22,52 @@ const bandToneClass: Record<ToneT, string> = {
  * Decorative wavy marquee (React Bits CurvedLoop). It measures its text on the client and stays
  * invisible until then; this box reserves the exact SVG aspect ratio, so nothing shifts. CurvedLoop's
  * own wrapper is min-h-screen, hence the centred absolute positioning inside a clipped box.
+ * The pause button (WCAG 2.2.2) appears once the band moves; with prefers-reduced-motion it never moves.
  */
 function CurvedBand({ text, tone }: { text: string; tone: ToneT }) {
+  const [mounted, setMounted] = useState(false)
+  const [paused, setPaused] = useState(false)
+  useEffect(() => setMounted(true), [])
   return (
-    <div aria-hidden className={cn('pointer-events-none relative aspect-[100/12] overflow-hidden', bandToneClass[tone])}>
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2">
-        <CurvedLoop
-          marqueeText={text}
-          shape="wave"
-          curveAmount={60}
-          fontSize={64}
-          fontWeight={400}
-          letterSpacing={2}
-          speed={1}
-          separator="•"
-          edgeFade={0.12}
-          interactive={false}
-          className="font-display"
-        />
+    <div className={cn('relative', bandToneClass[tone])}>
+      <div aria-hidden className="pointer-events-none relative aspect-[100/12] overflow-hidden">
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2">
+          <CurvedLoop
+            marqueeText={text}
+            shape="wave"
+            curveAmount={60}
+            fontSize={64}
+            fontWeight={400}
+            letterSpacing={2}
+            speed={paused ? 0 : 1}
+            separator="•"
+            edgeFade={0.12}
+            interactive={false}
+            className="font-display"
+          />
+        </div>
       </div>
+      {mounted && (
+        <button
+          type="button"
+          aria-label="Zatrzymaj przewijany napis"
+          aria-pressed={paused}
+          onClick={() => setPaused((p) => !p)}
+          // Panel colours: on phones the button covers the end of the band
+          className={cn('absolute right-3 bottom-3 grid size-11 cursor-pointer place-items-center rounded-full border-2 border-current motion-reduce:hidden sm:right-5 sm:bottom-5', toneClass[tone])}
+        >
+          <svg viewBox="0 0 24 24" width={16} height={16} fill="currentColor" aria-hidden focusable={false}>
+            {paused ? (
+              <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
+            ) : (
+              <>
+                <rect x="6" y="5" width="4" height="14" rx="1" />
+                <rect x="14" y="5" width="4" height="14" rx="1" />
+              </>
+            )}
+          </svg>
+        </button>
+      )}
     </div>
   )
 }
@@ -52,7 +80,7 @@ export default function CtaBanner({ section }: SectionProps<'cta'>) {
       <div className={cn('relative overflow-hidden rounded-frame', toneClass[tone], tone === 'cream' && 'ring-1 ring-brand-deep/15 ring-inset')}>
         <Container className={cn('grid items-center gap-12 pt-16 pb-4 md:pt-24', image && 'lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]')}>
           <Reveal className={cn('text-center', image && 'lg:text-left')}>
-            <h2 id={headingId} className={cn('font-display text-[clamp(3rem,11vw,8.5rem)] leading-[0.9] tracking-tight uppercase', headingToneClass[tone])}>
+            <h2 id={headingId} className={cn('font-display text-[clamp(3rem,11vw,8.5rem)] leading-[0.9] tracking-tight wrap-anywhere uppercase', headingToneClass[tone])}>
               {section.heading}
             </h2>
             {section.text && (

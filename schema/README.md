@@ -4,8 +4,9 @@
 > `npm run content:check` fails when these files are out of date.
 
 JSON Schema (draft 2020-12) of every editable content file. The data files point at them via `$schema`,
-so editors (VS Code, Cursor…) autocomplete and validate while you type. Cross-file rules (image keys exist,
-product slugs and internal links resolve, section ids are unique) are checked by `npm run content:check`.
+so editors (VS Code, Cursor…) autocomplete and validate while you type. Unknown or misspelled keys are errors
+(`additionalProperties: false`), never silently ignored. Cross-file rules (image keys exist, product slugs and
+internal links resolve, section ids are unique) are checked by `npm run content:check`.
 
 | Schema | Files |
 | --- | --- |
@@ -18,6 +19,8 @@ product slugs and internal links resolve, section ids are unique) are checked by
 
 Every `href` accepts an internal path (`/`, `/o-nas`, `/#smaki`, `/produkt/<slug>`), an absolute URL, `tel:`/`mailto:`
 or a token resolved from `site.json`: `@order`, `@phone`, `@directions`, `@instagram`, `@facebook`, `@reviews`, `@writeReview`.
+A bare `#id` works only inside one page file — `site.json` and `products.json` must use `/#id`. The target section
+must exist and be shown: links to a section with `"enabled": false` (or a product grid without products) fail.
 
 ## Section types
 

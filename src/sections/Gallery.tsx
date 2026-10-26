@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import BounceCards from '@/components/BounceCards'
+import { AiBadge } from '@/components/ui/AiBadge'
 import { CtaButton } from '@/components/ui/Button'
 import { Picture } from '@/components/ui/Picture'
 import { Reveal } from '@/components/ui/Reveal'
@@ -45,7 +46,8 @@ function useFan(ref: RefObject<HTMLDivElement | null>) {
 export default function Gallery({ section }: SectionProps<'gallery'>) {
   const headingId = `${section.id}-title`
   const stageRef = useRef<HTMLDivElement>(null)
-  const fan = useFan(stageRef)
+  // The bouncy fan cannot show the "Ilustracja" label, so AI-generated images keep the photo grid
+  const fan = useFan(stageRef) && !section.images.some((image) => image.aiGenerated)
   const count = section.images.length
 
   return (
@@ -81,13 +83,14 @@ export default function Gallery({ section }: SectionProps<'gallery'>) {
               {section.images.map((image, i) => (
                 <li
                   key={image.src}
-                  className={cn('w-[calc(50%-0.375rem)] sm:w-[calc(33.333%-0.875rem)] lg:w-auto lg:max-w-52 lg:flex-1', i % 2 ? 'rotate-2' : '-rotate-2')}
+                  className={cn('relative w-[calc(50%-0.375rem)] sm:w-[calc(33.333%-0.875rem)] lg:w-auto lg:max-w-52 lg:flex-1', i % 2 ? 'rotate-2' : '-rotate-2')}
                 >
                   <Picture
                     image={image}
                     sizes="(min-width: 1024px) 208px, (min-width: 640px) 30vw, 46vw"
                     className="aspect-[4/5] w-full rounded-2xl object-cover shadow-[0_14px_30px_-12px_rgb(0_0_0/0.4)] ring-6 ring-white lg:aspect-square"
                   />
+                  {image.aiGenerated && <AiBadge className="absolute top-2 left-2" />}
                 </li>
               ))}
             </ul>

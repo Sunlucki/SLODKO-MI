@@ -15,13 +15,27 @@ type Review = ReviewsT['items'][number]
 
 const LOCATION = 'reviews'
 const label = 'text-[11px] font-extrabold tracking-[0.14em] uppercase'
+const ui = site.ui.reviews
 
 /** Polish plural: 1 opinia, 2–4 opinie (but 12–14 opinii), otherwise opinii. */
 function opinions(n: number) {
-  if (n === 1) return 'opinia'
+  const [one, few, many] = ui.countForms
+  if (n === 1) return one
   const last = n % 10
   const lastTwo = n % 100
-  return last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14) ? 'opinie' : 'opinii'
+  return last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14) ? few : many
+}
+
+const monthYear = new Intl.DateTimeFormat('pl-PL', { month: 'long', year: 'numeric', timeZone: 'Europe/Warsaw' })
+
+/** "październik 2026" from publishTime ("YYYY-MM" or ISO) — stays true, unlike Google's frozen "tydzień temu". */
+function reviewDate(review: Review): { text: string; dateTime?: string } | undefined {
+  const time = review.publishTime
+  if (time) {
+    const date = new Date(time.length === 7 ? `${time}-15T12:00:00Z` : time)
+    if (!Number.isNaN(date.getTime())) return { text: monthYear.format(date), dateTime: time.slice(0, 7) }
+  }
+  return review.relativeTime ? { text: review.relativeTime } : undefined
 }
 
 /** Five stars; with `label` it is announced as one image ("Ocena 5 na 5"), otherwise hidden from AT. */
@@ -125,7 +139,8 @@ function ReviewCarousel({ id, items }: { id: string; items: Review[] }) {
         <div className={cn('flex items-center justify-between gap-4', label)}>
           <span className="inline-flex items-center gap-2">
             <GoogleG width={18} height={18} />
-            Opinie z Google
+            {/* "Google" stays fixed: attribution required for Google reviews */}
+            {`${ui.sourcePrefix} Google`}
           </span>
           {multi && (
             <span aria-hidden className="text-ink/70 tabular-nums">
@@ -139,6 +154,7 @@ function ReviewCarousel({ id, items }: { id: string; items: Review[] }) {
             const active = i === index
             const open = active && expanded
             const textId = `${id}-text-${i}`
+            const date = reviewDate(review)
             return (
               <div
                 key={i}
@@ -170,7 +186,7 @@ function ReviewCarousel({ id, items }: { id: string; items: Review[] }) {
                     !(clamped[i] || open) && 'invisible',
                   )}
                 >
-                  {open ? 'Zwiń' : 'Czytaj całość'}
+                  {open ? ui.readLess : ui.readMore}
                   <ChevronDown width={14} height={14} className={cn('transition-transform', open && 'rotate-180')} />
                 </button>
                 <div className="mt-auto flex items-center gap-3 border-t border-ink/10 pt-4">
@@ -187,7 +203,14 @@ function ReviewCarousel({ id, items }: { id: string; items: Review[] }) {
                         review.author
                       )}
                     </span>
-                    {review.relativeTime && <span className={cn('mt-0.5 block text-ink/70', label)}>{review.relativeTime}</span>}
+                    {date &&
+                      (date.dateTime ? (
+                        <time dateTime={date.dateTime} className={cn('mt-0.5 block text-ink/70', label)}>
+                          {date.text}
+                        </time>
+                      ) : (
+                        <span className={cn('mt-0.5 block text-ink/70', label)}>{date.text}</span>
+                      ))}
                   </span>
                 </div>
               </div>
@@ -224,6 +247,7 @@ export default function Reviews({ section }: SectionProps<'reviews'>) {
               <div aria-hidden className="absolute inset-0 bg-ink/30" />
               <ReviewCarousel id={section.id} items={items} />
             </div>
+            <p className="mx-auto mt-4 max-w-3xl text-center text-xs leading-relaxed">{section.notice}</p>
           </Reveal>
         )}
 

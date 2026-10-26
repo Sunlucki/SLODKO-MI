@@ -42,9 +42,13 @@ function installStub() {
 
 const fbq = (...args: unknown[]) => window.fbq?.(...args)
 
-export function grantMeta() {
+/** `fbclid` of the landing URL: the pixel reads it only from the current URL, which may have changed meanwhile. */
+export function grantMeta(fbclid?: string) {
   if (!ID || state === 'granted') return
   if (state === 'off') {
+    // Meta's own click-ID cookie format (fb.<subdomain index>.<creation ms>.<fbclid>), 90 days like the pixel's
+    if (fbclid && !/(^|;\s*)_fbc=/.test(document.cookie))
+      document.cookie = `_fbc=fb.1.${Date.now()}.${encodeURIComponent(fbclid)}; max-age=7776000; path=/; SameSite=Lax`
     installStub()
     fbq('consent', 'grant')
     fbq('init', ID)

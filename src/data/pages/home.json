@@ -15,12 +15,16 @@
         { "text": "CYNAMONKĘ", "accent": true }
       ],
       "description": "Puszyste, wilgotne, codziennie wypiekane na świeżo. Na Wildzie, wejście od Hetmańskiej.",
-      "image": { "src": "hero/cynamonka", "alt": "Dłoń trzymająca cynamonkę sernik z truskawką, kruszonką i białą czekoladą" },
-      "note": { "title": "Sernik z truskawką", "subtitle": "nasz bestseller" },
+      "image": {
+        "src": "hero/cynamonka",
+        "alt": "Ilustracja: dłoń trzymająca cynamonkę sernik z truskawką, kruszonką i białą polewą",
+        "aiGenerated": true
+      },
+      "note": { "title": "Sernik z truskawką", "subtitle": "jeden z bestsellerów" },
       "aside": "Każdego ranka robimy ciasto od podstaw, ręcznie zwijamy każdą cynamonkę i pieczemy wszystko tego samego dnia.",
       "primaryCta": { "label": "Zamów na Wolt", "href": "@order", "variant": "light" },
       "secondaryCta": { "label": "Wyznacz trasę", "href": "@directions", "variant": "light" },
-      "spotlight": { "label": "Bestsellery", "productSlugs": ["sernik-z-truskawka", "szarlotka", "oreo"] },
+      "spotlight": { "label": "Bestsellery", "productSlugs": ["sernik-z-truskawka", "szarlotka"] },
       "ticker": ["Puszyste", "Wilgotne", "Codziennie wypiekane na świeżo", "7 smaków", "Wilda · wejście od Hetmańskiej", "TEJ, czas na cynamonkę"]
     },
     {
@@ -71,11 +75,12 @@
       "tone": "cream",
       "heading": "Nie wierz nam na słowo.",
       "sticker": "Opinie z Google",
-      "backgroundImage": { "src": "photos/zespol", "alt": "Zespół Słodko Mi przed witryną z cynamonkami i różowym neonem" },
+      "backgroundImage": { "src": "photos/zespol", "alt": "Zespół Słodko Mi za witryną z cynamonkami, pod różowym neonem „Jeszcze jedna?”" },
       "maxItems": 5,
       "minRating": 4,
       "readAllLabel": "Wszystkie opinie w Google",
-      "writeLabel": "Napisz opinię"
+      "writeLabel": "Napisz opinię",
+      "notice": "Opinie pochodzą z Map Google i cytujemy je bez zmian (pominięte fragmenty oznaczamy „(…)”). Pokazujemy wybrane opinie z oceną 4–5 gwiazdek. Nie sprawdzamy, czy ich autorzy kupili nasze produkty — wszystkie opinie znajdziesz w Google."
     },
     {
       "id": "instagram",
@@ -85,9 +90,9 @@
       "sticker": "@slodkomi.poznan",
       "images": [
         { "src": "photos/krem", "alt": "Cynamonki z kleksami kremu na blasze" },
-        { "src": "photos/sernik-blacha", "alt": "Cynamonki sernikowe z truskawką i kruszonką na blasze" },
+        { "src": "photos/sernik-blacha", "alt": "Cynamonki malina z kokosem oraz szarlotka z kruszonką i karmelem na blasze" },
         { "src": "photos/biscoff-blacha", "alt": "Cynamonki Biscoff polane karmelem" },
-        { "src": "photos/przekroj", "alt": "Przekrój cynamonki z nadzieniem owocowym i kremem" },
+        { "src": "photos/przekroj", "alt": "Kawałek cynamonki malina z kokosem z kremem, wiórkami kokosowymi i maliną" },
         { "src": "photos/blachy", "alt": "Kilka blach z różnymi smakami cynamonek" }
       ],
       "cta": { "label": "Obserwuj na Instagramie", "href": "@instagram", "variant": "primary" }
@@ -117,7 +122,7 @@
           "question": "Gdzie dokładnie jesteście?",
           "answer": "Poznań, Wilda, ul. 28 Czerwca 1956 r. 177/13. Wejście jest od strony ul. Hetmańskiej — od 28 Czerwca nie wejdziesz."
         },
-        { "question": "Czy macie dostawę?", "answer": "Tak — zamówisz nas przez Wolt. Możesz też zjeść na miejscu albo wziąć cynamonki na wynos." },
+        { "question": "Czy macie dostawę?", "answer": "Tak — dostawę zamówisz przez Wolt. Możesz też zjeść na miejscu albo wziąć cynamonki na wynos." },
         {
           "question": "Ile macie smaków?",
           "answer": "Siedem: klasyczna z lukrem, klasyczna z serkiem, Biscoff, Oreo, szarlotka z kruszonką i karmelem, sernik z truskawką i kruszonką oraz malina z kokosem."
@@ -128,8 +133,8 @@
         },
         { "question": "Czy jest kawa?", "answer": "Tak, do cynamonek serwujemy kawę — na miejscu i na wynos." },
         {
-          "question": "Czy mogę zamówić większą ilość?",
-          "answer": "Jasne. Napisz do nas na Instagramie albo zadzwoń — napisz, ile sztuk i na którą godzinę, a przygotujemy."
+          "question": "Czy mogę zamówić więcej cynamonek?",
+          "answer": "Jasne. Napisz do nas na Instagramie albo zadzwoń i daj znać, ile sztuk i na którą godzinę — przygotujemy."
         }
       ]
     },

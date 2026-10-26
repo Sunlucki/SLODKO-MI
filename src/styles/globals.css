@@ -83,6 +83,13 @@
     content-visibility: auto;
     contain-intrinsic-size: auto 900px;
   }
+  /* A #fragment URL (page load, or an in-page link before the app has loaded) scrolls to the target with the
+     real heights of the sections above it, not their placeholders. Later navigations: ScrollManager in Layout.tsx.
+     ([id] keeps the rule in the inlined critical CSS: beasties drops ":has(:target)" as an empty selector) */
+  html:has([id]:target) main > section ~ section,
+  html:has([id]:target) main ~ footer {
+    content-visibility: visible;
+  }
   ::selection {
     @apply bg-brand text-cream;
   }
@@ -91,6 +98,11 @@
     outline: 3px solid var(--c-ink);
     outline-offset: 2px;
     box-shadow: 0 0 0 2px var(--c-cream);
+  }
+  /* Sections focused as in-page link targets (ScrollManager) are not controls: no ring around the whole section */
+  section[tabindex='-1']:focus-visible {
+    outline: none;
+    box-shadow: none;
   }
   @media (prefers-reduced-motion: reduce) {
     html {

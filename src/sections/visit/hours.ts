@@ -44,11 +44,41 @@ export function hoursRows(): HoursRow[] {
 }
 
 const toMinutes = (hhmm: string) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3))
+/** "00:00" as a closing time is midnight at the end of the day */
+const closingMinutes = (hhmm: string) => (hhmm === '00:00' ? 24 * 60 : toMinutes(hhmm))
 
-/** Current weekday and open/closed state in the shop's time zone. Client-only (depends on the clock). */
-export function warsawStatus(date = new Date()): { day: Day; open: boolean } {
+const UPCOMING_DAYS = 14
+const DAY_OF_WEEK: Day[] = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] // Date#getUTCDay() order
+const longDate = new Intl.DateTimeFormat('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' })
+
+export interface SpecialDay {
+  date: string
+  /** "sob 31.10" */
+  label: string
+  /** "sobota, 31 października" for screen readers */
+  fullLabel: string
+  today: boolean
+  /** undefined = closed that day */
+  time?: Time
+  note?: string
+}
+
+export interface WarsawStatus {
+  day: Day
+  open: boolean
+  /** Today follows site.specialHours instead of the regular hours */
+  special: boolean
+  /** site.specialHours from today through the next 14 days */
+  upcoming: SpecialDay[]
+}
+
+/** Current day, open/closed state and upcoming special days in the shop's time zone. Client-only (depends on the clock). */
+export function warsawStatus(date = new Date()): WarsawStatus {
   const parts = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Europe/Warsaw',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
     weekday: 'short',
     hour: '2-digit',
     minute: '2-digit',
@@ -56,7 +86,27 @@ export function warsawStatus(date = new Date()): { day: Day; open: boolean } {
   }).formatToParts(date)
   const get = (type: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === type)?.value ?? ''
   const day = get('weekday').slice(0, 2) as Day // "Mon" → "Mo"
+  const today = `${get('year')}-${get('month')}-${get('day')}`
   const now = Number(get('hour')) * 60 + Number(get('minute'))
-  const time = timeFor(day)
-  return { day, open: Boolean(time && now >= toMinutes(time.opens) && now < toMinutes(time.closes)) }
+
+  const special = site.specialHours.find((s) => s.date === today)
+  const time = special ? ('opens' in special ? { opens: special.opens, closes: special.closes } : undefined) : timeFor(day)
+  const open = Boolean(time && now >= toMinutes(time.opens) && now < closingMinutes(time.closes))
+
+  const end = new Date(Date.parse(`${today}T00:00:00Z`) + UPCOMING_DAYS * 86_400_000).toISOString().slice(0, 10)
+  const upcoming = site.specialHours
+    .filter((s) => s.date >= today && s.date < end)
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .map((s) => {
+      const d = new Date(`${s.date}T00:00:00Z`)
+      return {
+        date: s.date,
+        label: `${DAY_SHORT[DAY_OF_WEEK[d.getUTCDay()]]} ${s.date.slice(8)}.${s.date.slice(5, 7)}`,
+        fullLabel: longDate.format(d),
+        today: s.date === today,
+        time: 'opens' in s ? { opens: s.opens, closes: s.closes } : undefined,
+        note: s.note,
+      }
+    })
+  return { day, open, special: Boolean(special), upcoming }
 }

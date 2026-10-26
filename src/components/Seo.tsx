@@ -1,7 +1,7 @@
 import { Head } from 'vite-react-ssg'
 import { site } from '@/content'
 import type { PageT } from '@/content/schema'
-import { imageUrl, pageUrl } from '@/lib/schema-org'
+import { pageUrl, socialImage } from '@/lib/schema-org'
 
 interface Props {
   title: string
@@ -18,6 +18,7 @@ interface Props {
 export function Seo({ title, description, path, ogImage, noindex, jsonLd = [] }: Props) {
   const fullTitle = site.seo.titleTemplate.replace('%s', title)
   const url = pageUrl(path)
+  const image = socialImage(ogImage ?? site.seo.ogImage)
   return (
     <Head>
       <title>{fullTitle}</title>
@@ -30,7 +31,9 @@ export function Seo({ title, description, path, ogImage, noindex, jsonLd = [] }:
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
-      <meta property="og:image" content={imageUrl(ogImage ?? site.seo.ogImage)} />
+      <meta property="og:image" content={image.url} />
+      <meta property="og:image:width" content={String(image.width)} />
+      <meta property="og:image:height" content={String(image.height)} />
       <meta name="twitter:card" content="summary_large_image" />
       {jsonLd.map((data, i) => (
         <script key={i} type="application/ld+json">

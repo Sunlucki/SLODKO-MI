@@ -19,7 +19,7 @@ components ──► src/lib/analytics.ts (public API + event mapping)
 | File | Role |
 | --- | --- |
 | `src/lib/analytics.ts` | The only module components import. `trackAction`, `trackPageView`, `trackViewItem`, `trackViewItemList`, `trackSelectItem`, `trackEngagement`, plus the consent API used by the banner. |
-| `src/lib/tracking/events.ts` | `dispatch()`: drops events without consent, assigns one `event_id`, sends to each allowed destination, logs in debug mode. Reacts to consent changes. |
+| `src/lib/tracking/events.ts` | `dispatch()`: drops events without consent, assigns one `event_id`, sends to each allowed destination, logs in debug mode. Reacts to consent changes (re-sends the current page's page view and item views to newly allowed destinations). |
 | `src/lib/tracking/consent.ts` | Consent state in `localStorage`, change listeners, the "reopen banner" window event. |
 | `src/lib/tracking/dataLayer.ts` | `window.dataLayer`, the `gtag()` shim, Consent Mode v2 default and update. |
 | `src/lib/tracking/ga4.ts`, `gtm.ts`, `metaPixel.ts`, `tiktok.ts` | One transport per vendor: stub, lazy script, consent grant/revoke, event call. |
@@ -40,7 +40,9 @@ Set in `.env` (or the CI environment) **before** `npm run build`. The values are
 | `VITE_GTM_ID` | `GTM-XXXXXXX` | Google Tag Manager container |
 | `VITE_TIKTOK_PIXEL_ID` | `C0XXXXXXXXXXXXXXXXXX` | TikTok Pixel |
 
-Empty or missing = that destination is disabled (its code is never called). When **every** ID is empty the site sets no optional cookies, so the banner does not appear on its own (its text names GA4 and Meta Pixel); "Ustawienia cookies" in the footer still opens it, which is handy for testing the flow.
+Empty or missing = that destination is disabled (its code is never called). When **every** ID is empty the site sets no optional cookies, so the banner does not appear on its own; "Ustawienia cookies" in the footer still opens it, which is handy for testing the flow.
+
+**Every enabled vendor must be named.** `npm run content:check` (and therefore every build) reads the IDs like the build does (shell, then `.env` / `.env.local`, via Vite's `loadEnv`) and fails when an enabled vendor is not named in `site.json` → `consent` (`text`, `analyticsText` or `marketingText`) **and** in the privacy-policy page (`consent.policyHref`): "Google Analytics" for `VITE_GA_ID`, "Meta" for `VITE_META_PIXEL_ID`, "TikTok" for `VITE_TIKTOK_PIXEL_ID`, "Google Tag Manager" for `VITE_GTM_ID`.
 
 Do not configure GA4 twice: use either `VITE_GA_ID` **or** a GA4 tag inside GTM, not both, or every event is counted twice.
 
@@ -48,22 +50,23 @@ Do not configure GA4 twice: use either `VITE_GA_ID` **or** a GA4 tag inside GTM,
 
 1. **Before any tag** (`initTracking()`, on the first tracking call or when the banner mounts) the Consent Mode v2 default is pushed:
    `ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage` = `denied`; `functionality_storage`, `security_storage` = `granted`; `wait_for_update: 500`.
-2. **No decision yet** → the banner is shown (if at least one ID is configured). Every event is dropped (not queued). No `fbq`/`ttq` objects exist, no script tag is added.
+2. **No decision yet** → the banner is shown (if at least one ID is configured). Every event is dropped (not queued; only the current page's page view and item views are re-sent in step 3). No `fbq`/`ttq` objects exist, no script tag is added.
 3. **Visitor decides** (Accept all / Only necessary / Settings → two switches → Save):
    - `gtag('consent', 'update', …)`: `analytics_storage` follows *Analytics*; `ad_storage`, `ad_user_data`, `ad_personalization` follow *Marketing*.
    - `dataLayer.push({ event: 'consent_update', consent_analytics, consent_marketing })` for GTM triggers.
    - *Analytics* → GA4 is configured (`send_page_view: false`) and gtag.js loads (basic consent mode: no script without consent).
    - *Marketing* → `fbq('consent', 'grant')`, `fbq('init', id)`, fbevents.js loads; `ttq.load(id)`, `ttq.grantConsent()`, TikTok's events.js loads.
    - *Any* consent → GTM loads.
-   - The page view of the current page, dropped in step 2, is sent once, only to the destinations that were just enabled (adding Marketing later does not resend the GA4 page view).
+   - The page view of the current page, dropped in step 2, is sent once, only to the destinations that were just enabled (adding Marketing later does not resend the GA4 page view). The item views of that page (`view_item`, `view_item_list`) follow it the same way, so a visitor who lands on a product and then accepts still counts as a ViewContent.
+   - That page view's `page_location` carries the campaign parameters of the landing URL (`utm_*`, `gclid`, `fbclid`, `ttclid`), kept in memory only, so GA4 keeps the campaign when the visitor browsed on before deciding. With *Marketing*, a landing `fbclid` is also written to Meta's `_fbc` cookie (`fb.1.<ms>.<fbclid>`) when the pixel has none yet, because the pixel only reads it from the current URL. TikTok reads `ttclid` from the current URL only.
 4. **Returning visitor** → the stored decision is applied right after the default (`consent update`), before the first page view. No banner.
 5. **Revocation** (footer → "Ustawienia cookies" → switches off → Save, or "Tylko niezbędne"):
    - `gtag('consent', 'update', denied…)` and `window['ga-disable-<GA_ID>'] = true` (the official GA opt-out: an already loaded gtag.js, including enhanced measurement, sends nothing).
    - `fbq('consent', 'revoke')`, `ttq.revokeConsent()`.
    - Our dispatcher stops calling the vendors. Loaded scripts stay in memory but inert until consent is granted again.
 
-**Storage:** `localStorage['slodkomi-consent'] = { "v": 1, "ts": <ms timestamp>, "analytics": bool, "marketing": bool }`.
-The banner is shown again when the record is older than 12 months, has a different `v`, or storage is unavailable (private mode, blocked site data; the choice then applies until the tab is closed). To ask everybody again after a material change (e.g. TikTok is switched on), bump `VERSION` in `src/lib/tracking/consent.ts`.
+**Storage:** `localStorage['slodkomi-consent'] = { "v": "1:ga,meta", "ts": <ms timestamp>, "analytics": bool, "marketing": bool }`.
+`v` is the purpose version plus the vendors this build enables (`ga`, `meta`, `tiktok`, `gtm`). The banner is shown again when the record is older than 12 months, has a different `v` (so adding or removing a pixel ID asks everybody again automatically), or storage is unavailable (private mode, blocked site data; the choice then applies until the tab is closed). To ask everybody again after a change of purposes, bump the number in `VERSION` in `src/lib/tracking/consent.ts`.
 
 **No `<noscript>` pixels.** They would fire without consent.
 
@@ -71,16 +74,19 @@ The banner is shown again when the record is older than 12 months, has a differe
 
 Scripts are injected by `whenIdle()`: on the first `pointerdown` / `keydown` / `touchstart` / `scroll`, or via `requestIdleCallback` after `load` (2 s timeout fallback in browsers without it), whichever comes first. Calls made before the script arrives wait in the official stub queues (`dataLayer`, `fbq.queue`, `ttq`). A Lighthouse run has no stored consent, so no third-party script is loaded at all.
 
+**Clicks before the app bundle runs.** The bundle itself loads only after the first paint (`scripts/lib/defer-app-script.ts`). Until it has run, the inline loader queues clicks on tracked links and on buttons in `window.__early` (capture phase). After hydration, `replayEarlyClicks()` (`src/lib/analytics.ts`, called from the banner's mount effect) reports each queued link through `trackAction` (from the `data-track`, `data-track-location`, `data-track-product` attributes `SmartLink` renders on tracked links; the usual consent gate applies) and clicks the last queued button once more, so the menu, carousels, map and "Ustawienia cookies" answer a tap made before hydration. Navigations are never replayed: the browser already followed the link. Queueing stops when the bundle has run, because React then handles new clicks itself.
+
 ### The banner
 
 - Texts come from `src/data/site.json` → `consent` (title, text, acceptAll, rejectAll, settings, save, analyticsLabel/Text, marketingLabel/Text, policyLabel, policyHref).
 - "Akceptuję wszystkie" and "Tylko niezbędne" have identical styles (equal prominence). Switches start off (no pre-ticked boxes).
-- Rendered only after mount (not in the pre-rendered HTML → no hydration mismatch), `position: fixed` (no layout shift), non-modal `role="dialog"` with `aria-labelledby` / `aria-describedby`.
+- Rendered only after mount (not in the pre-rendered HTML → no hydration mismatch), `position: fixed` (no layout shift), non-modal `role="dialog"` with `aria-labelledby` / `aria-describedby`. It works anywhere in the DOM; placed early (before the header) it comes first in the keyboard and screen-reader order.
+- While it is open, `scroll-padding-bottom` on `<html>` and `padding-bottom` on `<body>` equal its height (plus its gap to the edge), so a focused element is always scrolled above it, down to the last footer link (WCAG 2.2 SC 2.4.11). Both are removed when it closes.
 - Reopened from the footer: settings expanded with the current choice, focus moves to the dialog, Escape closes it unchanged and returns focus to the button. On the first visit Escape only collapses the settings: it never decides for the visitor.
 
 ## Event mapping
 
-Every event is also pushed to the dataLayer as `{ event, ...params, event_id }` (only when at least one consent is granted). Meta calls pass `{ eventID: event_id }` and TikTok calls `{ event_id }` with the same UUID, so a future Conversions API / Events API integration can deduplicate browser and server events.
+Every event is also pushed to the dataLayer as `{ event, ...params, event_id }` (only when at least one consent is granted). Item events (`view_item`, `view_item_list`, `select_item`) follow GA4's ecommerce format for GTM instead: `{ ecommerce: null }` first (GTM merges pushes, so this clears the previous items), then `{ event, ecommerce: { currency?, value?, item_list_name?, items }, event_id }`; use GTM's "Send Ecommerce data" or Data Layer Variables `ecommerce.items`. Meta calls pass `{ eventID: event_id }` and TikTok calls `{ event_id }` with the same UUID, so a future Conversions API / Events API integration can deduplicate browser and server events.
 
 | Facade call | GA4 (`gtag('event', …)`) | Meta Pixel | TikTok Pixel |
 | --- | --- | --- | --- |
@@ -108,7 +114,7 @@ Notes:
 - **Meta Pixel:** the stub sets `fbq.disablePushState = true`, so the pixel does not send its own PageView on SPA navigation. Optional: Events Manager → Settings → disable *Automatic events* if you only want the events above.
 - **TikTok Pixel:** check Events Manager for automatic/history-based page views and keep only the manual ones.
 - **GTM:** enable Consent Overview and give every tag the right *additional consent checks* (`analytics_storage` for analytics, `ad_storage` + `ad_user_data` for ads). The container loads with *any* consent; the custom `consent_update` event can trigger tags once consent is granted.
-- **Legal texts:** the banner (`site.json` → `consent`) and the privacy policy (`src/data/pages/polityka-prywatnosci.json`) currently name Google Analytics and Meta Pixel. When enabling TikTok or adding vendors through GTM, update both texts and bump the consent `VERSION`.
+- **Legal texts:** the banner (`site.json` → `consent`) and the privacy policy (`src/data/pages/polityka-prywatnosci.json`) must name every enabled vendor and its purpose; the build fails otherwise (see Configuration). *Marketing* grants `ad_storage`, `ad_user_data` and `ad_personalization`, so its text must cover ad measurement **and** ad personalisation/remarketing. Vendors added only inside GTM are not checked: name them in both texts and bump the number in the consent `VERSION`.
 - **Content-Security-Policy:** if a CSP header is added (e.g. in `.htaccess`), allow at least `script-src https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com`, `connect-src https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://www.facebook.com https://analytics.tiktok.com` and `img-src https://www.facebook.com https://*.google-analytics.com https://www.googletagmanager.com`.
 
 ## Debugging

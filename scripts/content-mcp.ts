@@ -2,11 +2,11 @@
  * MCP stdio server "slodkomi-content" — lets any MCP client (Claude Code/Desktop, Cursor, Windsurf, VS Code…)
  * read and edit the site content safely. Registered in .mcp.json; run manually: npx tsx scripts/content-mcp.ts
  *
- * Only src/data/site.json, products.json, reviews.json and src/data/pages/<slug>.json can be written.
- * Every write is validated with loadContent() (same rules as the build) and rolled back automatically
- * when it introduces errors. stdout is the JSON-RPC channel — log only to stderr.
+ * Only src/data/site.json, products.json and src/data/pages/<slug>.json can be written (reviews.json is read-only —
+ * scripts/fetch-google-reviews.ts refreshes it). Every write is validated with loadContent() (same rules as the build)
+ * and rolled back automatically when it introduces errors. stdout is the JSON-RPC channel — log only to stderr.
  */
-import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync, unlinkSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, readdirSync, renameSync, statSync, unlinkSync } from 'node:fs'
 import path from 'node:path'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
@@ -49,15 +49,15 @@ function guard<A>(fn: (args: A) => Result | Promise<Result>) {
 
 /** Validates + writes one file; reports what changed or why it was rolled back. */
 function save(file: string, doc: unknown): Result {
-  const { rel } = contentPath(file)
+  const { rel } = contentPath(file, 'write')
   const beforeText = readText(rel)
   const text = serialize(rel, doc)
   const result = commit([{ rel, text }])
   if (!result.ok)
     return fail(`Rolled back — ${rel} was NOT changed. The change introduces ${result.errors.length} error(s):\n- ${result.errors.join('\n- ')}`)
   const changes = beforeText === null ? [`created ${rel}`] : describeChanges(JSON.parse(beforeText), JSON.parse(text))
-  const remaining = result.errors.length ? `\n\nPre-existing problems (not caused by this change):\n- ${result.errors.join('\n- ')}` : ''
-  return ok(`Saved ${rel} — content is valid.\n${changes.join('\n')}${remaining}`)
+  if (!result.errors.length) return ok(`Saved ${rel} — content is valid.\n${changes.join('\n')}`)
+  return ok(`Saved ${rel} (no new errors).\n${changes.join('\n')}\n\nContent is still INVALID — pre-existing problems (not caused by this change):\n- ${result.errors.join('\n- ')}`)
 }
 
 const parseJson = (value: unknown): unknown => (typeof value === 'string' ? JSON.parse(value) : value)
@@ -78,8 +78,9 @@ const server = new McpServer(
       'Edits the content of the SŁODKO MI website (Polish cinnamon-roll bakery). All texts, links, images, products ' +
       'and the order of page sections live in JSON files under src/data. Start with list_content, read get_schema ' +
       'before larger edits, prefer patch_content for small changes. Writes are validated and rolled back on error. ' +
-      'Site copy is Polish. Use link tokens (@order, @phone, @directions, @instagram, @facebook, @reviews, @writeReview) ' +
-      'instead of raw URLs. Image keys must exist (list_images / add_image). Run build_site at the end to verify.',
+      'Site copy is Polish. src/data/reviews.json is read-only (Google reviews are never written or invented). ' +
+      'Use link tokens (@order, @phone, @directions, @instagram, @facebook, @reviews, @writeReview) instead of raw URLs. ' +
+      'Image keys must exist (list_images / add_image). Run build_site at the end to verify.',
   },
 )
 
@@ -116,7 +117,7 @@ server.registerTool(
   'read_content',
   {
     title: 'Read a content file',
-    description: 'Returns the JSON of one content file.',
+    description: 'Returns the JSON of one content file (also src/data/reviews.json, which is read-only).',
     inputSchema: { file: fileArg },
     annotations: { readOnlyHint: true },
   },
@@ -152,7 +153,7 @@ server.registerTool(
     annotations: { destructiveHint: true },
   },
   guard(({ file, operations }) => {
-    const { rel } = contentPath(file)
+    const { rel } = contentPath(file, 'write')
     const text = readText(rel)
     if (text === null && !rel.startsWith('src/data/pages/')) return fail(`${rel} does not exist`)
     return save(rel, applyOperations(text === null ? {} : JSON.parse(text), operations as Operation[]))
@@ -168,7 +169,7 @@ server.registerTool(
     annotations: { destructiveHint: true },
   },
   guard(({ file }) => {
-    const { rel } = contentPath(file)
+    const { rel } = contentPath(file, 'write')
     if (!rel.startsWith('src/data/pages/')) return fail('Only page files can be deleted')
     if (rel === PROTECTED_PAGE) return fail('The home page cannot be deleted')
     if (readText(rel) === null) return fail(`${rel} does not exist`)
@@ -211,7 +212,8 @@ server.registerTool(
     title: 'Add an image',
     description:
       'Copies a local image (jpg/png/webp) into assets/images/<group>/<name>.<ext> and runs the image pipeline (responsive WebP + manifest). ' +
-      'Returns the new key "<group>/<name>" for "src" fields. Use a cut-out PNG/WebP with transparency for products.',
+      'Returns the new key "<group>/<name>" for "src" fields. A file that already is assets/images/<group>/<name>.<ext> is processed in place. ' +
+      'Use a cut-out PNG/WebP with transparency for products. Mark AI-generated pictures with "aiGenerated": true where you use the key.',
     inputSchema: {
       source: z.string().describe('Absolute path of the image file on this computer'),
       group: slugArg('Folder: "products", "photos", "og" (social preview, 1200×630) or a new one'),
@@ -224,11 +226,25 @@ server.registerTool(
     if (!['.jpg', '.png', '.webp'].includes(ext)) return fail('Only .jpg, .jpeg, .png and .webp files are supported')
     if (!existsSync(source) || !statSync(source).isFile()) return fail(`File not found: ${source}`)
     const dir = path.join(ROOT, IMAGE_SRC, group)
-    const existing = existsSync(dir) ? readdirSync(dir).filter((f) => f.replace(/\.[^.]+$/, '') === name) : []
-    if (existing.length && !overwrite) return fail(`Image "${group}/${name}" already exists (${existing.join(', ')}). Pass overwrite: true to replace it.`)
-    mkdirSync(dir, { recursive: true })
-    for (const f of existing) unlinkSync(path.join(dir, f))
-    copyFileSync(source, path.join(dir, `${name}${ext}`))
+    const target = path.join(dir, `${name}${ext}`)
+    // The documented workflow puts the photo into assets/images first: then the source IS the target — never copy or delete it
+    const same = (a: string, b: string) => {
+      const [x, y] = [statSync(a), statSync(b)]
+      return x.dev === y.dev && x.ino === y.ino
+    }
+    const inPlace = existsSync(target) && same(source, target)
+    const others = (existsSync(dir) ? readdirSync(dir).filter((f) => f.replace(/\.[^.]+$/, '') === name) : []).filter(
+      (f) => !inPlace || path.join(dir, f) !== target,
+    )
+    if (others.length && !overwrite) return fail(`Image "${group}/${name}" already exists (${others.join(', ')}). Pass overwrite: true to replace it.`)
+    if (!inPlace) {
+      mkdirSync(dir, { recursive: true })
+      // Copy under a temporary name first, so a failed copy never leaves the key without a file
+      const tmp = path.join(dir, `.${name}-${process.pid}.tmp`)
+      copyFileSync(source, tmp)
+      renameSync(tmp, target)
+    }
+    for (const f of others) if (path.join(dir, f) !== target) unlinkSync(path.join(dir, f))
     const { code, output } = await run(process.execPath, ['scripts/process-images.mjs'])
     if (code !== 0) return fail(`Image pipeline failed:\n${tail(output, 30)}`)
     const key = `${group}/${name}`

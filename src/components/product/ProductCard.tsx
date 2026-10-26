@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import { formatPrice } from '@/content'
+import { formatPrice, site } from '@/content'
 import type { ProductT } from '@/content/schema'
 import { Plus } from '@/components/ui/icons'
 import { SmartLink } from '@/components/ui/SmartLink'
@@ -31,7 +31,9 @@ export function ProductCard({ product, index, listName }: Props) {
       className={cn(
         'group relative flex h-full flex-col rounded-2xl border bg-white p-3 text-ink transition-[transform,box-shadow] duration-300',
         'hover:shadow-xl hover:shadow-brand-deep/15 motion-safe:hover:-translate-y-1',
+        // Caramel ring shows on dark tones, the ink outline around it on light ones (caramel on cream alone is 1.5:1)
         'has-[a:focus-visible]:ring-4 has-[a:focus-visible]:ring-caramel motion-safe:has-[a:focus-visible]:-translate-y-1',
+        'has-[a:focus-visible]:outline-3 has-[a:focus-visible]:outline-offset-4 has-[a:focus-visible]:outline-ink',
         product.available ? 'border-brand-deep' : 'border-ink/30',
       )}
     >
@@ -51,7 +53,7 @@ export function ProductCard({ product, index, listName }: Props) {
             id={statusId}
             className="absolute bottom-2 left-2 rounded-full bg-ink px-3 py-1.5 text-[10px] font-extrabold tracking-[0.12em] text-cream uppercase"
           >
-            Chwilowo niedostępna
+            {site.ui.product.unavailable}
           </span>
         )}
       </div>

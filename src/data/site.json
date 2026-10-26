@@ -29,6 +29,11 @@
     { "days": ["Mo"], "closed": true },
     { "days": ["Tu", "We", "Th", "Fr", "Sa", "Su"], "opens": "10:00", "closes": "19:00" }
   ],
+  "specialHours": [
+    { "date": "2026-10-29", "opens": "10:30", "closes": "19:00", "note": "Wyjątkowo otwieramy później" },
+    { "date": "2026-10-31", "closed": true, "note": "Zapraszamy w niedzielę" },
+    { "date": "2026-11-01", "opens": "10:00", "closes": "19:00", "note": "Wszystkich Świętych" }
+  ],
   "hoursNote": "W święta godziny mogą się różnić — aktualne godziny zawsze sprawdzisz w Google.",
   "servesCuisine": ["Cynamonki", "Wypieki", "Kawa"],
   "priceRange": "20–40 zł",
@@ -94,15 +99,15 @@
   },
   "consent": {
     "title": "Ciasteczka? Tylko te z cynamonem… i kilka cyfrowych",
-    "text": "Używamy plików cookie, żeby mierzyć ruch na stronie (Google Analytics) i lepiej docierać z reklamami (Meta Pixel). Niezbędne pliki działają zawsze, resztę włączasz Ty.",
+    "text": "Za Twoją zgodą używamy Google Analytics (statystyki odwiedzin) i Meta Pixel (pomiar skuteczności i dopasowanie reklam na Facebooku i Instagramie, w tym remarketing). Bez zgody tych narzędzi nie wczytujemy. Wybór zmienisz w każdej chwili przyciskiem „Ustawienia cookies” w stopce.",
     "acceptAll": "Akceptuję wszystkie",
     "rejectAll": "Tylko niezbędne",
     "settings": "Ustawienia",
     "save": "Zapisz wybór",
     "analyticsLabel": "Analityczne",
-    "analyticsText": "Statystyki odwiedzin (Google Analytics 4).",
+    "analyticsText": "Statystyki odwiedzin i kliknięć z pseudonimowym identyfikatorem w plikach cookie (Google Analytics 4).",
     "marketingLabel": "Marketingowe",
-    "marketingText": "Pomiar skuteczności reklam na Instagramie i Facebooku (Meta Pixel).",
+    "marketingText": "Pomiar skuteczności reklam i ich dopasowanie do Ciebie, w tym remarketing na Facebooku i Instagramie (Meta Pixel). Obejmuje też reklamowe wykorzystanie danych przez Google.",
     "policyLabel": "Polityka prywatności",
     "policyHref": "/polityka-prywatnosci",
     "reopenLabel": "Ustawienia cookies"

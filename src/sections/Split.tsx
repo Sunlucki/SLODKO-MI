@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { AiBadge } from '@/components/ui/AiBadge'
 import { CtaButton } from '@/components/ui/Button'
 import { Picture } from '@/components/ui/Picture'
 import { Reveal } from '@/components/ui/Reveal'
@@ -55,14 +56,16 @@ function CoverVideo({ video }: { video: VideoT }) {
 export default function Split({ section }: SectionProps<'split'>) {
   const { left, right } = section
   const headingId = `${section.id}-title`
+  const coverImage = left.video ? left.video.poster : left.image
   return (
     <Section id={section.id} labelledBy={headingId} className="px-2 py-0 sm:px-3 md:py-0">
       <div className="grid overflow-hidden rounded-frame md:grid-cols-2">
         <div className="relative isolate flex min-h-[24rem] items-center justify-center p-8 md:min-h-[32rem] lg:min-h-[35rem]">
           {left.video ? <CoverVideo video={left.video} /> : <Picture image={left.image} sizes={coverSizes} className={cover} />}
           <div aria-hidden className="absolute inset-0 -z-10 bg-linear-to-t from-ink/70 via-ink/40 to-ink/25" />
+          {coverImage.aiGenerated && <AiBadge className="absolute bottom-3 left-3" />}
           <Reveal>
-            <p className="text-center font-display text-[clamp(3rem,8vw,7rem)] leading-[0.88] tracking-tight text-cream uppercase [text-shadow:0_4px_24px_rgb(0_0_0/0.35)]">
+            <p className="text-center font-display text-[clamp(3rem,8vw,7rem)] leading-[0.88] tracking-tight wrap-anywhere text-cream uppercase [text-shadow:0_4px_24px_rgb(0_0_0/0.35)]">
               {left.title.map((line, i) => (
                 <span key={i} className="block">
                   {line}{' '}
