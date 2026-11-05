@@ -54,16 +54,21 @@ export default function Hero({ section }: SectionProps<'hero'>) {
             </p>
           )}
 
-          <div className="relative z-10 mx-auto w-full max-w-[20rem] md:max-w-[24rem] lg:col-span-4 lg:col-start-6 lg:row-span-2 lg:row-start-1 lg:-mx-[6%] lg:-mb-[calc(var(--nf-band)+3rem)] lg:w-auto lg:max-w-none lg:self-end">
-            <div className={cn('relative', !cutout && 'aspect-square')}>
+          {/* lg+: the picture's height follows the viewport — from just under the note's arrow down to the
+              frame's bottom edge — and its width follows from the image's aspect ratio. */}
+          <div className="relative z-10 mx-auto w-full max-w-[20rem] md:max-w-[24rem] lg:absolute lg:top-20 lg:right-0 lg:-bottom-[calc(var(--nf-band)+3rem)] lg:col-span-5 lg:col-start-5 lg:row-span-2 lg:row-start-1 lg:mx-0 lg:flex lg:max-w-none lg:justify-end">
+            <div
+              className={cn('relative lg:h-full lg:max-w-full', !cutout && 'aspect-square')}
+              style={cutout ? { aspectRatio: `${images[section.image.src]?.width} / ${images[section.image.src]?.height}` } : undefined}
+            >
               {!cutout && <span aria-hidden className="absolute -inset-3 rounded-full border-2 border-dashed border-cream/30 lg:-inset-5" />}
               <Picture
                 image={section.image}
-                sizes="(min-width: 1024px) 35vw, (min-width: 768px) 384px, 320px"
+                sizes="(min-width: 1024px) min(40vw, 62vh), (min-width: 768px) 384px, 320px"
                 priority
                 className={cn(
-                  'relative w-full',
-                  cutout ? 'h-auto object-contain drop-shadow-2xl drop-shadow-ink/50' : 'aspect-square rounded-full object-cover shadow-[0_40px_80px_-30px] shadow-ink/70',
+                  'relative w-full lg:h-full',
+                  cutout ? 'h-auto object-contain object-bottom drop-shadow-2xl drop-shadow-ink/50' : 'aspect-square rounded-full object-cover shadow-[0_40px_80px_-30px] shadow-ink/70',
                 )}
               />
               {section.image.aiGenerated && <AiBadge className="absolute bottom-4 left-0 lg:bottom-[22%]" />}
