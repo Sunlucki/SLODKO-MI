@@ -54,12 +54,12 @@ export default function Hero({ section }: SectionProps<'hero'>) {
             </p>
           )}
 
-          <div className="relative z-10 mx-auto w-full max-w-[20rem] md:max-w-[24rem] lg:col-span-4 lg:col-start-6 lg:row-span-2 lg:row-start-1 lg:-mb-[calc(var(--nf-band)+2.75rem)] lg:max-w-none lg:self-end">
+          <div className="relative z-10 mx-auto w-full max-w-[20rem] md:max-w-[24rem] lg:col-span-4 lg:col-start-6 lg:row-span-2 lg:row-start-1 lg:-mx-[6%] lg:-mb-[calc(var(--nf-band)+3rem)] lg:w-auto lg:max-w-none lg:self-end">
             <div className={cn('relative', !cutout && 'aspect-square')}>
               {!cutout && <span aria-hidden className="absolute -inset-3 rounded-full border-2 border-dashed border-cream/30 lg:-inset-5" />}
               <Picture
                 image={section.image}
-                sizes="(min-width: 1024px) 31vw, (min-width: 768px) 384px, 320px"
+                sizes="(min-width: 1024px) 35vw, (min-width: 768px) 384px, 320px"
                 priority
                 className={cn(
                   'relative w-full',
