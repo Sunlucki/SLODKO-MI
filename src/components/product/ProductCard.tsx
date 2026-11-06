@@ -26,7 +26,6 @@ export function ProductCard({ product, index, listName }: Props) {
   const statusId = useId()
   const { site, formatPrice } = useContent()
   const price = formatPrice(product)
-  const tag = price ?? product.badge
   return (
     <article
       className={cn(
@@ -38,6 +37,14 @@ export function ProductCard({ product, index, listName }: Props) {
         product.available ? 'border-brand-deep' : 'border-ink/30',
       )}
     >
+      {/* Badge as a ribbon across the top-left corner; the wrapper clips it to the card's rounded corner */}
+      {product.badge && (
+        <span className="pointer-events-none absolute -top-px -left-px z-10 size-28 overflow-hidden rounded-tl-2xl">
+          <span className="absolute top-[1.375rem] left-[-2.375rem] w-40 -rotate-45 bg-caramel py-1.5 text-center text-[10px] font-extrabold tracking-[0.12em] whitespace-nowrap text-ink uppercase shadow-md shadow-ink/20">
+            {product.badge}
+          </span>
+        </span>
+      )}
       <div className="relative">
         <ProductImage image={product.images[0]} sizes={SIZES} muted={!product.available} className="aspect-square rounded-xl bg-none" />
         <span
@@ -59,16 +66,11 @@ export function ProductCard({ product, index, listName }: Props) {
         )}
       </div>
 
-      {/* The pill floats right so long names wrap underneath it instead of into a narrow column */}
+      {/* The price pill floats right so long names wrap underneath it instead of into a narrow column */}
       <div className="flow-root px-1 pt-4">
-        {tag && (
-          <span
-            className={cn(
-              'float-right mt-0.5 ml-3 rounded-full px-3 py-1.5 text-[10px] font-extrabold tracking-[0.12em] whitespace-nowrap uppercase',
-              price ? 'bg-brand-deep text-cream' : 'bg-caramel text-ink',
-            )}
-          >
-            {tag}
+        {price && (
+          <span className="float-right mt-0.5 ml-3 rounded-full bg-brand-deep px-3 py-1.5 text-[10px] font-extrabold tracking-[0.12em] whitespace-nowrap text-cream uppercase">
+            {price}
           </span>
         )}
         <h3 className={cn('font-display text-2xl leading-[1.05] uppercase', product.available ? 'text-ink' : 'text-ink/70')}>
