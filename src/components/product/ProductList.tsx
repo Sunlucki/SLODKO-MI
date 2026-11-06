@@ -40,7 +40,7 @@ export function ProductList({ products, listName, className }: Props) {
       role="list"
       className={cn(
         // Phones: bleed to the screen edges (Container has px-4) and leave room for the hover lift/focus ring
-        '-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+        '-mx-4 -mt-12 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pt-15 pb-3 sm:mt-0 sm:py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
         'sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 lg:gap-5',
         className,
       )}

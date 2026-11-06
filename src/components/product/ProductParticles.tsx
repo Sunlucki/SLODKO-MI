@@ -10,31 +10,55 @@ import { asset } from '@/lib/utils'
  */
 
 // Resting spots around the bun, in % of the image frame from its centre (x, y), plus a tilt.
-// The top-right corner stays free for the round "+" button.
+// The top-right corner stays free for the round "+" button; the lower ones stay above the card's title.
+// Each piece then gets its own distance (×1.05–1.4, so some fly past the card edge), size and tilt.
 const SPOTS: [number, number, number][] = [
   [-41, -6, -18],
   [-33, -32, 24],
   [-9, -42, -10],
   [15, -40, 16],
   [42, -2, 30],
-  [39, 22, -22],
-  [26, 40, 12],
-  [0, 44, -28],
-  [-25, 39, 20],
-  [-42, 19, -12],
+  [41, 17, -22],
+  [26, 30, 12],
+  [1, 32, -28],
+  [-25, 30, 20],
+  [-43, 15, -12],
 ]
 
+// Deterministic per flavour (same on the server and in the browser): a small seeded generator
+function random(seed: string) {
+  let h = 2166136261
+  for (const c of seed) h = Math.imul(h ^ c.charCodeAt(0), 16777619)
+  return () => {
+    h = Math.imul(h ^ (h >>> 15), 2246822507) ^ Math.imul(h ^ (h >>> 13), 3266489909)
+    return ((h ^= h >>> 16) >>> 0) / 4294967296
+  }
+}
+
 export function ProductParticles({ slug }: { slug: string }) {
-  const pieces = SPOTS.map((spot, i) => ({ spot, key: `particles/${slug}-${i + 1}` })).filter((p) => images[p.key])
+  const rnd = random(slug)
+  const pieces = SPOTS.map(([x, y, r], i) => {
+    const spread = 1.05 + rnd() * 0.35
+    return {
+      key: `particles/${slug}-${i + 1}`,
+      style: {
+        '--x': (x * spread).toFixed(1),
+        '--y': (y * spread).toFixed(1),
+        '--r': `${Math.round(r + (rnd() - 0.5) * 30)}deg`,
+        '--w': `${(14 + rnd() * 11).toFixed(1)}cqw`,
+        '--i': i,
+      } as React.CSSProperties,
+    }
+  }).filter((p) => images[p.key])
   return (
     <div aria-hidden className="pp-layer">
       <span className="pp-steam" />
       <span className="pp-steam" />
       <span className="pp-steam" />
-      {pieces.map(({ spot: [x, y, r], key }, i) => {
+      {pieces.map(({ key, style }) => {
         const meta = images[key]
         return (
-          <span key={key} className="pp-piece" style={{ '--x': x, '--y': y, '--r': `${r}deg`, '--i': i } as React.CSSProperties}>
+          <span key={key} className="pp-piece" style={style}>
             <img src={asset(`images/${key}-${meta.widths[0]}.webp`)} width={meta.width} height={meta.height} alt="" loading="lazy" decoding="async" />
           </span>
         )

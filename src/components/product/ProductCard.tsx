@@ -33,7 +33,8 @@ export function ProductCard({ product, index, listName }: Props) {
   return (
     <article
       className={cn(
-        'group relative flex h-full flex-col rounded-2xl border bg-white p-3 text-ink transition-[transform,box-shadow] duration-300',
+        // While its particles are out the card sits above its neighbours, so pieces flying past its edge stay visible
+        'group relative flex h-full flex-col rounded-2xl has-[[data-burst]]:z-10 border bg-white p-3 text-ink transition-[transform,box-shadow] duration-300',
         'hover:shadow-xl hover:shadow-brand-deep/15 motion-safe:hover:-translate-y-1',
         // Caramel ring shows on dark tones, the ink outline around it on light ones (caramel on cream alone is 1.5:1)
         'has-[a:focus-visible]:ring-4 has-[a:focus-visible]:ring-caramel motion-safe:has-[a:focus-visible]:-translate-y-1',
