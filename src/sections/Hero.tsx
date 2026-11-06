@@ -37,7 +37,7 @@ export default function Hero({ section }: SectionProps<'hero'>) {
         <div className="relative grid flex-1 grid-cols-1 content-start px-6 pt-[calc(var(--nf-notch-h)+2rem)] pb-[calc(var(--nf-band)+2.5rem)] md:px-12 md:pb-[calc(var(--nf-card-h)+2rem)] lg:grid-cols-12 lg:grid-rows-[auto_1fr] lg:content-stretch lg:gap-x-6 lg:px-16 lg:pt-[calc(var(--nf-notch-h)+3rem)] lg:pb-[calc(var(--nf-band)+3rem)]">
           <h1
             id={titleId}
-            className="relative z-10 font-display text-[clamp(3.25rem,15.5vw,4.75rem)] leading-[0.92] tracking-[-0.005em] wrap-anywhere uppercase md:text-[clamp(4rem,10vw,6rem)] lg:col-span-5 lg:row-start-1 lg:text-[clamp(4.25rem,6.6vw,8rem)]"
+            className="relative z-20 font-display text-[clamp(3.25rem,15.5vw,4.75rem)] leading-[0.92] tracking-[-0.005em] wrap-anywhere uppercase md:text-[clamp(4rem,10vw,6rem)] lg:col-span-5 lg:row-start-1 lg:text-[clamp(4.25rem,6.6vw,8rem)]"
           >
             {section.headline.map((line, i) => (
               <span key={i} className={cn('block', line.accent && 'text-caramel')}>
@@ -47,28 +47,28 @@ export default function Hero({ section }: SectionProps<'hero'>) {
           </h1>
 
           {section.note && (
-            <p className="relative z-10 mt-8 mb-16 ml-auto w-fit max-w-[15rem] text-right md:mb-20 lg:col-span-3 lg:col-start-10 lg:row-start-1 lg:mt-4 lg:mb-0 lg:ml-0 lg:max-w-none lg:self-start lg:pl-2 lg:text-left">
+            <p className="relative z-20 mt-8 mb-16 ml-auto w-fit max-w-[15rem] text-right md:mb-20 lg:col-span-3 lg:col-start-10 lg:row-start-1 lg:mt-4 lg:mb-0 lg:ml-0 lg:max-w-none lg:self-start lg:pl-2 lg:text-left">
               <span className="block font-display text-[1.75rem] leading-none text-caramel uppercase lg:text-[2.125rem]">{section.note.title}</span>
               {section.note.subtitle && <span className="mt-1.5 block text-[0.6875rem] font-extrabold tracking-[0.2em] text-cream uppercase">{section.note.subtitle}</span>}
-              <SquiggleArrow className="absolute top-full right-[55%] mt-1 rotate-[-6deg] text-caramel lg:top-6 lg:right-full lg:mt-0 lg:mr-2 lg:rotate-[-4deg]" />
+              <SquiggleArrow className="absolute top-full right-3 mt-5 rotate-[-18deg] text-caramel lg:top-6 lg:right-full lg:mt-0 lg:mr-2 lg:rotate-[-4deg]" />
             </p>
           )}
 
-          {/* lg+: the picture's height follows the viewport — from just under the note's arrow down to the
-              frame's bottom edge — and its width follows from the image's aspect ratio. */}
-          <div className="relative z-10 mx-auto w-full max-w-[20rem] md:max-w-[24rem] lg:absolute lg:top-20 lg:right-0 lg:-bottom-[calc(var(--nf-band)+3rem)] lg:col-span-5 lg:col-start-5 lg:row-span-2 lg:row-start-1 lg:mx-0 lg:flex lg:max-w-none lg:justify-end">
+          {/* lg+: the box spans the frame's full height; the picture is a bit taller than the frame (its height,
+              and so its width, follow the viewport), starts just under the top edge and is cut off by the bottom one. */}
+          <div className="relative z-10 mx-auto w-full max-w-[20rem] md:max-w-[24rem] lg:absolute lg:top-[calc(-1*(var(--nf-notch-h)+3rem))] lg:-right-6 lg:-bottom-[calc(var(--nf-band)+3rem)] lg:col-span-5 lg:col-start-5 lg:row-span-2 lg:row-start-1 lg:mx-0 lg:flex lg:max-w-none lg:justify-end lg:[clip-path:inset(-50%_-50%_0_-50%)]">
             <div
-              className={cn('relative lg:h-full lg:max-w-full', !cutout && 'aspect-square')}
+              className={cn('relative lg:top-[9%] lg:h-[94%] lg:max-w-[38vw] lg:shrink-0', cutout ? 'drop-shadow-2xl drop-shadow-ink/50' : 'aspect-square')}
               style={cutout ? { aspectRatio: `${images[section.image.src]?.width} / ${images[section.image.src]?.height}` } : undefined}
             >
               {!cutout && <span aria-hidden className="absolute -inset-3 rounded-full border-2 border-dashed border-cream/30 lg:-inset-5" />}
               <Picture
                 image={section.image}
-                sizes="(min-width: 1024px) min(40vw, 62vh), (min-width: 768px) 384px, 320px"
+                sizes="(min-width: 1024px) min(48vw, 75vh), (min-width: 768px) 384px, 320px"
                 priority
                 className={cn(
                   'relative w-full lg:h-full',
-                  cutout ? 'h-auto object-contain object-bottom drop-shadow-2xl drop-shadow-ink/50' : 'aspect-square rounded-full object-cover shadow-[0_40px_80px_-30px] shadow-ink/70',
+                  cutout ? 'h-auto object-contain object-bottom max-lg:[mask-image:linear-gradient(to_bottom,#000_72%,transparent)]' : 'aspect-square rounded-full object-cover shadow-[0_40px_80px_-30px] shadow-ink/70',
                 )}
               />
               {section.image.aiGenerated && <AiBadge className="absolute bottom-4 left-0 lg:bottom-[22%]" />}
