@@ -79,13 +79,7 @@ export function ProductCard({ product, index, listName }: Props) {
             aria-describedby={product.available ? undefined : statusId}
             className="after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none"
           >
-            <span aria-hidden className="text-brand">
-              ((&nbsp;
-            </span>
             {product.name}
-            <span aria-hidden className="text-brand">
-              &nbsp;))
-            </span>
           </SmartLink>
         </h3>
       </div>
