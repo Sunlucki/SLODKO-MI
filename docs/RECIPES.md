@@ -233,6 +233,14 @@ deleted.
 Full procedure (site.json entry, overlays, fonts for new alphabets, checks): [I18N.md → Adding a
 language](I18N.md#adding-a-language).
 
+## Flavour particles (hover effect)
+
+Hovering a flavour card (on phones: scrolling it into view) makes ten ingredient pieces fly out from behind the
+bun and hover around it, with steam rising behind it. The pieces are images
+`assets/images/particles/<product-slug>-1.png` … `-10.png` (transparent PNG, about 110 px; run `npm run images`).
+A product without them gets only the steam. Component: `src/components/product/ProductParticles.tsx`, styles
+`.pp-*` in `src/styles/globals.css`. The current pieces are AI illustrations (Higgsfield), decorative only.
+
 ## Replace AI images with real photos
 
 AI illustrations today: `hero/cynamonka` (home hero), `cutouts/malina-z-kokosem` and `products/malina-z-kokosem`

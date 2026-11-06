@@ -1,11 +1,13 @@
-import { useId } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import { useContent } from '@/content'
 import type { ProductT } from '@/content/schema'
 import { Plus } from '@/components/ui/icons'
 import { SmartLink } from '@/components/ui/SmartLink'
 import { trackSelectItem } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
+import { isCutout } from './helpers'
 import { ProductImage } from './ProductImage'
+import { ProductParticles } from './ProductParticles'
 
 // Matches the ProductList layout: ~78vw scroller on phones, 2 columns from sm, 4 from lg (max-w-6xl container)
 const SIZES = '(min-width: 1152px) 264px, (min-width: 1024px) 23vw, (min-width: 640px) 46vw, 76vw'
@@ -26,8 +28,19 @@ export function ProductCard({ product, index, listName }: Props) {
   const statusId = useId()
   const { site, formatPrice } = useContent()
   const price = formatPrice(product)
+  const ref = useRef<HTMLElement>(null)
+  // Touch screens have no hover: the particles come out while the card is well inside the viewport
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !matchMedia('(hover: none)').matches) return
+    const io = new IntersectionObserver(([e]) => el.toggleAttribute('data-burst', e.isIntersecting), { threshold: 0.6 })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+  const particles = product.available && isCutout(product.images[0])
   return (
     <article
+      ref={ref}
       className={cn(
         'group relative flex h-full flex-col rounded-2xl border bg-white p-3 text-ink transition-[transform,box-shadow] duration-300',
         'hover:shadow-xl hover:shadow-brand-deep/15 motion-safe:hover:-translate-y-1',
@@ -46,6 +59,7 @@ export function ProductCard({ product, index, listName }: Props) {
         </span>
       )}
       <div className="relative">
+        {particles && <ProductParticles slug={product.slug} />}
         <ProductImage image={product.images[0]} sizes={SIZES} muted={!product.available} className="aspect-square rounded-xl bg-none" />
         <span
           aria-hidden

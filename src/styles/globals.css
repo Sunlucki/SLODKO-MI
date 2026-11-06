@@ -149,3 +149,100 @@
     transform: translateY(24px);
   }
 }
+
+/* Product card particles + steam (src/components/product/ProductParticles.tsx). Active while the card is
+   hovered, or on touch screens while it is in view ([data-burst], set by ProductCard). */
+.pp-layer {
+  position: absolute;
+  inset: 0;
+  container-type: size;
+  pointer-events: none;
+}
+.pp-piece {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 21cqw;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.3);
+  transition:
+    transform 0.55s cubic-bezier(0.55, 0, 0.75, 0.2),
+    opacity 0.3s ease-in 0.2s;
+}
+.pp-piece img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 6px 6px rgb(43 23 20 / 0.18));
+  animation: pp-float 2.8s ease-in-out calc(var(--i) * -0.37s) infinite alternate paused;
+}
+.group:hover .pp-piece,
+[data-burst] .pp-piece {
+  opacity: 1;
+  transform: translate(calc(-50% + var(--x) * 1cqw), calc(-50% + var(--y) * 1cqw)) rotate(var(--r)) scale(1);
+  transition:
+    transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.25) calc(var(--i) * 30ms),
+    opacity 0.2s ease-out calc(var(--i) * 30ms);
+}
+.group:hover .pp-piece img,
+[data-burst] .pp-piece img {
+  animation-play-state: running;
+}
+@keyframes pp-float {
+  from {
+    transform: translateY(-5%) rotate(-4deg);
+  }
+  to {
+    transform: translateY(5%) rotate(4deg);
+  }
+}
+/* Steam: soft blurred wisps rising from behind the top of the bun (tinted, so it shows on white cards too) */
+.pp-steam {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  width: 26cqw;
+  height: 34cqw;
+  margin-left: -13cqw;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(255 255 255 / 0.9), rgb(196 180 176 / 0.5) 55%, transparent);
+  filter: blur(7px);
+  opacity: 0;
+}
+.pp-steam:nth-child(2) {
+  left: 38%;
+}
+.pp-steam:nth-child(3) {
+  left: 62%;
+}
+/* Runs only while active (a paused animation would freeze a visible wisp) */
+.group:hover .pp-steam,
+[data-burst] .pp-steam {
+  animation: pp-steam 2.6s ease-out infinite;
+}
+.group:hover .pp-steam:nth-child(2),
+[data-burst] .pp-steam:nth-child(2) {
+  animation-delay: 0.85s;
+}
+.group:hover .pp-steam:nth-child(3),
+[data-burst] .pp-steam:nth-child(3) {
+  animation-delay: 1.7s;
+}
+@keyframes pp-steam {
+  0% {
+    opacity: 0;
+    transform: translateY(14cqw) scale(0.5, 0.7);
+  }
+  30% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-16cqw) scale(1.2, 1.3) rotate(8deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pp-layer {
+    display: none;
+  }
+}

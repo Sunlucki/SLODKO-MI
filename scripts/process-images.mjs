@@ -66,7 +66,7 @@ for (const file of (await walk(SRC)).sort()) {
     const dest = path.join(OUT, `${key}.jpg`)
     if (!(await isFresh(file, dest)))
       await sharp(file).rotate().resize(1200, 630, { fit: 'cover' }).jpeg({ quality: 82, mozjpeg: true }).toFile(dest)
-  } else if (alpha) {
+  } else if (alpha && !key.startsWith('particles/')) {
     // Social apps show transparency as black and crop to ~1.91:1, so centre the cut-out on cream with a margin
     const dest = path.join(OUT, `${key}-og.jpg`)
     if (!(await isFresh(file, dest)))

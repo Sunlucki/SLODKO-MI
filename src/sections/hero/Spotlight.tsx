@@ -24,10 +24,18 @@ export function Spotlight({ label, products }: { label: string; products: Produc
     trackEngagement('spotlight_navigate', step > 0 ? 'next' : 'prev')
   }
   const image = product.images[0]
-  const pill = formatPrice(product) ?? product.badge
+  const price = formatPrice(product)
 
   return (
     <div className="nf-card relative h-full min-h-[9.5rem] text-cream">
+      {/* Badge as a ribbon across the top-left corner, as on the product cards */}
+      {product.badge && (
+        <span key={product.slug} className="pointer-events-none absolute top-0 left-0 z-10 size-24 overflow-hidden rounded-tl-[22px]">
+          <span className="absolute top-[1.125rem] left-[-2.5rem] w-36 -rotate-45 bg-caramel py-1 text-center text-[0.5625rem] font-extrabold tracking-[0.12em] whitespace-nowrap text-ink uppercase shadow-md shadow-ink/30">
+            {product.badge}
+          </span>
+        </span>
+      )}
       {many && (
         <div className="absolute top-0 right-0 z-10 flex gap-1.5">
           <button type="button" aria-label={site.ui.common.previousProduct} onClick={() => go(-1)} className={navButton}>
@@ -66,8 +74,8 @@ export function Spotlight({ label, products }: { label: string; products: Produc
           >
             {product.name}
           </SmartLink>
-          {pill && (
-            <span className="mt-2 inline-flex rounded-full bg-cream px-3 py-1 text-[0.625rem] font-extrabold tracking-[0.12em] text-brand-deep uppercase">{pill}</span>
+          {price && (
+            <span className="mt-2 inline-flex rounded-full bg-cream px-3 py-1 text-[0.625rem] font-extrabold tracking-[0.12em] text-brand-deep uppercase">{price}</span>
           )}
         </div>
       </div>

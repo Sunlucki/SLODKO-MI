@@ -101,6 +101,566 @@
     ],
     "alpha": false
   },
+  "particles/biscoff-1": {
+    "width": 107,
+    "height": 112,
+    "widths": [
+      107
+    ],
+    "alpha": true
+  },
+  "particles/biscoff-10": {
+    "width": 112,
+    "height": 103,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/biscoff-2": {
+    "width": 112,
+    "height": 104,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/biscoff-3": {
+    "width": 112,
+    "height": 109,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/biscoff-4": {
+    "width": 112,
+    "height": 100,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/biscoff-5": {
+    "width": 103,
+    "height": 112,
+    "widths": [
+      103
+    ],
+    "alpha": true
+  },
+  "particles/biscoff-6": {
+    "width": 112,
+    "height": 106,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/biscoff-7": {
+    "width": 106,
+    "height": 112,
+    "widths": [
+      106
+    ],
+    "alpha": true
+  },
+  "particles/biscoff-8": {
+    "width": 112,
+    "height": 105,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/biscoff-9": {
+    "width": 112,
+    "height": 112,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-lukrem-1": {
+    "width": 112,
+    "height": 83,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-lukrem-10": {
+    "width": 112,
+    "height": 90,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-lukrem-2": {
+    "width": 104,
+    "height": 112,
+    "widths": [
+      104
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-lukrem-3": {
+    "width": 112,
+    "height": 101,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-lukrem-4": {
+    "width": 112,
+    "height": 93,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-lukrem-5": {
+    "width": 107,
+    "height": 112,
+    "widths": [
+      107
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-lukrem-6": {
+    "width": 112,
+    "height": 100,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-lukrem-7": {
+    "width": 112,
+    "height": 98,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-lukrem-8": {
+    "width": 104,
+    "height": 112,
+    "widths": [
+      104
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-lukrem-9": {
+    "width": 112,
+    "height": 102,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-serkiem-1": {
+    "width": 112,
+    "height": 106,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-serkiem-10": {
+    "width": 111,
+    "height": 112,
+    "widths": [
+      111
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-serkiem-2": {
+    "width": 112,
+    "height": 86,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-serkiem-3": {
+    "width": 112,
+    "height": 82,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-serkiem-4": {
+    "width": 112,
+    "height": 102,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-serkiem-5": {
+    "width": 112,
+    "height": 94,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-serkiem-6": {
+    "width": 112,
+    "height": 95,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-serkiem-7": {
+    "width": 112,
+    "height": 111,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-serkiem-8": {
+    "width": 112,
+    "height": 93,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/klasyczna-z-serkiem-9": {
+    "width": 112,
+    "height": 84,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/malina-z-kokosem-1": {
+    "width": 112,
+    "height": 105,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/malina-z-kokosem-10": {
+    "width": 112,
+    "height": 92,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/malina-z-kokosem-2": {
+    "width": 112,
+    "height": 98,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/malina-z-kokosem-3": {
+    "width": 112,
+    "height": 105,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/malina-z-kokosem-4": {
+    "width": 112,
+    "height": 97,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/malina-z-kokosem-5": {
+    "width": 112,
+    "height": 109,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/malina-z-kokosem-6": {
+    "width": 112,
+    "height": 105,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/malina-z-kokosem-7": {
+    "width": 112,
+    "height": 96,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/malina-z-kokosem-8": {
+    "width": 111,
+    "height": 112,
+    "widths": [
+      111
+    ],
+    "alpha": true
+  },
+  "particles/malina-z-kokosem-9": {
+    "width": 112,
+    "height": 102,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/oreo-1": {
+    "width": 101,
+    "height": 112,
+    "widths": [
+      101
+    ],
+    "alpha": true
+  },
+  "particles/oreo-10": {
+    "width": 109,
+    "height": 112,
+    "widths": [
+      109
+    ],
+    "alpha": true
+  },
+  "particles/oreo-2": {
+    "width": 112,
+    "height": 85,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/oreo-3": {
+    "width": 107,
+    "height": 112,
+    "widths": [
+      107
+    ],
+    "alpha": true
+  },
+  "particles/oreo-4": {
+    "width": 108,
+    "height": 112,
+    "widths": [
+      108
+    ],
+    "alpha": true
+  },
+  "particles/oreo-5": {
+    "width": 112,
+    "height": 107,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/oreo-6": {
+    "width": 112,
+    "height": 105,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/oreo-7": {
+    "width": 112,
+    "height": 102,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/oreo-8": {
+    "width": 112,
+    "height": 93,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/oreo-9": {
+    "width": 112,
+    "height": 111,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/sernik-z-truskawka-1": {
+    "width": 97,
+    "height": 112,
+    "widths": [
+      97
+    ],
+    "alpha": true
+  },
+  "particles/sernik-z-truskawka-10": {
+    "width": 97,
+    "height": 112,
+    "widths": [
+      97
+    ],
+    "alpha": true
+  },
+  "particles/sernik-z-truskawka-2": {
+    "width": 112,
+    "height": 110,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/sernik-z-truskawka-3": {
+    "width": 112,
+    "height": 103,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/sernik-z-truskawka-4": {
+    "width": 112,
+    "height": 105,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/sernik-z-truskawka-5": {
+    "width": 95,
+    "height": 112,
+    "widths": [
+      95
+    ],
+    "alpha": true
+  },
+  "particles/sernik-z-truskawka-6": {
+    "width": 94,
+    "height": 112,
+    "widths": [
+      94
+    ],
+    "alpha": true
+  },
+  "particles/sernik-z-truskawka-7": {
+    "width": 102,
+    "height": 112,
+    "widths": [
+      102
+    ],
+    "alpha": true
+  },
+  "particles/sernik-z-truskawka-8": {
+    "width": 112,
+    "height": 104,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/sernik-z-truskawka-9": {
+    "width": 99,
+    "height": 112,
+    "widths": [
+      99
+    ],
+    "alpha": true
+  },
+  "particles/szarlotka-1": {
+    "width": 97,
+    "height": 112,
+    "widths": [
+      97
+    ],
+    "alpha": true
+  },
+  "particles/szarlotka-10": {
+    "width": 112,
+    "height": 111,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/szarlotka-2": {
+    "width": 112,
+    "height": 111,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/szarlotka-3": {
+    "width": 112,
+    "height": 102,
+    "widths": [
+      112
+    ],
+    "alpha": true
+  },
+  "particles/szarlotka-4": {
+    "width": 109,
+    "height": 112,
+    "widths": [
+      109
+    ],
+    "alpha": true
+  },
+  "particles/szarlotka-5": {
+    "width": 107,
+    "height": 112,
+    "widths": [
+      107
+    ],
+    "alpha": true
+  },
+  "particles/szarlotka-6": {
+    "width": 97,
+    "height": 112,
+    "widths": [
+      97
+    ],
+    "alpha": true
+  },
+  "particles/szarlotka-7": {
+    "width": 106,
+    "height": 112,
+    "widths": [
+      106
+    ],
+    "alpha": true
+  },
+  "particles/szarlotka-8": {
+    "width": 106,
+    "height": 112,
+    "widths": [
+      106
+    ],
+    "alpha": true
+  },
+  "particles/szarlotka-9": {
+    "width": 94,
+    "height": 112,
+    "widths": [
+      94
+    ],
+    "alpha": true
+  },
   "photos/biscoff-blacha": {
     "width": 1500,
     "height": 2000,
