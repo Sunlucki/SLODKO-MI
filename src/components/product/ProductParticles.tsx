@@ -1,11 +1,12 @@
+import { useEffect, useRef } from 'react'
 import { images } from '@/content'
 import { asset } from '@/lib/utils'
 
 /**
  * Ingredient particles + steam behind a product's cut-out. Pictures come from the image pipeline as
  * `particles/<slug>-1` … `-10` (no particles for a slug → only the steam). Everything stays tucked behind
- * the bun until the card is hovered (or, on touch screens, scrolled into view: ProductCard sets data-burst);
- * then the pieces fly out, hover around it and fly back when the pointer leaves. Styles: .pp-* in globals.css.
+ * the bun until its host gets [data-burst] (useParticleBurst); then the pieces fly out, hover around the bun
+ * and fly back when it is removed. Styles: .pp-* in globals.css.
  */
 
 // Resting spots around the bun, in % of the image frame from its centre (x, y), plus a tilt.
@@ -40,4 +41,39 @@ export function ProductParticles({ slug }: { slug: string }) {
       })}
     </div>
   )
+}
+
+/**
+ * Sets [data-burst] on `area` (the bun's frame, which holds <ProductParticles>) while a mouse is over the bun
+ * itself — the middle of the frame, not its empty corners — or, on touch screens, while the frame is well
+ * inside the viewport. Pointer position is tracked on the frame's parent, because a stretched card link
+ * usually covers the image and would swallow :hover.
+ */
+/** `resetKey`: pass what re-creates the frame element (e.g. the slide's slug) so the listeners follow it. */
+export function useParticleBurst<T extends HTMLElement>(resetKey?: unknown) {
+  const area = useRef<T>(null)
+  useEffect(() => {
+    const el = area.current
+    const host = el?.parentElement?.closest<HTMLElement>('article, .nf-card, section') ?? el?.parentElement
+    if (!el || !host) return
+    if (matchMedia('(hover: none)').matches) {
+      const io = new IntersectionObserver(([e]) => el.toggleAttribute('data-burst', e.isIntersecting), { threshold: 0.6 })
+      io.observe(el)
+      return () => io.disconnect()
+    }
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect()
+      const x = (e.clientX - r.left) / r.width
+      const y = (e.clientY - r.top) / r.height
+      el.toggleAttribute('data-burst', x > 0.18 && x < 0.82 && y > 0.18 && y < 0.82)
+    }
+    const onLeave = () => el.removeAttribute('data-burst')
+    host.addEventListener('pointermove', onMove)
+    host.addEventListener('pointerleave', onLeave)
+    return () => {
+      host.removeEventListener('pointermove', onMove)
+      host.removeEventListener('pointerleave', onLeave)
+    }
+  }, [resetKey])
+  return area
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ProductParticles, useParticleBurst } from '@/components/product/ProductParticles'
 import { AiBadge } from '@/components/ui/AiBadge'
 import { ChevronLeft, ChevronRight } from '@/components/ui/icons'
 import { Picture } from '@/components/ui/Picture'
@@ -25,6 +26,7 @@ export function Spotlight({ label, products }: { label: string; products: Produc
   }
   const image = product.images[0]
   const price = formatPrice(product)
+  const burstArea = useParticleBurst<HTMLDivElement>(product.slug)
 
   return (
     <div className="nf-card relative h-full min-h-[9.5rem] text-cream">
@@ -48,12 +50,13 @@ export function Spotlight({ label, products }: { label: string; products: Produc
       )}
 
       <div aria-live="polite" className="group grid h-full grid-cols-[44%_1fr] items-center gap-3 py-3 pr-4 pl-2">
-        <div key={product.slug} className="relative aspect-square transition-opacity duration-500 starting:opacity-0">
+        <div ref={burstArea} key={product.slug} className="relative aspect-square transition-opacity duration-500 starting:opacity-0">
+          <ProductParticles slug={product.slug} />
           <Picture
             image={image}
             sizes="160px"
             decorative
-            className="size-full object-contain drop-shadow-lg drop-shadow-ink/40 transition-transform duration-500 group-hover:scale-105 group-hover:-rotate-3"
+            className="relative size-full object-contain drop-shadow-lg drop-shadow-ink/40 transition-transform duration-500 group-hover:scale-105 group-hover:-rotate-3"
           />
           {image.aiGenerated && <AiBadge className="absolute bottom-0 left-1 scale-90" />}
         </div>

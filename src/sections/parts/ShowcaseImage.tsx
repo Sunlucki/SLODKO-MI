@@ -1,6 +1,7 @@
 import { AiBadge } from '@/components/ui/AiBadge'
 import { Picture } from '@/components/ui/Picture'
-import { images } from '@/content'
+import { ProductParticles, useParticleBurst } from '@/components/product/ProductParticles'
+import { images, useContent } from '@/content'
 import type { ImageT } from '@/content/schema'
 import { cn } from '@/lib/utils'
 
@@ -11,13 +12,17 @@ import { cn } from '@/lib/utils'
  */
 export function ShowcaseImage({ image, sizes, className }: { image: ImageT; sizes: string; className?: string }) {
   const cutout = images[image.src]?.alpha
+  // A cut-out of one of the flavours gets that flavour's particles + steam on hover
+  const product = useContent().products.find((p) => p.images[0]?.src === image.src)
+  const burstArea = useParticleBurst<HTMLDivElement>()
   return (
-    <div className={cn('relative', className)}>
+    <div ref={burstArea} className={cn('relative', className)}>
+      {cutout && product && <ProductParticles slug={product.slug} />}
       <Picture
         image={image}
         sizes={sizes}
         className={cn(
-          'w-full',
+          'relative w-full',
           cutout
             ? 'h-auto object-contain drop-shadow-[0_24px_28px_rgb(0_0_0/0.3)]'
             : 'aspect-square rounded-full object-cover shadow-[0_28px_50px_-18px_rgb(0_0_0/0.55)] ring-8 ring-cream/40',
