@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import BounceCards from '@/components/BounceCards'
 import { AiBadge } from '@/components/ui/AiBadge'
-import { CtaButton } from '@/components/ui/Button'
+import { CtaButton, ctaGroup } from '@/components/ui/Button'
 import { Picture } from '@/components/ui/Picture'
 import { Reveal } from '@/components/ui/Reveal'
 import { Container, Section, SectionHeading } from '@/components/ui/Section'
@@ -98,7 +98,7 @@ export default function Gallery({ section }: SectionProps<'gallery'>) {
         </div>
 
         {section.cta && (
-          <div className="mt-12 text-center lg:mt-8">
+          <div className={cn('mt-12 sm:justify-center lg:mt-8', ctaGroup)}>
             <CtaButton cta={section.cta} location="gallery" />
           </div>
         )}

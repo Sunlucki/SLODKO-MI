@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { useContent } from '@/content'
-import { CtaButton } from '@/components/ui/Button'
+import { CtaButton, ctaGroup } from '@/components/ui/Button'
 import { MapPin, Phone } from '@/components/ui/icons'
 import { Reveal } from '@/components/ui/Reveal'
 import { Container, Section, SectionHeading } from '@/components/ui/Section'
@@ -57,7 +57,7 @@ export default function Visit({ section }: SectionProps<'visit'>) {
                 <Phone width={24} height={24} />
                 {contact.phoneDisplay}
               </SmartLink>
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className={cn('mt-6', ctaGroup)}>
                 {section.ctas.map((cta, i) => (
                   <CtaButton key={cta.href} cta={cta} location="visit" withCircle={i === 0} />
                 ))}

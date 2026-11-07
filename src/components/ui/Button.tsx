@@ -4,6 +4,12 @@ import { cn } from '@/lib/utils'
 import { ArrowUpRight } from './icons'
 import { SmartLink } from './SmartLink'
 
+/**
+ * Layout of a group of CTAs. On phones every group is the same: a column of full-width buttons (label centred,
+ * the round arrow on the right edge); from `sm` they sit in a row. Sections add only their alignment (sm:justify-*).
+ */
+export const ctaGroup = 'flex flex-wrap items-center gap-3 max-sm:w-full max-sm:flex-col max-sm:items-stretch'
+
 const pill = {
   primary: 'bg-brand-deep text-cream hover:bg-ink',
   light: 'bg-cream text-brand-deep hover:bg-white',
@@ -43,7 +49,8 @@ export function CtaButton({ cta, location, product, size = 'md', withCircle = tr
     >
       <span
         className={cn(
-          'inline-flex items-center rounded-full transition-colors duration-200',
+          // flex-1: when the button is stretched (ctaGroup on phones) the pill takes the width, label centred
+          'inline-flex flex-1 items-center justify-center rounded-full transition-colors duration-200',
           sizes.pill,
           pill[cta.variant],
         )}

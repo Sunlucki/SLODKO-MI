@@ -1,5 +1,5 @@
 import { AiBadge } from '@/components/ui/AiBadge'
-import { CtaButton } from '@/components/ui/Button'
+import { CtaButton, ctaGroup } from '@/components/ui/Button'
 import { Picture } from '@/components/ui/Picture'
 import { Reveal } from '@/components/ui/Reveal'
 import { Container, Section, SectionHeading } from '@/components/ui/Section'
@@ -25,7 +25,7 @@ export default function About({ section }: SectionProps<'about'>) {
             ))}
           </div>
           {section.cta && (
-            <div className="mt-10">
+            <div className={cn('mt-10 sm:justify-center', ctaGroup)}>
               <CtaButton cta={section.cta} location="about" />
             </div>
           )}

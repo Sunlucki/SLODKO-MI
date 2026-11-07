@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import CurvedLoop from '@/components/CurvedLoop'
-import { CtaButton } from '@/components/ui/Button'
+import { CtaButton, ctaGroup } from '@/components/ui/Button'
 import { Reveal } from '@/components/ui/Reveal'
 import { Container, headingToneClass, Section, toneClass } from '@/components/ui/Section'
 import { useContent } from '@/content'
@@ -80,7 +80,7 @@ export default function CtaBanner({ section }: SectionProps<'cta'>) {
   return (
     <Section id={section.id} labelledBy={headingId} className="px-2 py-2 sm:px-3 sm:py-3 md:py-3">
       <div className={cn('relative overflow-hidden rounded-frame', toneClass[tone], tone === 'cream' && 'ring-1 ring-brand-deep/15 ring-inset')}>
-        <Container className={cn('grid items-center gap-12 pt-16 pb-4 md:pt-24', image && 'lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]')}>
+        <Container className={cn('grid items-center gap-12 pt-16 pb-10 sm:pb-4 md:pt-24', image && 'lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]')}>
           <Reveal className={cn('text-center', image && 'lg:text-left')}>
             <h2 id={headingId} className={cn('font-display text-[clamp(3rem,11vw,8.5rem)] leading-[0.9] tracking-tight wrap-anywhere uppercase', headingToneClass[tone])}>
               {section.heading}
@@ -90,7 +90,7 @@ export default function CtaBanner({ section }: SectionProps<'cta'>) {
                 {section.text}
               </p>
             )}
-            <div className={cn('mt-10 flex flex-wrap items-center justify-center gap-3', image && 'lg:justify-start')}>
+            <div className={cn('mt-10 sm:justify-center', ctaGroup, image && 'lg:justify-start')}>
               <CtaButton cta={section.primaryCta} location="cta" size="lg" />
               {section.secondaryCta && <CtaButton cta={section.secondaryCta} location="cta" size="lg" withCircle={false} />}
             </div>

@@ -77,9 +77,10 @@ export default function Hero({ section }: SectionProps<'hero'>) {
 
           <div className="relative z-10 mt-10 lg:col-span-5 lg:row-start-2 lg:mt-8 lg:self-end">
             {section.description && <p className="max-w-sm text-base leading-relaxed text-cream/90 lg:text-lg">{section.description}</p>}
-            <div className="mt-7 flex flex-wrap items-center gap-2.5 sm:gap-3 lg:mt-9">
-              <Magnet padding={70} magnetStrength={5} maxOffset={14}>
-                <CtaButton cta={section.primaryCta} location="hero" size="lg" className={compactOnPhones} />
+            {/* Phones: the order pill stretches, the round map pin stays beside it */}
+            <div className="mt-7 flex items-center gap-2.5 sm:flex-wrap sm:gap-3 lg:mt-9">
+              <Magnet padding={70} magnetStrength={5} maxOffset={14} wrapperClassName="max-sm:flex-1" innerClassName="max-sm:flex">
+                <CtaButton cta={section.primaryCta} location="hero" size="lg" className={cn(compactOnPhones, 'max-sm:flex-1')} />
               </Magnet>
               {section.secondaryCta && (
                 <IconLink href={section.secondaryCta.href} label={section.secondaryCta.label} location="hero" variant={section.secondaryCta.variant} className="size-12 sm:size-14">

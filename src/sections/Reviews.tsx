@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type TouchEvent } from 'react'
-import { CtaButton } from '@/components/ui/Button'
+import { CtaButton, ctaGroup } from '@/components/ui/Button'
 import { ChevronDown, ChevronLeft, ChevronRight, GoogleG, Star } from '@/components/ui/icons'
 import { Picture } from '@/components/ui/Picture'
 import { Reveal } from '@/components/ui/Reveal'
@@ -289,7 +289,7 @@ export default function Reviews({ section }: SectionProps<'reviews'>) {
               <p className={cn('mt-1', label)}>{`${reviews.count.toLocaleString(lang)} ${countNoun(reviews.count, ui.countForms, lang)} ${site.ui.sections.reviewCountSource} Google`}</p>
             </div>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className={cn('sm:justify-center', ctaGroup)}>
             <CtaButton cta={{ label: section.readAllLabel, href: '@reviews', variant: dark ? 'light' : 'primary' }} location={LOCATION} />
             {site.links.writeReview && (
               <CtaButton cta={{ label: section.writeLabel, href: '@writeReview', variant: 'secondary' }} location={LOCATION} withCircle={false} />

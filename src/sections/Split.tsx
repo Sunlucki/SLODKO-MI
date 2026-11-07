@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { AiBadge } from '@/components/ui/AiBadge'
-import { CtaButton } from '@/components/ui/Button'
+import { CtaButton, ctaGroup } from '@/components/ui/Button'
 import { Picture } from '@/components/ui/Picture'
 import { Reveal } from '@/components/ui/Reveal'
 import { headingToneClass, Section, toneClass } from '@/components/ui/Section'
@@ -84,7 +84,7 @@ export default function Split({ section }: SectionProps<'split'>) {
             <ShowcaseImage image={right.image} sizes="(min-width: 768px) 288px, 60vw" className="mt-8 w-[min(60vw,18rem)] md:w-[min(28vw,18rem)]" />
             <p className="mt-8 max-w-xs text-xs leading-relaxed font-bold tracking-[0.16em] uppercase">{right.caption}</p>
             {right.cta && (
-              <div className="mt-8">
+              <div className={cn('mt-8', ctaGroup)}>
                 <CtaButton cta={right.cta} location="split" />
               </div>
             )}

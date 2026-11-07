@@ -1,6 +1,6 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { CtaButton, IconLink } from '@/components/ui/Button'
+import { CtaButton, ctaGroup, IconLink } from '@/components/ui/Button'
 import { Close, Facebook, Instagram, Menu, Phone } from '@/components/ui/icons'
 import { SmartLink } from '@/components/ui/SmartLink'
 import { fmt, useContent } from '@/content'
@@ -132,7 +132,7 @@ export function MobileMenu({ className }: { className?: string }) {
             </nav>
 
             <div className="mt-auto flex flex-col gap-8 pt-12">
-              <div className="flex flex-wrap items-center gap-2">
+              <div className={ctaGroup}>
                 <CtaButton cta={{ ...site.header.cta, variant: 'light' }} location="menu" size="lg" />
               </div>
               <nav aria-label={common.language}>

@@ -1,6 +1,7 @@
 import { useContent } from '@/content'
 import { ProductList } from '@/components/product/ProductList'
-import { CtaButton } from '@/components/ui/Button'
+import { CtaButton, ctaGroup } from '@/components/ui/Button'
+import { cn } from '@/lib/utils'
 import { Reveal } from '@/components/ui/Reveal'
 import { Container, Section, SectionHeading } from '@/components/ui/Section'
 import type { SectionProps } from './types'
@@ -27,7 +28,7 @@ export default function ProductGrid({ section }: SectionProps<'productGrid'>) {
           <ProductList products={list} listName={section.id} />
         </Reveal>
         {section.cta && (
-          <div className="mt-10 flex justify-center md:mt-14">
+          <div className={cn('mt-10 sm:justify-center md:mt-14', ctaGroup)}>
             <CtaButton cta={section.cta} location={section.id} />
           </div>
         )}
