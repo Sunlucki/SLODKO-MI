@@ -241,3 +241,9 @@
     display: none;
   }
 }
+/* Touch screens: the hero spotlight card is narrow and in view on load, so its particles would sit on its title */
+@media (hover: none) {
+  .nf-card .pp-layer {
+    display: none;
+  }
+}
